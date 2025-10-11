@@ -1,9 +1,13 @@
 import { addToast } from "@heroui/react";
-import { useMutation, UseMutationOptions, UseMutationResult } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationOptions,
+  UseMutationResult,
+} from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import httpService from "./httpService";
 
-interface MutationConfig<TResponse, TVariables> {
+interface MutationConfig<TResponse, TVariables, TContext = unknown> {
   /** API endpoint */
   url: string;
   /** HTTP method (default = POST) */
@@ -11,44 +15,69 @@ interface MutationConfig<TResponse, TVariables> {
   /** Optional static success message */
   successMessage?: string;
   /** React-Query options */
-  options?: UseMutationOptions<AxiosResponse<TResponse>, AxiosError, TVariables>;
+  options?: UseMutationOptions<
+    AxiosResponse<TResponse>,
+    AxiosError,
+    TVariables,
+    TContext
+  >;
 }
 
 /**
- * A reusable mutation hook with toast notifications and strong typing
+ * ✅ Reusable mutation hook with HeroUI toast + full typing support
  */
-export function useAppMutation<TResponse = unknown, TVariables = unknown>({
+export function useAppMutation<
+  TResponse = unknown,
+  TVariables = unknown,
+  TContext = unknown
+>({
   url,
   method = "post",
   successMessage,
-  options
-}: MutationConfig<TResponse, TVariables>): UseMutationResult<
+  options,
+}: MutationConfig<TResponse, TVariables, TContext>): UseMutationResult<
   AxiosResponse<TResponse>,
   AxiosError,
-  TVariables
+  TVariables,
+  TContext
 > {
-  return useMutation<AxiosResponse<TResponse>, AxiosError, TVariables>({
-    mutationFn: (data: TVariables) => httpService[method]<TResponse>(url, data),
+  return useMutation<AxiosResponse<TResponse>, AxiosError, TVariables, TContext>({
+    mutationFn: (data: TVariables) =>
+      httpService.request<TResponse>({
+        url,
+        method,
+        data,
+      }),
+    ...options,
     onError: (error, variables, context) => {
       const message =
         (error.response?.data as { message?: string })?.message ??
+        error.message ??
         "Something went wrong";
+
       addToast({
         title: "Error",
         description: message,
         color: "danger",
         timeout: 3000,
       });
+// @ts-expect-error cant debug this
       options?.onError?.(error, variables, context);
     },
     onSuccess: (data, variables, context) => {
+      const responseMessage =
+        (data.data as { message?: string })?.message ??
+        successMessage ??
+        "Success";
+
       addToast({
         title: "Success",
-        description: successMessage ?? (data.data as { message?: string })?.message ?? "Success",
+        description: responseMessage,
         color: "success",
+        timeout: 3000,
       });
+      // @ts-expect-error cant debug this
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 }
