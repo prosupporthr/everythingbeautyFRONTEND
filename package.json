@@ -9,9 +9,20 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.5",
+    "@tanstack/react-query": "^5.90.2",
+    "@types/js-cookie": "^3.0.6",
+    "axios": "^1.12.2",
+    "formik": "^2.4.6",
+    "framer-motion": "^12.23.23",
+    "js-cookie": "^3.0.5",
+    "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "react-icons": "^5.5.0",
+    "react-phone-number-input": "^3.4.12",
+    "react-simple-wysiwyg": "^3.4.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "typescript": "^5",
