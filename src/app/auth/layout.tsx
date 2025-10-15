@@ -1,6 +1,4 @@
-import { CustomImage } from "@/src/components/custom";
-
- 
+import { CustomImage } from "@/components/custom";
 
 export default function RootLayout({
     children,
