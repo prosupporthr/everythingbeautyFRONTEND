@@ -1,6 +1,6 @@
-"use client"
-import { CustomButton, CustomInput } from "@/components/custom"
-import useAuth from "@/hooks/useAuth"
+"use client" 
+import { CustomInput, CustomButton } from "@/src/components/custom"
+import useAuth from "@/src/hooks/useAuth"
 import { FormikProvider } from "formik"
 import { useRouter } from "next/navigation"
 

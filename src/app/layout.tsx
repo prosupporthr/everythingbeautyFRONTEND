@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import "./globals.css";
-import { Provider } from "@/provider";
+import "./globals.css"; 
+import { Provider } from "../provider";
 
 const dmSans = DM_Sans({
   variable: "--font-dms-sans",
