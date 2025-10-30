@@ -11,6 +11,7 @@ type CustomVariants =
   | "primary"
   | "auth"
   | "outline"  
+  | "outlinebrand"
 
 interface IProps {
   children: React.ReactNode
@@ -26,7 +27,8 @@ interface IProps {
   onClick?: () => void
   startIcon?: React.ReactNode
   endIcon?: React.ReactNode,
-  height?: string
+  height?: string,
+  className?: string
 }
 
 export default function CustomButton({
@@ -39,6 +41,7 @@ export default function CustomButton({
   fullWidth = false,
   isDisabled = false,
   isLoading = false,
+  className,
   type,
   onClick,
   startIcon,
@@ -54,6 +57,8 @@ export default function CustomButton({
     "bg-violet-500 text-white hover:bg-violet-500": variant === "auth",
     "bg-white text-[#161925] border border-[#E8E7ED] hover:bg-white":
       variant === "outline", 
+    "bg-white text-[#9747FF] border border-[#9747FF] hover:bg-white":
+        variant === "outlinebrand", 
   })
 
   // Ensure HeroUI only gets its valid variants
@@ -80,7 +85,7 @@ export default function CustomButton({
       onClick={onClick}
       startContent={startIcon}
       endContent={endIcon}
-      className={customClasses+" font-bold text-sm "}
+      className={`${className} ${customClasses} font-bold text-sm `}
     >
       {children}
     </Button>

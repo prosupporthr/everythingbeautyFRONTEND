@@ -60,7 +60,7 @@ export default function CustomDateTimePicker({
           ).padStart(2, "0")}`
         );
     } catch (e: unknown) {
-      console.warn("Invalid date in formik value:", rawValue+e);
+      console.warn("Invalid date in formik value:", rawValue + e);
     }
   }
 
@@ -103,15 +103,16 @@ export default function CustomDateTimePicker({
       )}
 
       <DatePicker
-        isDisabled={disabled}
+        showMonthAndYearPickers
+        // isDisabled={disabled}
         value={formikValue ?? undefined}
-        minValue={today(getLocalTimeZone())}
+        // minValue={today(getLocalTimeZone())}
         granularity={withTime ? "minute" : "day"}
         hourCycle={12}
         classNames={{
           inputWrapper:
-            "bg-white border border-gray-300 rounded-xl h-[45px]",
-          input: "text-gray-900",
+            "bg-white text-primary border border-gray-300 rounded-xl h-[45px]",
+          input: " text-primary ",
         }}
         onChange={(date) => changeHandler(date)}
       />

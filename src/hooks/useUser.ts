@@ -1,0 +1,73 @@
+import { handleError } from "@/helper/services/errorHandler"
+import httpService from "@/helper/services/httpService"
+import { addToast } from "@heroui/toast"
+import { useMutation } from "@tanstack/react-query"
+import { useFormik } from "formik"
+import { useRouter } from "next/navigation"
+import { useUploadMutation } from "./useUpload"
+import { URLS } from "@/helper/services/urls"
+import { useState } from "react"
+import Cookies from "js-cookie"
+import { IOnboarding } from "@/helper/model/auth"
+import { userSchema } from "@/helper/services/validation"
+
+
+const useUser = () => {
+
+    const router = useRouter()
+    const userId = Cookies.get("userid") as string
+    const [imageFile, setImageFile] = useState<File | string | null>("");
+
+    /** 🔹 Login */
+    const userMutation = useMutation({
+        mutationFn: (data: IOnboarding) =>
+            httpService.patch(URLS.USERUPDATE(userId), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })
+            router.push(`/`)
+        },
+    })
+
+    const uploadMutation = useUploadMutation((res) => {
+
+        const payload = {...formik.values, profilePicture: res+""}
+
+        userMutation.mutate(payload)
+    })
+
+    /** 🔹 Formik Instances */
+    const formik = useFormik({
+        initialValues: {
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+            gender: "",
+            profilePicture: "",
+            dateOfBirth: ""
+        },
+        validationSchema: userSchema,
+        onSubmit: () => { 
+            if (imageFile) {
+                const formdata = new FormData()
+                formdata.append("file", imageFile)
+                uploadMutation.mutate(formdata )
+            }
+        },
+    })
+
+    const isLoading = uploadMutation.isPending || userMutation.isPending
+
+    return {
+        formik,
+        isLoading,
+        setImageFile,
+        imageFile
+    }
+}
+
+export default useUser
