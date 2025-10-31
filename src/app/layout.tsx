@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import { Provider } from "../provider"; 
+import { Provider } from "../provider";
 import { Navbar } from "@/components/dashboard";
 import { Footer } from "@/components/shared";
 
@@ -28,11 +28,11 @@ export default function RootLayout({
         className={`${dmSans.variable} antialiased`}
       >
         <Provider>
-          <div className=" w-full h-full flex flex-col overflow-y-auto bg-white relative " >
-            <div className=" w-full fixed z-30 top-0 inset-x-0 " >
-              <Navbar />
+          <div className=" w-full h-screen flex flex-col overflow-y-auto bg-white " >
+            <Navbar />
+            <div className=" w-full flex flex-col h-auto " >
+              {children}
             </div>
-            {children}
             <Footer />
           </div>
         </Provider>

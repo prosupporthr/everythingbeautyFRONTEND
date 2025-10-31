@@ -6,7 +6,7 @@ export default function Footer() {
     const pathname = usePathname()
 
     return (
-        <div className={` w-full bg-[#FCFAFF] ${pathname.includes("auth") ? " hidden " : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
+        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("business/create")) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
             <div className=" max-w-[1276px] w-full flex flex-col gap-6 " >
                 <div className=" w-full flex justify-between " >
                     <div className=" flex flex-col gap-1 max-w-[308px] " >

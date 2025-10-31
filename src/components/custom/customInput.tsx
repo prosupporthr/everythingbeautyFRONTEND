@@ -100,7 +100,7 @@ export default function CustomInput({
               placeholder={placeholder}
               labelPlacement={placement}
               type="text"
-              value={value}
+              value={(value === 0+"" || !value) ? "" : value}
               disabled={disabled}
               classNames={{
                 inputWrapper:

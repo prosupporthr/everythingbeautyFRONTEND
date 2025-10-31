@@ -89,7 +89,7 @@ export default function ImagePicker({
                 <button
                     type="button"
                     onClick={handleButtonClick}
-                    className="w-full h-[240px] rounded-xl flex justify-center items-center bg-neonblue-50 relative"
+                    className="w-full h-[240px] rounded-xl border border-gray-100 flex justify-center items-center bg-neonblue-50 relative"
                 >
                     {isLoading ? (
                         <p className="text-sm font-semibold z-10 text-white">{isLoading}</p>
@@ -100,8 +100,8 @@ export default function ImagePicker({
                     )}
 
                     {previewUrl && (
-                        <div className="absolute inset-0">
-                            <CustomImage src={previewUrl + ""} alt="image" fillContainer />
+                        <div className="absolute inset-0 rounded-xl">
+                            <CustomImage src={previewUrl + ""} alt="image" className="rounded-xl" fillContainer />
                         </div>
                     )}
                 </button>

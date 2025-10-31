@@ -3,6 +3,9 @@ export const URLS = {
     SIGNUP: `/user/signup/email`, 
     VERIFY: `/user/verify-otp`, 
     UPLOAD: "/upload/file",
+    BUSINESS: "/business",
+    SERVICE: "/service",
+    PRODUCT: "/product",
     USERUPDATE: (item: string) => `/user/${item}`
 }
 
