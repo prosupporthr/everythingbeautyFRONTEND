@@ -1,10 +1,9 @@
 "use client"
 import { CustomButton } from "@/components/custom"
-import useAuth from "@/hooks/useAuth"  
-import { AccountVerified } from "@/modals";
-import {InputOtp} from "@heroui/input-otp";
-import { FormikProvider } from "formik"
-import { useRouter } from "next/navigation";
+import { AccountVerified } from "@/components/modals";
+import useAuth from "@/hooks/useAuth"   
+import {InputOtp} from "@heroui/input-otp"; 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { BsArrowLeftCircle } from "react-icons/bs";
 
@@ -12,13 +11,21 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 
 export default function VerificationPage() {
 
-    const { formik } = useAuth()
+    const { verifyMutation, isOpen, setIsOpen } = useAuth()
     const [value, setValue] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
 
+    const query = useSearchParams();
+    const email = query?.get('email');
+
+    const clickHandler = () => {
+        verifyMutation.mutate({
+            code: value
+        })
+    }
+
     return (
-        <FormikProvider value={formik} >
+        <>
             <div className=" w-full max-w-[435px] flex flex-col items-center gap-6 " >
                 <div className=" w-fit flex-col flex gap-4 " >
                     <div className=" flex gap-3 items-center " >
@@ -27,9 +34,8 @@ export default function VerificationPage() {
                         </button>
                         <p className=" text-2xl font-medium " >Enter Authentication Code</p>
                     </div>
-                    <p className=" text-secondary text-sm w-[300px] text-center ">Enter the 6_digit code we sent to the Email Address otue***gmail.com</p>
-                </div>
-
+                    <p className=" text-secondary text-sm w-[300px] text-center ">Enter the 6_digit code we sent to the Email Address {email}</p>
+                </div> 
                 {/* OTP Input */}
                 <InputOtp
                     length={6}
@@ -37,12 +43,11 @@ export default function VerificationPage() {
                     size="lg" 
                     allowedKeys="^[a-zA-Z0-9]*$" // restricts to letters
                     onValueChange={setValue}
-                />
-
+                /> 
                 <p className=" text-sm text-secondary " >Waiting to resend OTP in  <span className=" font-medium text-primary cursor-pointer " >59 Secs</span></p>
-                <CustomButton fullWidth height="56px" onClick={()=> setIsOpen(true)} >Continue</CustomButton>
+                <CustomButton isLoading={verifyMutation?.isPending} isDisabled={value.length >= 6 ? false : true} fullWidth height="56px" onClick={clickHandler} >Continue</CustomButton>
             </div>
-            <AccountVerified isOpen={isOpen} setIsOpen={setIsOpen} />
-        </FormikProvider>
+            <AccountVerified isOpen={verifyMutation?.isPending || isOpen} setIsOpen={setIsOpen} />
+        </>
     )
 }

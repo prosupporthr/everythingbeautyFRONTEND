@@ -9,7 +9,8 @@
   --foreground: #171717;
   --primary: #1E1E20;
   --secondary: #747474;
-  --brand: #9747FF
+  --brand: #9747FF;
+  --bordercolor: #EAEBEDCC;
 }
 
 @theme inline {
@@ -19,12 +20,20 @@
   --color-secondary: var(--secondary);
   --color-brand: var(--brand);
   --font-sans: var(--font-dms-sans); 
+  --color-bordercolor: var(--bordercolor);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  /* :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  } */
+}
+
+@layer base {
+  *, ::before, ::after {
+    /* color: var(--primary); */
+    border-color: var(--bordercolor);
   }
 }
 
@@ -32,4 +41,15 @@ body {
   background: var(--background);
   color: var(--primary);
   font-family: var(--font-sans);
+  border-color: var(--bordercolor) !important;
+}
+
+button{
+  cursor: pointer;
+}
+
+.PhoneInputInput:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important; /* keep your border color */
 }
