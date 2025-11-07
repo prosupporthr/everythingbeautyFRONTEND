@@ -13,87 +13,115 @@ import {
 } from "@internationalized/date";
 
 interface IProps {
-  name: string;
+  borderWidth?: string;
+  name?: string; // ✅ optional for standalone mode
   label?: string;
   placeholder?: string;
   disabled?: boolean;
   withTime?: boolean;
   defaultHour?: number;
   defaultMinute?: number;
+
+  /** ✅ Standalone mode props */
+  useFormik?: boolean;
+  value?: string; // ISO string
+  onChange?: (value: string) => void;
 }
 
 export default function CustomDateTimePicker({
-  name,
+  borderWidth,
+  name = "",
   label,
   disabled,
   withTime = true,
   defaultHour = 9,
   defaultMinute = 0,
+  useFormik = true,
+  value,
+  onChange,
 }: IProps) {
-  const { errors, touched, setFieldValue, values } =
-    useFormikContext<FormikValues>();
+  /** ✅ Try to use Formik if enabled */
+  let formikValue: string | undefined;
+  let formikError: string | null = null;
+  let formikTouched: boolean = false;
+  let setFormikValue: ((field: string, val: any) => void) | null = null;
 
-  const error = getIn(errors, name) as string | undefined;
-  const isTouched = getIn(touched, name) as boolean | undefined;
+  if (useFormik) {
+    try {
+      const formik = useFormikContext<FormikValues>();
+      formikError = getIn(formik.errors, name) || null;
+      formikTouched = getIn(formik.touched, name) || false;
+      formikValue = getIn(formik.values, name);
+      setFormikValue = formik.setFieldValue;
+    } catch {
+      console.warn("CustomDateTimePicker: Formik not detected — using standalone mode.");
+      useFormik = false;
+    }
+  }
 
-  // ✅ Convert ISO → DateValue (preserving local timezone)
-  const rawValue = getIn(values, name) as string | undefined;
-  let formikValue: DateValue | null = null;
+  /** ✅ RAW value (either from Formik or from props) */
+  const rawValue = useFormik ? formikValue : value;
+  let dateValue: DateValue | null = null;
 
+  /** ✅ Convert ISO → DatePicker value */
   if (rawValue) {
     try {
-      const jsDate = new Date(rawValue);
-      // Convert JS Date → Zoned Date (keeps local date correctly)
-      const zoned = fromDate(jsDate, getLocalTimeZone());
-      formikValue = withTime
-        ? parseDateTime(
+      const js = new Date(rawValue);
+      const zoned = fromDate(js, getLocalTimeZone());
+
+      if (withTime) {
+        dateValue = parseDateTime(
           `${zoned.year}-${String(zoned.month).padStart(2, "0")}-${String(
             zoned.day
-          ).padStart(2, "0")}T${String(zoned.hour).padStart(
-            2,
-            "0"
-          )}:${String(zoned.minute).padStart(2, "0")}`
-        )
-        : parseDate(
+          ).padStart(2, "0")}T${String(zoned.hour).padStart(2, "0")}:${String(
+            zoned.minute
+          ).padStart(2, "0")}`
+        );
+      } else {
+        dateValue = parseDate(
           `${zoned.year}-${String(zoned.month).padStart(2, "0")}-${String(
             zoned.day
           ).padStart(2, "0")}`
         );
-    } catch (e: unknown) {
-      console.warn("Invalid date in formik value:", rawValue+e);
+      }
+    } catch (err) {
+      console.warn("Invalid date value:", rawValue, err);
     }
   }
 
-  const changeHandler = (item: DateValue | null) => {
+  /** ✅ When user picks a date/time */
+  const handleChange = (item: DateValue | null) => {
     if (!item) {
-      setFieldValue(name, null);
+      if (useFormik && setFormikValue) setFormikValue(name, null);
+      else onChange?.("");
       return;
     }
 
     let zoned;
+
     if (withTime) {
       if ("hour" in item) {
         zoned = toZoned(item, getLocalTimeZone());
       } else {
-        const withDefaultTime = new CalendarDateTime(
+        const withDefault = new CalendarDateTime(
           item.year,
           item.month,
           item.day,
           defaultHour,
           defaultMinute
         );
-        zoned = toZoned(withDefaultTime, getLocalTimeZone());
+        zoned = toZoned(withDefault, getLocalTimeZone());
       }
     } else {
       zoned = toZoned(item, getLocalTimeZone());
     }
 
-    // ✅ Store ISO string from local time (avoid UTC shift)
-    setFieldValue(
-      name,
-      new Date(zoned.toDate().getTime() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-    );
+    const iso = new Date(
+      zoned.toDate().getTime() - new Date().getTimezoneOffset() * 60000
+    ).toISOString();
+
+    if (useFormik && setFormikValue) setFormikValue(name, iso);
+    else onChange?.(iso);
   };
 
   return (
@@ -104,20 +132,25 @@ export default function CustomDateTimePicker({
 
       <DatePicker
         isDisabled={disabled}
-        value={formikValue ?? undefined}
-        minValue={today(getLocalTimeZone())}
+        value={dateValue ?? undefined}
         granularity={withTime ? "minute" : "day"}
+        minValue={today(getLocalTimeZone())}
         hourCycle={12}
+        style={{
+          borderWidth: borderWidth ?? "1px", 
+        }}
+        onChange={handleChange}
         classNames={{
           inputWrapper:
-            "bg-white border border-gray-300 rounded-xl h-[45px]",
+            "bg-white border-gray-300 rounded-xl h-[45px]",
           input: "text-gray-900",
         }}
-        onChange={(date) => changeHandler(date)}
       />
 
-      {isTouched && error && (
-        <p className="text-xs text-red-600 font-medium ml-2">{error}</p>
+      {useFormik && formikTouched && formikError && (
+        <p className="text-xs text-red-600 font-medium ml-2">
+          {formikError}
+        </p>
       )}
     </div>
   );

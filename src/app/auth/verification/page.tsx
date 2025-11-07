@@ -1,7 +1,7 @@
 "use client"
 import { CustomButton } from "@/components/custom"
-import useAuth from "@/hooks/useAuth"  
-import { AccountVerified } from "@/modals";
+import { AccountVerified } from "@/components/modals";
+import useAuth from "@/hooks/useAuth"   
 import {InputOtp} from "@heroui/input-otp"; 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -11,9 +11,8 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 
 export default function VerificationPage() {
 
-    const { verifyMutation } = useAuth()
+    const { verifyMutation, isOpen, setIsOpen } = useAuth()
     const [value, setValue] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
 
     const query = useSearchParams();
@@ -48,7 +47,7 @@ export default function VerificationPage() {
                 <p className=" text-sm text-secondary " >Waiting to resend OTP in  <span className=" font-medium text-primary cursor-pointer " >59 Secs</span></p>
                 <CustomButton isLoading={verifyMutation?.isPending} isDisabled={value.length >= 6 ? false : true} fullWidth height="56px" onClick={clickHandler} >Continue</CustomButton>
             </div>
-            <AccountVerified isOpen={isOpen} setIsOpen={setIsOpen} />
+            <AccountVerified isOpen={verifyMutation?.isPending || isOpen} setIsOpen={setIsOpen} />
         </>
     )
 }

@@ -1,29 +1,35 @@
 import { handleError } from "@/helper/services/errorHandler"
 import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useFormik } from "formik"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
 import { useState } from "react"
-import Cookies from "js-cookie" 
-import { businessSchema, productSchema, serviceSchema } from "@/helper/services/validation" 
+import Cookies from "js-cookie"
+import { businessSchema, productSchema, serviceSchema } from "@/helper/services/validation"
 import { IBusiness, IProduct, IServices } from "@/helper/model/business"
 
 interface IProps {
     services?: boolean,
-    product?: boolean ,
-    business?: boolean 
+    product?: boolean,
+    business?: boolean
 }
 
 const useBusiness = (
-  { services, product, business } : IProps
+    { services, product, business }: IProps
 ) => {
 
     const router = useRouter()
     const userId = Cookies.get("userid") as string
     const [imageFile, setImageFile] = useState<File | string | null>("");
+
+    const param = useParams();
+    const id = param.id as string;
+    const slug = param.slug as string;
+
+    const queryClient = useQueryClient()
 
     /** 🔹 Business */
     const businessMutation = useMutation({
@@ -39,7 +45,7 @@ const useBusiness = (
             router.push(`/`)
         },
     })
-    
+
     /** 🔹 Service */
     const servicesMutation = useMutation({
         mutationFn: (data: IServices) =>
@@ -51,7 +57,37 @@ const useBusiness = (
                 description: res?.data?.message,
                 color: "success",
             })
-            router.push(`/`)
+            router.push(`/business/${id}/dashboard?tab=services`)
+        },
+    })
+
+    /** 🔹 Service */
+    const servicesEditMutation = useMutation({
+        mutationFn: (data: IServices) =>
+            httpService.patch(URLS.SERVICEBYID(slug), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })
+            router.push(`/business/${id}/dashboard?tab=services`)
+        },
+    })
+
+    /** 🔹 Service */
+    const servicesDeleteMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.SERVICEBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })
+            queryClient.invalidateQueries({ queryKey: ["service"] })
         },
     })
 
@@ -66,7 +102,37 @@ const useBusiness = (
                 description: res?.data?.message,
                 color: "success",
             })
-            router.push(`/`)
+            router.push(`/business/${id}/dashboard?tab=store`)
+        },
+    })
+
+    /** 🔹 Product */
+    const productEditMutation = useMutation({
+        mutationFn: (data: IProduct) =>
+            httpService.patch(URLS.PRODUCTBYID(slug), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })
+            router.push(`/business/${id}/dashboard?tab=store`)
+        },
+    })
+
+    /** 🔹 Product */
+    const productDeleteMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.PRODUCTBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }) 
+            queryClient.invalidateQueries({ queryKey: ["product"] })
         },
     })
 
@@ -76,12 +142,20 @@ const useBusiness = (
         const payloadservices = { ...formikService.values, pictures: [res + ""] }
         const payloadproduct = { ...formikProduct.values, pictures: [res + ""] }
 
-        if(business) {
+        if (business) {
             businessMutation.mutate(payload)
-        } else if(services) {
-            servicesMutation.mutate(payloadservices)
-        } else if(product) {
-            productMutation.mutate(payloadproduct)
+        } else if (services) {
+            if (slug) {
+                servicesEditMutation.mutate(payloadservices)
+            } else {
+                servicesMutation.mutate(payloadservices)
+            }
+        } else if (product) {
+            if (slug) {
+                productEditMutation.mutate(payloadproduct)
+            } else {
+                productMutation.mutate(payloadproduct)
+            }
         }
     })
 
@@ -117,18 +191,19 @@ const useBusiness = (
 
 
     /** 🔹 Formik Instances */
-    const formikService = useFormik({
+    const formikService = useFormik<IServices>({
         initialValues: {
-            "businessId": "6904afd64efca5874d0e4814",
+            "businessId": slug ? "" : id,
             "name": "",
             "description": "",
             "hourlyRate": 0,
-            "allowReview": false,
-            "pictures": []
-          },
+            "allowReview": false, 
+        },
         validationSchema: serviceSchema,
-        onSubmit: () => {
-            if (imageFile) {
+        onSubmit: (data) => {
+            if (slug && !imageFile) {
+                servicesEditMutation.mutate(data)
+            } else if (imageFile) {
                 const formdata = new FormData()
                 formdata.append("file", imageFile)
                 uploadMutation.mutate(formdata)
@@ -143,18 +218,19 @@ const useBusiness = (
     })
 
     /** 🔹 Formik Instances */
-    const formikProduct = useFormik({
+    const formikProduct = useFormik<IProduct>({
         initialValues: {
-            "businessId": "6904afd64efca5874d0e4814",
+            "businessId": slug ? "" : id,
             "name": "",
             "description": "",
             "price": 0,
             "allowReview": false,
-            "pictures": []
-          },
+        },
         validationSchema: productSchema,
-        onSubmit: () => {
-            if (imageFile) {
+        onSubmit: (data) => {
+            if (slug && !imageFile) {
+                productEditMutation.mutate(data)
+            } else if (imageFile) {
                 const formdata = new FormData()
                 formdata.append("file", imageFile)
                 uploadMutation.mutate(formdata)
@@ -168,13 +244,15 @@ const useBusiness = (
         },
     })
 
-    const isLoading = uploadMutation.isPending || businessMutation.isPending || servicesMutation.isPending || productMutation.isPending
+    const isLoading = uploadMutation.isPending || businessMutation.isPending || servicesMutation.isPending || servicesEditMutation.isPending || servicesDeleteMutation.isPending || productMutation.isPending || productEditMutation.isPending || productDeleteMutation.isPending
 
     return {
         formik,
         formikService,
         formikProduct,
         isLoading,
+        productDeleteMutation,
+        servicesDeleteMutation,
         setImageFile,
         imageFile
     }

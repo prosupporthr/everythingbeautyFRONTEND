@@ -10,8 +10,11 @@ import { ILogin, IAuth } from "@/helper/model/auth"
 import { emailSchema } from "@/helper/services/validation"
 import { handleError } from "@/helper/services/errorHandler"
 import { URLS } from "@/helper/services/urls"
+import { useState } from "react"
 
 const useAuth = () => {
+
+    const [isOpen, setIsOpen] = useState(false);
 
     const router = useRouter()
     /** 🔹 Login */
@@ -52,10 +55,6 @@ const useAuth = () => {
         onSuccess: (res) => {
             const { token, user } = res.data.data
 
-            console.log(token);
-
-            console.log(user?._id);
-            
             Cookies.set("accesstoken", token)
             Cookies.set("userid", user?._id)
             addToast({
@@ -63,7 +62,12 @@ const useAuth = () => {
                 description: res?.data?.message,
                 color: "success",
             })
-            router.push(user?.firstName ? "/" : "/auth/onboarding")
+            if (user?.firstName) {
+                setIsOpen(true)
+                router.push("/")
+            } else {
+                router.push("/auth/onboarding")
+            }
         },
     })
 
@@ -78,7 +82,7 @@ const useAuth = () => {
         initialValues: { email: "" },
         validationSchema: emailSchema,
         onSubmit: (data) => signupMutation.mutate(data),
-    }) 
+    })
 
     /** 🔹 Loading State */
     const isLoading =
@@ -88,9 +92,11 @@ const useAuth = () => {
 
     return {
         formik,
-        formikSignup, 
+        formikSignup,
         isLoading,
         verifyMutation,
+        isOpen,
+        setIsOpen
     }
 }
 

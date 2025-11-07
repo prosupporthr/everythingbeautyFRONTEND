@@ -1,12 +1,14 @@
 "use client"
-import { usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 
 export default function Footer() {
 
     const pathname = usePathname()
+    const param = useParams();
+    const id = param.id; 
 
     return (
-        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("business/create")) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
+        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
             <div className=" max-w-[1276px] w-full flex flex-col gap-6 " >
                 <div className=" w-full flex justify-between " >
                     <div className=" flex flex-col gap-1 max-w-[308px] " >

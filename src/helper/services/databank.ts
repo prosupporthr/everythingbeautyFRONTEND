@@ -1,29 +1,32 @@
-
+import { BiMessageDetail } from "react-icons/bi";
+import { BsPersonCircle, BsShop } from "react-icons/bs";
+import { IoHeartOutline, IoSettingsOutline } from "react-icons/io5";
+import { TbLogout2 } from "react-icons/tb";
 
 export const menulist = [
     {
         title: "My Profile",
-        icon: ""
+        icon: BsPersonCircle
     },
     {
         title: "Message",
-        icon: ""
+        icon: BiMessageDetail
     },
     {
         title: "Settings",
-        icon: ""
+        icon: IoSettingsOutline
     },
     {
         title: "Favourite",
-        icon: ""
+        icon: IoHeartOutline
     },
     {
         title: "My Order",
-        icon: ""
+        icon: BsShop
     },
     {
         title: "Logout",
-        icon: ""
+        icon: TbLogout2
     }
 ]
 

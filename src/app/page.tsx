@@ -1,5 +1,5 @@
-import { Aboutsection, Navbar, Productsection, Reviewsection } from "@/components/dashboard";
-import HeroSection from "@/components/dashboard/herosection"; 
+import { Aboutsection, Navbar, Productsection, Reviewsection } from "@/components/landing";
+import HeroSection from "@/components/landing/herosection"; 
 
 export default function Home() {
   return (

@@ -5,47 +5,72 @@ import { useFormikContext, getIn, FormikValues } from "formik";
 import { parseTime, Time } from "@internationalized/date";
 
 interface IProps {
-  name: string;
+  borderWidth?: string
+  name?: string;              // optional when not using formik
   label?: string;
   disabled?: boolean;
-  is24Hour?: boolean; // 12-hour or 24-hour format
+  is24Hour?: boolean;
+  useFormik?: boolean;        // ✅ NEW — choose formik or standalone
+  
+
+  // Standalone props
+  value?: string;             // ✅ "HH:mm"
+  onChange?: (value: string) => void;
 }
 
 export default function CustomTimePicker({
-  name,
+  name = "",
+  borderWidth,
   label,
   disabled = false,
   is24Hour = false,
+  useFormik = true,
+  value,
+  onChange,
 }: IProps) {
-  const { errors, touched, setFieldValue, values } =
-    useFormikContext<FormikValues>();
+  
+  /** ✅ FORMik handling (only if enabled) */
+  let formikValue: string | undefined = undefined;
+  let formikError: string | null = null;
+  let formikTouched: boolean = false;
+  let setFormikValue: ((field: string, val: any) => void) | null = null;
 
-  const error = getIn(errors, name) as string | undefined;
-  const isTouched = getIn(touched, name) as boolean | undefined;
-  const rawValue = getIn(values, name) as string | undefined;
-
-  // 🔹 Convert string ("14:30") to Time object
-  let formikValue: Time | null = null;
-  if (rawValue) {
+  if (useFormik) {
     try {
-      formikValue = parseTime(rawValue);
+      const formik = useFormikContext<FormikValues>();
+      formikError = getIn(formik.errors, name) || null;
+      formikTouched = getIn(formik.touched, name) || false;
+      formikValue = getIn(formik.values, name);
+      setFormikValue = formik.setFieldValue;
     } catch {
-      console.warn("Invalid time value:", rawValue);
+      console.warn("CustomTimePicker: Formik not detected — using standalone mode.");
+      useFormik = false;
     }
   }
 
-  // 🔹 When user picks a time, store it as "HH:mm"
-  const handleChange = (item: Time | null) => {
-    if (!item) {
-      setFieldValue(name, "");
-      return;
+  /** ✅ Convert string → Time object */
+  const rawValue = useFormik ? formikValue : value;
+  let timeValue: Time | undefined = undefined;
+
+  if (rawValue) {
+    try {
+      timeValue = parseTime(rawValue);
+    } catch {
+      console.warn("Invalid time:", rawValue);
     }
+  }
 
-    const formattedTime = `${String(item.hour).padStart(2, "0")}:${String(
-      item.minute
-    ).padStart(2, "0")}`;
+  /** ✅ Handle update */
+  const handleChange = (item: Time | null) => {
+    const formatted = item
+      ? `${String(item.hour).padStart(2, "0")}:${String(item.minute).padStart(2, "0")}`
+      : "";
 
-    setFieldValue(name, formattedTime);
+    if (useFormik && setFormikValue) {
+      setFormikValue(name, formatted);
+    } else {
+      onChange?.(formatted);
+    }
   };
 
   return (
@@ -54,18 +79,20 @@ export default function CustomTimePicker({
 
       <TimeInput
         isDisabled={disabled}
-        value={formikValue ?? undefined}
+        value={timeValue}
         onChange={handleChange}
         hourCycle={is24Hour ? 24 : 12}
+        style={{
+          borderWidth: borderWidth ?? "1px"
+        }}
         classNames={{
-          inputWrapper:
-            "bg-white border border-gray-300 rounded-xl h-[45px]",
+          inputWrapper: ` bg-white hover:bg-white border-gray-300 rounded-xl h-[45px] `,
           input: "text-gray-900",
         }}
       />
 
-      {isTouched && error && (
-        <p className="text-xs text-red-600 font-medium ml-2">{error}</p>
+      {useFormik && formikTouched && formikError && (
+        <p className="text-xs text-red-600 font-medium ml-2">{formikError}</p>
       )}
     </div>
   );

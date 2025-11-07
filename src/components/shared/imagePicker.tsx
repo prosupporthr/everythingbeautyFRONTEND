@@ -101,7 +101,7 @@ export default function ImagePicker({
 
                     {previewUrl && (
                         <div className="absolute inset-0 rounded-xl">
-                            <CustomImage src={previewUrl + ""} alt="image" className="rounded-xl" fillContainer />
+                            <CustomImage nopopup={true} src={previewUrl + ""} style={{ borderRadius: "12px" }} alt="image" fillContainer />
                         </div>
                     )}
                 </button>

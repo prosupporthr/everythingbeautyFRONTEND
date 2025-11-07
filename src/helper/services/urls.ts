@@ -4,8 +4,11 @@ export const URLS = {
     VERIFY: `/user/verify-otp`, 
     UPLOAD: "/upload/file",
     BUSINESS: "/business",
+    BOOKING: "/booking",
     SERVICE: "/service",
+    SERVICEBYID: (item: string) => `/service/${item}`,
     PRODUCT: "/product",
+    PRODUCTBYID: (item: string) => `/product/${item}`,
     USERUPDATE: (item: string) => `/user/${item}`
 }
 
