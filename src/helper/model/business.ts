@@ -20,6 +20,16 @@ export interface IBooking {
     "bookingDate": string
 }
 
+export interface IOrder {
+    "userId": string,
+    "businessId": string,
+    "productId": string,
+    "quantity": number,
+    "totalPrice": number,
+    "paymentStatus": string,
+    "status": string
+}
+
 export interface IBusinessDetails {
     "_id": string,
     "isDeleted": boolean,
@@ -70,6 +80,7 @@ export interface IProductDetail {
     "colors": string[],
     "createdAt": string,
     "updatedAt": string,
+    business: IBusinessDetails
 }
 
 export interface IServiceDetail {

@@ -12,6 +12,8 @@ import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
 import { convertDataForSelect } from "@/helper/utils/convertDataForSelect";
 import { days } from "@/helper/utils/databank";
 import { isBusinessOpen } from "@/helper/utils/dateStatus";
+import { formatNumber } from "@/helper/utils/numberFormat";
+import { BusinessServiceCard } from "@/components/cards";
 
 export default function SaleServicePage() {
 
@@ -21,37 +23,36 @@ export default function SaleServicePage() {
     const router = useRouter()
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
-        endpoint: `/business/${id}`, name: "business"
+        endpoint: `/business/${id}`, name: ["business"]
     })
 
     const [status, setStatus] = useState(false)
 
     const { data: services = [], isLoading: loading } = useFetchData<IServiceDetail[]>({
-        endpoint: `/service/business/${id}`, name: "service"
+        endpoint: `/service/business/${id}`, name: ["service"]
     })
 
     function mergeDateAndTime(dateISO: string, time: string) {
         if (!dateISO || !time) return null;
-      
+
         const [hour, minute] = time.split(":").map(Number);
-      
+
         // Extract the date part only (YYYY-MM-DD)
         const datePart = dateISO.split("T")[0];
-      
+
         // Build a full datetime string in local time (no shifting)
         const localDateTime = `${datePart}T${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}:00`;
-      
+            .toString()
+            .padStart(2, "0")}:00`;
+
         // Convert to Date so you can send ISO
         const date = new Date(localDateTime);
-      
+
         return date.toISOString();
-      }
+    }
 
 
     const options = convertDataForSelect(services, ["name", "_id"]);
-    console.log(data);
 
 
     const [selectedOption, setSelectedOption] = useState({
@@ -77,10 +78,10 @@ export default function SaleServicePage() {
 
     }, [data, isLoading])
 
-    useEffect(()=> {
-        if(selectedOption) {
+    useEffect(() => {
+        if (selectedOption) {
             const newdate = mergeDateAndTime(selectedOption?.date, selectedOption.time)
-            setSelectedDate(newdate+"")
+            setSelectedDate(newdate + "")
         }
     }, [selectedOption])
 
@@ -116,9 +117,12 @@ export default function SaleServicePage() {
                     <div className=" flex-1 flex flex-col gap-4 p-6 " >
                         <p className=" text-2xl font-semibold " >Service offered</p>
                         <div className=" w-full flex border-b pb-4 flex-wrap gap-4" >
-                            {options.map((item) => {
+                            {services.map((item) => {
                                 return (
-                                    <CustomButton key={item?.value} height="45px" variant="outline" >{item?.label}</CustomButton>
+                                    // <CustomButton onClick={()=> setSelectedOption({ ...selectedOption, service: item.value })} key={item?.value} height="45px" variant={item.value === selectedOption?.service ? "outlinebrand" : "outline"} >{item?.label}</CustomButton>
+                                    <div className=" w-fit " >
+                                        <BusinessServiceCard selected={selectedOption?.service} setSelected={(item)=> setSelectedOption({ ...selectedOption, service: item })} item={item} key={item?._id} option={false} />
+                                    </div>
                                 )
                             })}
                         </div>
@@ -173,13 +177,21 @@ export default function SaleServicePage() {
                                 </div>
                             </div>
                             <CustomButton onClick={handleClick} isDisabled={(selectedOption.service && selectedDate) ? false : true} >Book Now</CustomButton>
-                            <div className=" w-full flex justify-center border-b pb-3 font-medium " >
+                            <div className=" w-full flex justify-center font-medium " >
                                 You won't be charged yet
                             </div>
-                            <div className=" w-full flex justify-between items-center " >
-                                <p className=" text-xl font-medium " >Total</p>
-                                <p className=" text-xl font-bold " >$36</p>
-                            </div>
+                            {selectedOption?.service && (
+                                <div className=" w-full flex justify-between  border-t pt-3 items-center " >
+                                    <p className=" text-xl font-medium " >Total</p>
+                                    {services?.map((item) => {
+                                        if (item?._id === selectedOption?.service) {
+                                            return (
+                                                <p className=" text-xl font-bold " >{formatNumber(item?.hourlyRate)}</p>
+                                            )
+                                        }
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

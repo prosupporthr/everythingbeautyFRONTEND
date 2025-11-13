@@ -5,7 +5,7 @@ import { RiCalendar2Line } from "react-icons/ri";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Textarea } from "@heroui/input";
 import { CustomButton, CustomImage } from "@/components/custom";
-import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
+import { IBusinessDetails, IProductDetail, IServiceDetail } from "@/helper/model/business";
 import { useFetchData } from "@/hooks/useFetchData";
 import { dateFormatMonthAndYear, dateTimeFormat } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
@@ -13,8 +13,9 @@ import { LoadingLayout } from "@/components/shared";
 import useBooking from "@/hooks/useBooking";
 import { useAtom } from "jotai"; 
 import { userAtom } from "@/store/user";
+import { URLS } from "@/helper/services/urls";
 
-export default function BookingPage() {
+export default function OrderPage() {
 
     const router = useRouter()
     const param = useParams(); 
@@ -22,26 +23,28 @@ export default function BookingPage() {
     const id = param.id as string;
     const slug = param.slug as string;
     const query = useSearchParams();
-    const date = query?.get('date') as string;
+    const qty = query?.get('qty') as string;
     const [user] = useAtom(userAtom)
 
-    const { bookingMutation, isLoading: loadingBooking } = useBooking()
+    const { orderMutation, isLoading: loadingBooking } = useBooking()
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
         endpoint: `/business/${id}`, name: ["business"]
     })
 
-    const { data: services, isLoading: loading } = useFetchData<IServiceDetail>({
-        endpoint: `/service/${slug}`, name: ["service"]
+    const { data: product, isLoading: loading } = useFetchData<IProductDetail>({
+        endpoint: URLS.PRODUCTBYID(slug), name: ["product"]
     })
 
     const handleClick = () => {
-        bookingMutation.mutate({
-            serviceId: slug,
-            businessId: id,
+        orderMutation.mutate({
             userId: user?._id as string,
-            totalPrice: services?.hourlyRate as number,
-            bookingDate: date
+            businessId: id,
+            productId: slug,
+            quantity: Number(qty),
+            totalPrice: product?.price ?? 0,
+            paymentStatus: "pending",
+            status: "PROCESSING"
         })
     }
 
@@ -67,23 +70,23 @@ export default function BookingPage() {
                         </div>
                         <div className=" w-full flex gap-2 items-center pb-3 border-b " >
                             <div className=" w-[123px] h-[103px] rounded-2xl bg-gray-200 " >
-                                <CustomImage alt={services?.name as string} style={{
+                                <CustomImage alt={product?.name as string} style={{
                                     borderRadius: "16px"
                                 }}
-                                    src={services?.pictures[0] as string} fillContainer />
+                                    src={product?.pictures[0] as string} fillContainer />
                             </div>
                             <div className=" flex flex-col gap-1 text-sm " >
                                 <div className=" flex gap-4 items-center " >
-                                    <p className=" text-secondary w-[100px] " >Service:</p>
-                                    <p className=" font-bold text-left capitalize " >{services?.name}</p>
+                                    <p className=" text-secondary w-[100px] " >Product:</p>
+                                    <p className=" font-bold text-left capitalize " >{product?.name}</p>
                                 </div>
                                 <div className=" flex gap-4 items-center " >
-                                    <p className=" text-secondary w-[100px] " >Time & Date:</p>
-                                    <p className=" font-bold text-left " >{dateTimeFormat(date)}</p>
+                                    <p className=" text-secondary w-[100px] " >Quatity:</p>
+                                    <p className=" font-bold text-left " >{formatNumber(Number(qty), "")}</p>
                                 </div>
                                 <div className=" flex gap-4 items-center " >
                                     <p className=" text-secondary w-[100px] " >Price:</p>
-                                    <p className=" font-bold text-left " >{formatNumber(Number(services?.hourlyRate))}</p>
+                                    <p className=" font-bold text-left " >{formatNumber(Number(product?.price))}</p>
                                 </div>
                             </div>
                         </div>
@@ -95,9 +98,9 @@ export default function BookingPage() {
                             <div className=" w-full flex justify-between items-center " >
                                 <div className=" flex items-center gap-1 " >
                                     <IoIosCheckmarkCircle size={"25px"} color="#25C26E" />
-                                    <p className=" text-sm font-bold text-secondary " >{formatNumber(Number(services?.hourlyRate) + 1)}</p>
+                                    <p className=" text-sm font-bold text-secondary " >{formatNumber(Number(product?.price) + 1)}</p>
                                 </div>
-                                <p className=" text-xs text-secondary " >Paid on {dateFormatMonthAndYear(date)}</p>
+                                <p className=" text-xs text-secondary " >Paid on {dateFormatMonthAndYear(new Date().toISOString() as string)}</p>
                             </div>
                             <p className=" underline text-brand text-xs " >see all</p>
                         </div>
@@ -124,14 +127,14 @@ export default function BookingPage() {
                                     </div>
                                 </div>
                                 <div className=" flex flex-col gap-1 " >
-                                    <p className=" text-xl font-bold cap  " >{data?.name}</p>
+                                    <p className=" text-xl font-bold capitalize  " >{data?.name}</p>
                                     <p className=" text-sm " >{data?.location}</p>
                                 </div>
                             </div>
                             <div className=" flex flex-col w-full gap-3 pb-3 border-b " >
                                 <div className=" w-full flex justify-between items-center text-sm " >
                                     <p >Amount</p>
-                                    <p>{formatNumber(Number(services?.hourlyRate))}</p>
+                                    <p>{formatNumber(Number(product?.price))}</p>
                                 </div>
                                 <p className=" font-bold mt-3 " >Pricing</p>
                                 <div className=" w-full flex justify-between items-center text-sm text-secondary " >
@@ -141,7 +144,7 @@ export default function BookingPage() {
                             </div>
                             <div className=" w-full flex justify-between items-center text-sm " >
                                 <p className=" font-medium " >Total</p>
-                                <p className=" text-xl font-bold " >{formatNumber(Number(services?.hourlyRate) + 1)}</p>
+                                <p className=" text-xl font-bold " >{formatNumber(Number(product?.price) + 1)}</p>
                             </div>
                         </div>
                     </div>

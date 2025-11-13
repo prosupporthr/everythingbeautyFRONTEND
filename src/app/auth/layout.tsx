@@ -15,7 +15,7 @@ export default function RootLayout({
                 </div>
             </div>
             <div className=" w-full h-screen flex flex-col justify-center items-center lg:px-6 px-4 " >
-                <div className=" w-full lg:w-fit rounded-2xl lg:shadow-none shadow-sm p-4 flex-col flex gap-6 " >
+                <div className=" w-full lg:w-fit items-center rounded-2xl lg:shadow-none shadow-sm p-4 flex-col flex gap-6 " >
                     <div className=" lg:hidden " >
                         <AuthHeader />
                     </div>

@@ -3,9 +3,12 @@ import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"
 import { useMutation } from "@tanstack/react-query" 
 import { URLS } from "@/helper/services/urls" 
-import { IBooking } from "@/helper/model/business"
+import { IBooking, IOrder } from "@/helper/model/business"
+import { useRouter } from "next/navigation"
 
 const useBooking = () => { 
+
+    const router = useRouter()
 
     /** 🔹 Business */
     const bookingMutation = useMutation({
@@ -18,16 +21,34 @@ const useBooking = () => {
                 description: res?.data?.message,
                 color: "success",
             }) 
+            router.push("/")
+        },
+    })
+
+
+    /** 🔹 Product */
+    const orderMutation = useMutation({
+        mutationFn: (data: IOrder) =>
+            httpService.post(URLS.ORDER, data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }) 
+            router.push("/")
         },
     })
 
 
 
-    const isLoading = bookingMutation.isPending 
+    const isLoading = bookingMutation.isPending || orderMutation.isPending
 
     return { 
         isLoading, 
-        bookingMutation
+        bookingMutation,
+        orderMutation
     }
 }
 
