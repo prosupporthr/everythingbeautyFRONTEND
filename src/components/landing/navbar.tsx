@@ -34,8 +34,9 @@ export default function Navbar() {
         if (item === "dashboard") {
             router.push(data?._id ? `/business/${data?.business?._id}/dashboard` : "/business")
         } else if (item === "logout") {
-            Cookies.set("accesstoken", "")
-            Cookies.set("userid", "")
+            // Cookies.set("accesstoken", "")
+            // Cookies.set("userid", "")
+            localStorage.clear()
             router.push("/auth")
         }
         setShow(false)

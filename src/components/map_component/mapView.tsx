@@ -17,37 +17,36 @@ interface Props {
   view?: boolean;
   latlng?: string;
   zoom?: number;
+  outclick?: boolean;
   setMyLocat?: (location: google.maps.LatLngLiteral) => void;
   marker?: google.maps.LatLngLiteral | null;
   setMarker?: (marker: google.maps.LatLngLiteral) => void;
   setAddress?: (address: string) => void;
   setState?: (state: string) => void;
-  setOpen: (state: boolean) => void;
+  setOpen?: (state: boolean) => void;
 }
 
 const MapView: React.FC<Props> = ({
-  hidesearch,
-  height,
+  hidesearch = false,
+  height = "47vh",
   latlng,
-  zoom,
-  view,
+  outclick,
+  zoom = 14,
+  view = false,
   setMyLocat,
   marker,
   setMarker,
   setAddress,
   setState,
-  setOpen
+  setOpen,
 }) => {
   const [directionsResponse, setDirectionsResponse] =
     useState<google.maps.DirectionsResult | null>(null);
+
   const [center, setCenter] = useState<google.maps.LatLngLiteral>({
-    lat: 0,
-    lng: 0,
+    lat: 9.082, // Default to Nigeria
+    lng: 8.6753,
   });
-  // const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral>({
-  //   lat: 0,
-  //   lng: 0,
-  // });
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
@@ -67,43 +66,42 @@ const MapView: React.FC<Props> = ({
 
   const onMapClick = useCallback(
     (e: google.maps.MapMouseEvent) => {
-      if (!hidesearch && e.latLng) {
-        const geocoder = new google.maps.Geocoder();
+      if (hidesearch || !e.latLng) return;
 
-        geocoder.geocode(
-          { location: { lat: e.latLng.lat(), lng: e.latLng.lng() } },
-          (results, status) => {
-            if (status === "OK" && results?.[0]) {
-              const address = results[0].formatted_address;
-              const components = results[0].address_components;
-              const countryIndex = components.length - 1;
-              const newState =
-                components[countryIndex]?.types[0] === "country"
-                  ? components[countryIndex - 1]?.long_name
-                  : components[countryIndex - 2]?.long_name;
+      const geocoder = new google.maps.Geocoder();
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
 
-              setState?.(newState || "");
-              setAddress?.(address);
-            } else {
-              console.error("Error fetching address:", status);
-            }
-          }
-        );
+      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+        if (status === "OK" && results?.[0]) {
+          const address = results[0].formatted_address;
+          const components = results[0].address_components;
 
-        setMarker?.({
-          lat: e.latLng.lat(),
-          lng: e.latLng.lng(),
-        });
-      }
+          const countryIndex = components.length - 1;
+          const newState =
+            components[countryIndex]?.types[0] === "country"
+              ? components[countryIndex - 1]?.long_name
+              : components[countryIndex - 2]?.long_name;
+
+          setState?.(newState || "");
+          setAddress?.(address);
+        } else {
+          console.error("Error fetching address:", status);
+        }
+      });
+
+      setMarker?.({ lat, lng });
     },
     [hidesearch, setAddress, setMarker, setState]
   );
 
+  // Handle latlng or geolocation
   useEffect(() => {
     if (latlng) {
       const [lat, lng] = latlng.split(" ").map(Number);
-      setCenter({ lat, lng });
-      setMarker?.({ lat, lng });
+      const loc = { lat, lng };
+      setCenter(loc);
+      setMarker?.(loc);
     } else {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -112,16 +110,22 @@ const MapView: React.FC<Props> = ({
             lng: position.coords.longitude,
           };
           setCenter(loc);
-          // setMyLocation(loc);
           if (hidesearch) setMyLocat?.(loc);
         },
         () => {
-          setCenter({ lat: 9.082, lng: 8.6753 }); // fallback: Nigeria
+          setCenter({ lat: 9.082, lng: 8.6753 }); // fallback
         }
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Handle external trigger click
+  useEffect(() => {
+    if (outclick && mapRef.current && marker) {
+      panTo(marker);
+    }
+  }, [outclick, marker, panTo]);
 
   if (loadError) {
     return (
@@ -133,45 +137,47 @@ const MapView: React.FC<Props> = ({
 
   return (
     <Card
-      className={`relative w-full rounded-3xl overflow-hidden bg-white`}
-      style={{ height: height ?? "47vh" }}
+      className="relative w-full rounded-3xl overflow-hidden bg-white"
+      style={{ height }}
     >
       <LoadingLayout loading={!isLoaded}>
-        <GoogleMap
-          mapContainerStyle={{
-            width: "100%",
-            height: height ?? "47vh",
-            borderBottomLeftRadius: "16px",
-            borderBottomRightRadius: "16px",
-          }}
-          center={center}
-          zoom={zoom ?? 14}
-          options={{
-            disableDefaultUI: true,
-            zoomControl: zoom ? false : true,
-          }}
-          onLoad={onMapLoad}
-          onClick={onMapClick}
-        >
-          {!hidesearch && (
-            <MapSearch
-              setState={setState!}
-              setMarker={setMarker!}
-              setAddress={setAddress!}
-              center={center}
-              panTo={panTo}
-            />
-          )}
+        {isLoaded && (
+          <GoogleMap
+            mapContainerStyle={{
+              width: "100%",
+              height,
+              borderBottomLeftRadius: "16px",
+              borderBottomRightRadius: "16px",
+            }}
+            center={center}
+            zoom={zoom}
+            options={{
+              disableDefaultUI: true,
+              zoomControl: !zoom,
+            }}
+            onLoad={onMapLoad}
+            onClick={onMapClick}
+          >
+            {!hidesearch && (
+              <MapSearch
+                setState={setState!}
+                setMarker={setMarker!}
+                setAddress={setAddress!}
+                center={center}
+                panTo={panTo}
+              />
+            )}
 
-          {directionsResponse && (
-            <DirectionsRenderer directions={directionsResponse} />
-          )}
+            {directionsResponse && (
+              <DirectionsRenderer directions={directionsResponse} />
+            )}
 
-          {marker?.lat && <Marker position={marker} />}
-        </GoogleMap>
+            {marker && <Marker position={marker} />}
+          </GoogleMap>
+        )}
       </LoadingLayout>
 
-      {!view && (
+      {!view && setOpen && (
         <div className="absolute bottom-3 right-3">
           <Button
             className="rounded-full w-[80px] h-[40px] text-[14px]"
