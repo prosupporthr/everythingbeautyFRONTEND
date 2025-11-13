@@ -1,3 +1,4 @@
+import { IUserDetail } from "./user"
 
 export interface IBusiness {
     "userId": string,
@@ -48,6 +49,7 @@ export interface IBusinessDetails {
     "enabled": boolean,
     "createdAt": string,
     "updatedAt": string,
+    creator: IUserDetail,
 }
 
 export interface IServices {

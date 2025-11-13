@@ -1,6 +1,5 @@
 "use client";
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import Cookies from "js-cookie";
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios"; 
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
 
@@ -21,7 +20,7 @@ unsecureHttpService.interceptors.response.use(
 // ✅ Interceptor for secure requests (adds token)
 httpService.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    const token = Cookies.get("accesstoken");
+    const token = localStorage.getItem("accesstoken");
     if (token) {
       config.headers.set("Authorization", `Bearer ${token}`);
     }

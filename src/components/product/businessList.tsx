@@ -3,11 +3,13 @@ import { IBusinessDetails } from "@/helper/model/business"
 import { useFetchData } from "@/hooks/useFetchData"
 import { BusinessCard } from "../cards"
 import { LoadingLayout } from "../shared"
+import { useRouter } from "next/navigation"
 
 export default function BusinessList(
     { title }: { title: string }
 ) {
 
+    const router = useRouter()
     const { data, isLoading } = useFetchData<IBusinessDetails[]>({
         endpoint: `/business/filter`, name: ["business"]
     }) 
@@ -16,7 +18,7 @@ export default function BusinessList(
         <div className=" w-full flex flex-col gap-3 " >
             <div className=" w-full flex justify-between items-center " >
                 <p className=" text-2xl font-semibold " >{title}</p>
-                <p className=" text-brand font-bold " >See all</p>
+                <button onClick={()=> router.push("/businesslist")} className=" text-brand font-bold " >See all</button>
             </div>
             <LoadingLayout loading={isLoading} >
                 <div className=" w-full grid grid-cols-4 gap-4 " >

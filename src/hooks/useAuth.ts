@@ -55,8 +55,8 @@ const useAuth = () => {
         onSuccess: (res) => {
             const { token, user } = res.data.data
 
-            Cookies.set("accesstoken", token)
-            Cookies.set("userid", user?._id)
+            localStorage.setItem("accesstoken", token)
+            localStorage.setItem("userid", user?._id)
             addToast({
                 title: "Success",
                 description: res?.data?.message,
