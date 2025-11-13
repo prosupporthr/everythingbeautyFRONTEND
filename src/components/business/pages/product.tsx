@@ -12,7 +12,7 @@ export default function Product() {
     const id = param.id; 
 
     const { data, isLoading } = useFetchData<IProductDetail[]>({
-        endpoint: `/product/business/${id}`, name: "product"
+        endpoint: `/product/business/${id}`, name: ["product"]
     }) 
 
     return (

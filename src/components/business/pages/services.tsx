@@ -12,7 +12,7 @@ export default function Services() {
     const id = param.id; 
 
     const { data, isLoading } = useFetchData<IServiceDetail[]>({
-        endpoint: `/service/business/${id}`, name: "service"
+        endpoint: `/service/business/${id}`, name: ["service"]
     })
 
     return (

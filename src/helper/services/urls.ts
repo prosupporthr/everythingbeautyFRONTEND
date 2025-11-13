@@ -5,9 +5,11 @@ export const URLS = {
     UPLOAD: "/upload/file",
     BUSINESS: "/business",
     BOOKING: "/booking",
+    ORDER: "/order",
     SERVICE: "/service",
     SERVICEBYID: (item: string) => `/service/${item}`,
     PRODUCT: "/product",
+    BUSINESSBYID: (item: string) => `/business/${item}`,
     PRODUCTBYID: (item: string) => `/product/${item}`,
     USERUPDATE: (item: string) => `/user/${item}`
 }

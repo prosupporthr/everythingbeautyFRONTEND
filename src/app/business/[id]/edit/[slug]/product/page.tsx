@@ -19,7 +19,7 @@ export default function BusinessProduct() {
 
 
     const { data, isLoading: loading } = useFetchData<IProductDetail>({
-        endpoint: `/product/${id}`, name: "product"
+        endpoint: `/product/${id}`, name: ["product"]
     })
 
     useEffect(() => {

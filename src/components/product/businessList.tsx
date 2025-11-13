@@ -1,18 +1,16 @@
 "use client"
-import { IProductDetail } from "@/helper/model/business"
+import { IBusinessDetails } from "@/helper/model/business"
 import { useFetchData } from "@/hooks/useFetchData"
-import { ProductCard } from "../cards"
+import { BusinessCard } from "../cards"
 import { LoadingLayout } from "../shared"
 
-export default function ProductList(
+export default function BusinessList(
     { title }: { title: string }
 ) {
 
-    const { data, isLoading } = useFetchData<IProductDetail[]>({
-        endpoint: `/product/filter`, name: ["product"]
-    })
-
-    console.log(data) 
+    const { data, isLoading } = useFetchData<IBusinessDetails[]>({
+        endpoint: `/business/filter`, name: ["business"]
+    }) 
 
     return (
         <div className=" w-full flex flex-col gap-3 " >
@@ -24,7 +22,7 @@ export default function ProductList(
                 <div className=" w-full grid grid-cols-4 gap-4 " >
                     {data?.map((item) => {
                         return (
-                            <ProductCard item={item} key={item._id} />
+                            <BusinessCard item={item} key={item._id} />
                         )
                     })}
                 </div>

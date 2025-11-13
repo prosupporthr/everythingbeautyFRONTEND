@@ -6,7 +6,7 @@ import { fetchSecureData, fetchUnsecureData } from "@/helper/services/api";
 
 interface UseFetchDataOptions {
   endpoint: string;
-  name?: string;
+  name?: string[];
   params?: Record<string, unknown>;
   id?: string | number;
   queryKey?: (string | number | undefined)[];
