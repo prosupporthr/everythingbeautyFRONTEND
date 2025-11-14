@@ -1,8 +1,9 @@
 "use client"
 
-import { HeroUIProvider, ToastProvider } from '@heroui/react'
+import { HeroUIProvider } from '@heroui/react'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
+import {ToastProvider} from "@heroui/toast";
 
 const queryClient = new QueryClient();
 
