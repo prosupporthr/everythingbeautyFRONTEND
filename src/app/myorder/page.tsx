@@ -1,9 +1,8 @@
 "use client"
 import { Tabs, Tab } from "@heroui/tabs"
-import { useState } from "react"
+import { lazy, Suspense, useState } from "react"
 
 export default function MyOrderPage() {
-
 
     const [tab, setTab] = useState("")
 
@@ -18,16 +17,19 @@ export default function MyOrderPage() {
         },
     ]
 
+    const OrderList = lazy(() => import("@/components/order").then(module => ({ default: module.OrderList })));
+    const BookingList = lazy(() => import("@/components/order").then(module => ({ default: module.BookingList })));
+
     return (
         <div className=" w-full flex flex-col py-10 gap-10 h-full ">
-            <div className=" w-full flex flex-col items-center px-8 " >
+            <div className=" w-full flex flex-col min-h-[50vh] px-8 " >
                 <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 " >
                     <div className=" w-full flex flex-col " >
                         <p className=" font-semibold text-3xl " >My order</p>
                         <p className=" text-sm " >See all orders  on Everything Beauty</p>
                     </div>
                 </div>
-                <div className=" w-fit flex justify-start " >
+                <div className=" w-full pb-6 border-b "  >
                     <Tabs selectedKey={tab ? tab : ""} aria-label="Tabs" variant={"underlined"}
                         classNames={{
                             tabContent:
@@ -41,6 +43,16 @@ export default function MyOrderPage() {
                         })}
                     </Tabs>
                 </div>
+                <Suspense fallback={<div className="p-4 text-center ">Loading...</div>}>
+                    <div className=" w-full pt-8 flex flex-col " >
+                        {!tab && (
+                            <BookingList />
+                        )}
+                        {tab === "product" && (
+                            <OrderList />
+                        )}
+                    </div>
+                </Suspense>
             </div>
         </div>
     )

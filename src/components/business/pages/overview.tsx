@@ -1,8 +1,7 @@
 "use client"
-import { BusinessBookingCard } from "@/components/cards";
-import { CustomButton, CustomSelect } from "@/components/custom";
+import { CustomButton, CustomSelect } from "@/components/custom"; 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 
 
 export default function Overview() {
@@ -11,7 +10,11 @@ export default function Overview() {
     const [selectedTab, setSelectedTab] = useState("incoming")
 
     const param = useParams();
-    const id = param.id; 
+    const id = param.id as string;
+
+
+    const OrderList = lazy(() => import("@/components/order").then(module => ({ default: module.OrderList })));
+    const BookingList = lazy(() => import("@/components/order").then(module => ({ default: module.BookingList })));
 
     return (
         <div className=" w-full flex-col flex gap-6 " >
@@ -48,9 +51,9 @@ export default function Overview() {
             </div>
             <div className=" w-full overflow-x-auto " >
                 <div className=" w-fit flex gap-1 items-center " >
-                    {Array.from({ length: 30 }).map((item) => {
+                    {Array.from({ length: 30 }).map((item, index) => {
                         return (
-                            <div key={item+""} className=" w-[128px]  flex flex-col hover:text-brand hover:border-brand rounded-2xl h-[128px] border p-2 " >
+                            <div key={item +""+ index} className=" w-[128px]  flex flex-col hover:text-brand hover:border-brand rounded-2xl h-[128px] border p-2 " >
                                 <div className=" w-full flex items-center justify-between " >
                                     <p className=" text-xs font-medium " >12</p>
                                     <p className=" text-xs " >Today</p>
@@ -65,11 +68,19 @@ export default function Overview() {
                 <p className=" text-2xl font-medium " >Bookings</p>
                 <div className=" w-full flex gap-4 " >
                     <CustomButton onClick={() => setSelectedTab("incoming")} variant={selectedTab === "incoming" ? "primary" : "outline"} height="40px" className={` !font-medium ${selectedTab === "incoming" ? "!bg-[#F7F2FF] !text-brand  " : ""} `} >Incoming Bookings</CustomButton>
-                    <CustomButton onClick={() => setSelectedTab("completed")} variant={selectedTab === "completed" ? "primary" : "outline"} height="40px" className={` !font-medium  ${selectedTab === "completed" ? "!bg-[#F7F2FF] !text-brand  " : ""}  `}>Completed</CustomButton>
+                    <CustomButton onClick={() => setSelectedTab("completed")} variant={selectedTab === "completed" ? "primary" : "outline"} height="40px" className={` !font-medium  ${selectedTab === "completed" ? "!bg-[#F7F2FF] !text-brand  " : ""}  `}>Incoming Orders</CustomButton>
                 </div>
-                <div className=" w-full grid grid-cols-4 gap-4 " >
-                    <BusinessBookingCard />
-                </div>
+
+                <Suspense fallback={<div className="text-center ">Loading...</div>}>
+                    <div className=" w-full pt-8 flex flex-col " >
+                        {selectedTab === "incoming"  && (
+                            <BookingList id={id} />
+                        )}
+                        {selectedTab === "completed" && (
+                            <OrderList id={id} />
+                        )}
+                    </div>
+                </Suspense> 
             </div>
         </div>
     )

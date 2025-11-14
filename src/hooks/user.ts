@@ -1,10 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import httpService from "@/helper/services/httpService";
-import Cookies from "js-cookie";
+import httpService from "@/helper/services/httpService"; 
 import { AxiosError } from "axios";
 import { IUserDetail } from "@/helper/model/user"; 
+import { userAtom } from "@/store/user";
+import { useAtom } from "jotai";
 
 /** 🔹 Fetch user data using the userid from cookies */
 async function fetchUser(): Promise<IUserDetail | null> {
@@ -35,11 +36,13 @@ async function fetchUser(): Promise<IUserDetail | null> {
  * - Handles error + redirect logic
  */
 export function useUserStore() {
-  const id = Cookies.get("userid");
+  const id = localStorage.getItem("userid") as string;
+
+  const [user] = useAtom(userAtom)
   return useQuery({
     queryKey: ["user", id],
     queryFn: fetchUser,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    retry: false, // Avoid retry loops if unauthorized
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes 
+    enabled: user?.id ? false : true
   });
 }

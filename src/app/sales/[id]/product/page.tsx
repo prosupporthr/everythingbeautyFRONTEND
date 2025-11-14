@@ -1,15 +1,18 @@
 "use client"
-import { CustomButton, CustomImage } from "@/components/custom"; 
+import { CustomButton, CustomImage } from "@/components/custom";
 import { LoadingLayout, StarRating } from "@/components/shared";
-import { useEffect, useState } from "react"; 
-import { RiAddFill } from "react-icons/ri"; 
+import { useEffect, useState } from "react";
+import { RiAddFill } from "react-icons/ri";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useParams, useRouter } from "next/navigation";
-import { IProductDetail } from "@/helper/model/business"; 
+import { IProductDetail } from "@/helper/model/business";
 import { isBusinessOpen } from "@/helper/utils/dateStatus";
 import { RxMinus } from "react-icons/rx";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { URLS } from "@/helper/services/urls";
+import UserCard from "@/components/shared/userCard";
+import { IUserDetail } from "@/helper/model/user";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 export default function SaleProductPage() {
 
@@ -22,9 +25,9 @@ export default function SaleProductPage() {
         endpoint: URLS.PRODUCTBYID(id), name: ["product"]
     })
 
-    const [status, setStatus] = useState(false) 
+    const [status, setStatus] = useState(false)
 
-    const [ qty, setQty ] = useState(0) 
+    const [qty, setQty] = useState(0)
 
     useEffect(() => {
 
@@ -39,7 +42,7 @@ export default function SaleProductPage() {
             setStatus(isStatus)
         }
 
-    }, [data, isLoading]) 
+    }, [data, isLoading])
 
     const handleClick = () => {
         router.push(`/sales/${data?.businessId}/order/${id}?qty=${qty}`)
@@ -47,26 +50,32 @@ export default function SaleProductPage() {
 
     return (
         <LoadingLayout loading={isLoading} >
-            <div className=" w-full flex flex-col gap-4 p-10 " > 
-                <p className=" text-sm font-medium capitalize " >Home • Product • {data?.name}</p> 
-                <div className=" w-full flex " >
-                    <div className=" flex-1 flex flex-col gap-4 px-6 " >
+            <div className=" w-full flex flex-col gap-4 p-10 " >
+                <div className=" flex gap-3 items-center " >
+                    <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                        <IoArrowBackOutline size={"22px"} />
+                    </button>
+                    <p className=" text-2xl font-bold capitalize " >Product</p>
+                </div>
+                <p className=" text-sm font-medium capitalize " >Home • Product • {data?.name}</p>
+                <div className=" w-full flex gap-6 " >
+                    <div className=" flex-1 flex flex-col gap-4 px-4 " >
 
                         <div className=" w-full h-[350px] rounded-2xl bg-gray-300 " >
                             <CustomImage alt={data?.name as string} style={{
                                 borderRadius: "16px"
                             }} fillContainer src={data?.pictures[0] as string} />
-                        </div> 
+                        </div>
                         <div className=" pb-4 border-b w-full flex flex-col gap-3 " >
-                            {/* <UserCard item={} /> */}
+                            <UserCard item={data?.business?.creator as IUserDetail} />
                             <div className=" pl-10 flex flex-col gap-3 " >
-                                <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p>
+                                {/* <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p> */}
                                 <div className=" w-full flex gap-2 " >
                                     <CustomButton variant="outlinebrand" height="45px" >View Profile</CustomButton>
                                     <CustomButton height="45px" >View Profile</CustomButton>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                     <div className=" w-fit " >
                         <div className=" w-full max-w-[562px] flex flex-col gap-4 " >
@@ -93,11 +102,11 @@ export default function SaleProductPage() {
                             <div className=" w-[413px] rounded-2xl border p-6 flex flex-col gap-4 " >
                                 <p className=" text-2xl font-bold " >Checkout</p>
                                 <div className=" w-full flex items-center justify-center gap-4 " >
-                                    <button disabled={qty === 0} onClick={()=> setQty(qty - 1)} className=" w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center " >
+                                    <button disabled={qty === 0} onClick={() => setQty(qty - 1)} className=" w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center " >
                                         <RxMinus />
                                     </button>
                                     {qty}
-                                    <button onClick={()=> setQty(qty + 1)} className=" w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center " >
+                                    <button onClick={() => setQty(qty + 1)} className=" w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center " >
                                         <RiAddFill />
                                     </button>
                                 </div>

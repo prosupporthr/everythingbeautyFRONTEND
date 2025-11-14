@@ -27,7 +27,7 @@ export function dateFormatDashboad(date: string) {
 }
 
 export function dateFormatMonthDay(date: string) {
-  return moment(date).format("MMMM Do")
+  return moment(date).format("MMM Do")
 }
 
 export function dateFormatMonth(date: string) {

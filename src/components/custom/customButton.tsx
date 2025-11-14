@@ -87,22 +87,22 @@ export default function CustomButton({
       isLoading={isLoading}
       onClick={onClick}
       startContent={
-        <>
+        <div>
           {startIcon && (
             <div className=" w-fit " >
               {startIcon}
             </div>
           )}
-        </>
+        </div>
       }
       endContent={
-        <>
+        <div>
           {endIcon && (
             <div className=" w-fit " >
               {endIcon}
             </div>
           )}
-        </>}
+        </div>}
       className={`${className} ${customClasses}`}
     >
       {children}

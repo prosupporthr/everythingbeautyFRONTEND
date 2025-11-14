@@ -15,7 +15,7 @@ export default function ProductList(
     console.log(data) 
 
     return (
-        <div className=" w-full flex flex-col gap-3 " >
+        <div className=" w-full flex flex-col gap-6 " >
             <div className=" w-full flex justify-between items-center " >
                 <p className=" text-2xl font-semibold " >{title}</p>
                 <p className=" text-brand font-bold " >See all</p>

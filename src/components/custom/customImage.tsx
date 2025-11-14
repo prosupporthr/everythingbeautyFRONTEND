@@ -36,7 +36,7 @@ export default function CustomImage({
   const FullImageModal = () => {
     return (
       <ModalLayout size="lg" title="Preview Image" isOpen={isOpen ? true : false} onClose={() => setIsOpen("")} >
-        <div className=" w-full relative h-[400px] mb-4 rounded-2xl bg-primary " >
+        <div className=" w-full relative h-[400px] mb-4 rounded-2xl bg-gray-300 " >
           <div className=" w-full max-w-[400px] h-full flex p-4 rounded-2xl justify-center items-center  " >
             <Image
               src={isOpen}
