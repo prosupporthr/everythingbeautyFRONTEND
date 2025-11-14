@@ -15,7 +15,7 @@ export default function OrderCard(
     return (
         <div onClick={()=> router.push(`/myorder/${item?._id}/product`)} className=" w-full border rounded-2xl p-4 gap-3 flex flex-col " >
             <div className=" w-full h-[266px] rounded-2xl bg-gray-300 " >
-                <CustomImage src={item?.product?.pictures[0]} alt={item?.product?.name} fillContainer />
+                <CustomImage src={item?.product?.pictures[0]} style={{ borderRadius: "16px" }} alt={item?.product?.name} fillContainer />
             </div>
             <div className=" w-full flex flex-col " >
                 <div className=" flex justify-between items-center " >

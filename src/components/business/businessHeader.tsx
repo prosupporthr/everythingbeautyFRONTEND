@@ -1,5 +1,7 @@
 "use client"
 import { CustomButton, CustomSearch } from "@/components/custom";
+import { userAtom } from "@/store/user";
+import { useAtom } from "jotai";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { IoMdAdd } from "react-icons/io";
 
@@ -10,6 +12,8 @@ export default function BusinessHeader() {
     const router = useRouter()
     const param = useParams();
     const id = param.id; 
+
+    const [user] = useAtom(userAtom)
 
     const handleClick = () => {
         if (tab === "services") {
@@ -22,7 +26,7 @@ export default function BusinessHeader() {
     return (
         <div className=" w-full flex h-fit py-6 justify-between items-center " >
             <div className=" flex items-center gap-3 " >
-                <p className=" text-2xl font-medium capitalize " >{tab === "store" ? "My Store" : tab ? tab : "Welcome, Shield"}</p>
+                <p className=" text-2xl font-medium capitalize " >{tab === "store" ? "My Store" : tab ? tab : `Welcome, ${user?.firstName+" "+user?.lastName}`}</p>
                 {/* {(tab === "services" || tab === "store") && (
                     <div className=" w-[41px] h-[34px] rounded-3xl bg-[#E9F4FC] flex justify-center items-center " >
                         <p className=" text-sm text-brand " >4</p>

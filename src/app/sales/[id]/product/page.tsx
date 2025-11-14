@@ -67,12 +67,12 @@ export default function SaleProductPage() {
                             }} fillContainer src={data?.pictures[0] as string} />
                         </div>
                         <div className=" pb-4 border-b w-full flex flex-col gap-3 " >
-                            <UserCard item={data?.business?.creator as IUserDetail} />
+                            <UserCard item={data?.business?.creator as IUserDetail} showDetail />
                             <div className=" pl-10 flex flex-col gap-3 " >
                                 {/* <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p> */}
                                 <div className=" w-full flex gap-2 " >
-                                    <CustomButton variant="outlinebrand" height="45px" >View Profile</CustomButton>
-                                    <CustomButton height="45px" >View Profile</CustomButton>
+                                    <CustomButton variant="outlinebrand" height="40px" >View Profile</CustomButton>
+                                    <CustomButton height="40px" >Message</CustomButton>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +84,7 @@ export default function SaleProductPage() {
                             </div>
                             <div className=" w-full flex gap-3 " >
                                 <StarRating />
-                                <p className=" font-medium text-sm " >{data?.business?.rating} Ratings • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >340+ Reviews</span> • <span className=" text-brand " >700+ sold</span></p>
+                                <p className=" font-medium text-sm " >{data?.business?.rating} Ratings • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >0 Reviews</span> • <span className=" text-brand " >0 sold</span></p>
                             </div>
                             <p className=" font-semibold text-3xl " >$45</p>
                             <div className=" flex flex-col gap-1 " >

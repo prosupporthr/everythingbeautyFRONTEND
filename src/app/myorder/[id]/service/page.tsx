@@ -77,8 +77,8 @@ export default function BookedServicesPage() {
 
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b " >
                                         <p className=" font-semibold " >Business Information</p>
-                                        {/* <p className=" text-sm font-medium mt-3 " ><span className=" font-bold " >Address:</span> {data?.business?.location}</p>
-                                    <p className=" text-sm font-medium "><span className=" font-bold " >Phone Number:</span> {data?.service?.phoneNumber}</p> */}
+                                        <p className=" text-sm font-medium mt-3 " ><span className=" font-bold " >Address:</span> {data?.service?.business?.location}</p>
+                                    <p className=" text-sm font-medium "><span className=" font-bold " >Phone Number:</span> {data?.service?.business?.creator?.phoneNumber}</p>
                                     </div>
 
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b " >
