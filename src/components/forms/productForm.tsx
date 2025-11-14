@@ -27,6 +27,7 @@ export default function ProductForm(
                         <CustomInput name="name" label="Tell us about your Product" />
                         <CustomInput textarea label="Describe your Product to make it stand out" name="description" />
                         <CustomInput label="Price per unit" name="price" type="number" />
+                        <CustomInput label="Quantity" name="quantity" type="number" />
                         <div className=" w-full flex items-center justify-between " >
                             <p className=" font-medium " >Allowed Customers Review</p>
                             <Switch checked={formik.values.allowReview} color="success" onChange={(e) => formik.setFieldValue("allowReview", e.target.checked)} />
