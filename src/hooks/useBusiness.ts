@@ -6,8 +6,7 @@ import { useFormik } from "formik"
 import { useParams, useRouter } from "next/navigation"
 import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
-import { useState } from "react"
-import Cookies from "js-cookie"
+import { useState } from "react" 
 import { businessSchema, productSchema, serviceSchema } from "@/helper/services/validation"
 import { IBusiness, IProduct, IServices } from "@/helper/model/business"
 
@@ -22,7 +21,7 @@ const useBusiness = (
 ) => {
 
     const router = useRouter()
-    const userId = Cookies.get("userid") as string
+    const userId = localStorage.getItem("userid") as string
     const [imageFile, setImageFile] = useState<File | string | null>("");
 
     const param = useParams();
