@@ -12,15 +12,13 @@ export default function ProductList(
         endpoint: `/product/filter`, name: ["product"]
     })
 
-    console.log(data) 
-
     return (
         <div className=" w-full flex flex-col gap-6 " >
             <div className=" w-full flex justify-between items-center " >
                 <p className=" text-2xl font-semibold " >{title}</p>
-                <p className=" text-brand font-bold " >See all</p>
+                {/* <p className=" text-brand font-bold " >See all</p> */}
             </div>
-            <LoadingLayout loading={isLoading} >
+            <LoadingLayout loading={isLoading} lenght={data?.length} >
                 <div className=" w-full grid grid-cols-4 gap-4 " >
                     {data?.map((item) => {
                         return (
