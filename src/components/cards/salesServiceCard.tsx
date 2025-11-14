@@ -3,10 +3,13 @@
 import { IBusinessDetails } from "@/helper/model/business";
 import { StarRating } from "../shared";
 import { CustomImage } from "../custom";
+import { useRouter } from "next/navigation";
 
 export default function BusinessServiceCard(
     { item, setLocation } : { item: IBusinessDetails, setLocation?: (location: google.maps.LatLngLiteral | null) => void, location?: google.maps.LatLngLiteral | null }
 ) {
+
+    const router = useRouter()
 
     const ServiceCard = () => {
         return (
@@ -44,6 +47,7 @@ export default function BusinessServiceCard(
                     setLocation(null)
                 }
             }}
+            onClick={() => router.push(`/sales/${item?._id}/services`)}
             className={`transform transition-transform duration-300 hover:border-brand hover:border hover:bg-white hover:scale-110 w-full flex flex-col gap-2 rounded-[10px] shadow p-4`}
         >
             <div className="w-full h-[200px] relative rounded-lg rounded-bl-lg bg-gray-200">
