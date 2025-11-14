@@ -20,11 +20,10 @@ const useBooking = () => {
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }) 
-            router.push("/")
+            })  
+            router.push(`/myorder/${res?.data?.data?._id}/service`)
         },
     })
-
 
     /** 🔹 Product */
     const orderMutation = useMutation({
@@ -36,8 +35,10 @@ const useBooking = () => {
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }) 
-            router.push("/")
+            })
+            
+            router.push(`/myorder/${res?.data?.data?._id}/product`)
+            // router.push("/")
         },
     })
 

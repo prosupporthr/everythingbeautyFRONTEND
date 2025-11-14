@@ -1,12 +1,10 @@
-import { IUser } from "@/helper/model/auth";
+"use client"
 import { IUserDetail } from "@/helper/model/user";
-import { Avatar } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import { dateFormat } from "@/helper/utils/dateFormat";
+import { Avatar } from "@heroui/react"; 
 
 
-export default function UserCard({ item, showDetail }: { item: IUserDetail, showDetail?: boolean }) {
-
-    const router = useRouter()
+export default function UserCard({ item, showDetail }: { item: IUserDetail, showDetail?: boolean }) { 
 
     return (
         <button className=" flex gap-2 items-center " >
@@ -16,7 +14,7 @@ export default function UserCard({ item, showDetail }: { item: IUserDetail, show
                     <div className=" flex items-center gap-1 " >
                         <p className=" text-sm font-semibold capitalize " >{item?.firstName + " " + item?.lastName}</p>
                     </div>
-                    <p className=" text-violet-300 text-xs " >{item?.email}</p>
+                    <p className=" text-secondary text-xs " >Joined {dateFormat(item?.createdAt)}</p>
                 </div>
             )}
         </button>

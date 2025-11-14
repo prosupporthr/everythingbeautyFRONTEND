@@ -6,27 +6,33 @@ import { TbLogout2 } from "react-icons/tb";
 export const menulist = [
     {
         title: "My Profile",
-        icon: BsPersonCircle
+        icon: BsPersonCircle,
+        link: ""
     },
     {
         title: "Message",
-        icon: BiMessageDetail
+        icon: BiMessageDetail,
+        link: ""
     },
     {
         title: "Settings",
-        icon: IoSettingsOutline
+        icon: IoSettingsOutline,
+        link: ""
     },
     {
         title: "Favourite",
-        icon: IoHeartOutline
+        icon: IoHeartOutline,
+        link: ""
     },
     {
         title: "My Order",
-        icon: BsShop
+        icon: BsShop,
+        link: "/myorder"
     },
     {
         title: "Logout",
-        icon: TbLogout2
+        icon: TbLogout2,
+        link: ""
     }
 ]
 

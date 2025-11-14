@@ -61,6 +61,40 @@ export interface IServices {
     "pictures"?: string[]
 }
 
+export interface IOrderDetail {
+    "_id": string,
+    "isDeleted": boolean,
+    "userId": string,
+    "businessId": string,
+    "productId": string,
+    "quantity": number,
+    "totalPrice": number,
+    "paymentStatus": string,
+    "status": string,
+    "createdAt": string,
+    "updatedAt": string,
+    "__v": 0,
+    "user":IUserDetail,
+    "product": IProductDetail,
+    "business": IBusinessDetails
+}
+
+export interface IBookingDetail {
+    "_id": string,
+    "isDeleted": boolean,
+    "userId": string,
+    "businessId": string,
+    "serviceId": string,
+    "totalPrice": number,
+    "bookingDate": string,
+    "paymentStatus": string,
+    "status": string,
+    "createdAt": string,
+    "updatedAt": string, 
+    "service": IServiceDetail,
+    "user": IUserDetail
+}
+
 export interface IProduct {
     "businessId": string,
     "name": string,

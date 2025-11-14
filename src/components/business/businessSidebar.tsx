@@ -23,7 +23,7 @@ export default function BusinessSidebar() {
     ];
 
     const handleClick = (value: string | null) => {
-        if (!value) router.push("/business/dashboard");
+        if (!value) router.push(`/business/${id}/dashboard`);
         else router.push(`/business/${id}/dashboard?tab=${value}`);
     };
 

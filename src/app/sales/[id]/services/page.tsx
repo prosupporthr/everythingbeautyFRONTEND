@@ -14,6 +14,9 @@ import { days } from "@/helper/utils/databank";
 import { isBusinessOpen } from "@/helper/utils/dateStatus";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { BusinessServiceCard } from "@/components/cards";
+import UserCard from "@/components/shared/userCard";
+import { IUserDetail } from "@/helper/model/user";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 export default function SaleServicePage() {
 
@@ -27,6 +30,7 @@ export default function SaleServicePage() {
     })
 
     const [status, setStatus] = useState(false)
+    const [index, setIndex] = useState<number>()
 
     const { data: services = [], isLoading: loading } = useFetchData<IServiceDetail[]>({
         endpoint: `/service/business/${id}`, name: ["service"]
@@ -79,7 +83,7 @@ export default function SaleServicePage() {
     }, [data, isLoading])
 
     useEffect(() => {
-        if (selectedOption) {
+        if (selectedOption?.date && selectedOption?.time) {
             const newdate = mergeDateAndTime(selectedOption?.date, selectedOption.time)
             setSelectedDate(newdate + "")
         }
@@ -89,11 +93,30 @@ export default function SaleServicePage() {
         router.push(`/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}`)
     }
 
+    const handleChange = (item: string) => {
+        setSelectedOption({ ...selectedOption, service: item });
+
+        const id = services.findIndex(service => service?._id + "" === item + "");
+
+        console.log(id);
+
+        setIndex(id)
+        // setIndex()
+    }
+
+    console.log(index);
+
+
     return (
         <LoadingLayout loading={isLoading || loading} >
             <div className=" w-full flex flex-col gap-4 p-10 " >
                 <div className=" w-full flex items-center justify-between " >
-                    <p className=" text-2xl font-bold capitalize " >{data?.name}</p>
+                    <div className=" flex gap-3 items-center " >
+                        <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                            <IoArrowBackOutline size={"22px"} />
+                        </button>
+                        <p className=" text-2xl font-bold capitalize " >{data?.name}</p>
+                    </div>
                     <div className=" flex gap-4 items-center " >
                         <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
                             <RiShareLine size={"24px"} />
@@ -121,24 +144,28 @@ export default function SaleServicePage() {
                                 return (
                                     // <CustomButton onClick={()=> setSelectedOption({ ...selectedOption, service: item.value })} key={item?.value} height="45px" variant={item.value === selectedOption?.service ? "outlinebrand" : "outline"} >{item?.label}</CustomButton>
                                     <div className=" w-fit " >
-                                        <BusinessServiceCard selected={selectedOption?.service} setSelected={(item)=> setSelectedOption({ ...selectedOption, service: item })} item={item} key={item?._id} option={false} />
+                                        <BusinessServiceCard selected={selectedOption?.service} setSelected={(item) => handleChange(item)} item={item} key={item?._id} option={false} />
                                     </div>
                                 )
                             })}
                         </div>
                         <div className=" pb-4 border-b w-full flex flex-col gap-3 " >
-                            {/* <UserCard item={} /> */}
+                            <UserCard item={data?.creator as IUserDetail} showDetail />
                             <div className=" pl-10 flex flex-col gap-3 " >
-                                <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p>
+                                {/* <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p> */}
                                 <div className=" w-full flex gap-2 " >
                                     <CustomButton variant="outlinebrand" height="45px" >View Profile</CustomButton>
-                                    <CustomButton height="45px" >View Profile</CustomButton>
+                                    <CustomButton height="45px" >Messages</CustomButton>
                                 </div>
                             </div>
                         </div>
                         <div className=" w-full flex flex-col pb-4 border-b gap-4 " >
-                            <p className=" text-xl font-bold " >About this salon</p>
-                            <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosquad litora torquent per conubia nostra, per inceptos himenaeos. Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosquad litora torquent per conubia nostra, per inceptos himenaeos.</p>
+                            {selectedOption?.service && (
+                                <div className=" flex flex-col gap-3 " >
+                                    <p className=" text-xl font-bold " >About this service</p>
+                                    <p className=" text-sm " >{services[Number(index)]?.description}</p>
+                                </div>
+                            )}
                             <div className=" w-full flex justify-between gap-4 " >
                                 <div className=" flex w-full flex-col gap-4 " >
                                     <div className=" flex items-center gap-2 " >
@@ -165,7 +192,7 @@ export default function SaleServicePage() {
                             <p className=" text-2xl font-bold " >Checkout</p>
                             <div className=" w-full border rounded-t-xl " >
                                 <div className=" w-full h-fit border-b px-4 py-2 " >
-                                    <CustomSelect placeholder="Select Services " name="service" onchange={(item: string) => setSelectedOption({ ...selectedOption, service: item })} value={selectedOption?.service} borderWidth="0px" label="Select Service" notform={true} options={options} />
+                                    <CustomSelect placeholder="Select Services " name="service" onchange={(item: string) => handleChange(item)} value={selectedOption?.service} borderWidth="0px" label="Select Service" notform={true} options={options} />
                                 </div>
                                 <div className=" w-full flex py-2 " >
                                     <div className=" w-full border-r px-4 " >
@@ -184,11 +211,11 @@ export default function SaleServicePage() {
                                 <div className=" w-full flex justify-between  border-t pt-3 items-center " >
                                     <p className=" text-xl font-medium " >Total</p>
                                     {services?.map((item) => {
-                                        if (item?._id === selectedOption?.service) {
+                                        if (item?._id === selectedOption?.service) { 
                                             return (
-                                                <p className=" text-xl font-bold " >{formatNumber(item?.hourlyRate)}</p>
+                                                <p key={item?._id} className=" text-xl font-bold " >{formatNumber(item?.hourlyRate)}</p>
                                             )
-                                        }
+                                        } 
                                     })}
                                 </div>
                             )}

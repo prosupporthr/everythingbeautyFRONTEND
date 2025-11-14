@@ -42,6 +42,11 @@ export default function Navbar() {
         setShow(false)
     }
 
+    const HandleRouter = (item: string) => {
+        router.push(item)
+        setShow(false)
+    }
+
     return (
         <div className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `} >
             <div className={` w-full ${(pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`)) ? "hidden" : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `} >
@@ -57,7 +62,7 @@ export default function Navbar() {
 
                         <Popover isOpen={show} onOpenChange={setShow} showArrow backdrop={"opaque"} offset={10} placement="top">
                             <PopoverTrigger>
-                                <button className={` z-50 bg-white h-[50px] ${data?.firstName ? " px-3 " : " px-5 "} rounded-full border border-[#E8E7ED] hover:bg-white text-primary `} >
+                                <div className={` z-50 bg-white h-[50px] ${data?.firstName ? " px-3 " : " px-5 "} rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
                                     {data?.firstName && (
                                         <div className=" flex items-center gap-3 " >
                                             <UserCard item={data} />
@@ -70,21 +75,21 @@ export default function Navbar() {
                                             <RxHamburgerMenu size={"20px"} />
                                         </div>
                                     )}
-                                </button>
+                                </div>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[227px]">
                                 {!data?.firstName && (
                                     <div className=" w-full flex flex-col gap-1 " >
                                         <div className=" py-3 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <CustomButton onClick={() => router.push("/auth/signup")} height="40px" >Sign up</CustomButton>
-                                            <CustomButton onClick={() => router.push("/auth")} variant="outline" height="40px" >Log in</CustomButton>
+                                            <CustomButton onClick={() => HandleRouter("/auth/signup")} height="40px" >Sign up</CustomButton>
+                                            <CustomButton onClick={() => HandleRouter("/auth")} variant="outline" height="40px" >Log in</CustomButton>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
                                             <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >FAQs</button>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <button onClick={() => router.push("/business")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Join as a stylist</button>
+                                            <button onClick={() => HandleRouter("/business")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Join as a stylist</button>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
                                             <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Market Place</button>
@@ -113,7 +118,7 @@ export default function Navbar() {
                                                     )
                                                 } else {
                                                     return (
-                                                        <button key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
+                                                        <button onClick={()=> HandleRouter(item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
                                                             <div className=" w-5 h-5  rounded-md " >
                                                                 <item.icon size={"20px"} />
                                                             </div>
