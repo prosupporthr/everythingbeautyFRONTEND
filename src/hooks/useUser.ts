@@ -6,8 +6,7 @@ import { useFormik } from "formik"
 import { useRouter } from "next/navigation"
 import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
-import { useState } from "react"
-import Cookies from "js-cookie"
+import { useState } from "react" 
 import { IOnboarding } from "@/helper/model/auth"
 import { userSchema } from "@/helper/services/validation"
 
@@ -15,7 +14,7 @@ import { userSchema } from "@/helper/services/validation"
 const useUser = () => {
 
     const router = useRouter()
-    const userId = Cookies.get("userid") as string
+    const userId = localStorage.getItem("userid") as string
     const [imageFile, setImageFile] = useState<File | string | null>("");
 
     /** 🔹 Login */
