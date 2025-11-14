@@ -19,12 +19,12 @@ export default function LoginPage() {
                 <CustomInput label="Email/Username" name="email" placeholder="Email Address" />
                 <CustomButton isLoading={isLoading} type="submit" fullWidth height="56px" >Continue</CustomButton>
                 <p >Don't have an account? <span onClick={()=> router.push("/auth/signup")} className=" font-semibold text-brand cursor-pointer " >Register</span></p>
-                <p className=" text-secondary " >OR</p>
+                {/* <p className=" text-secondary " >OR</p>
                 <div className=" flex flex-col gap-4 w-full " >
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Google</CustomButton>
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Facebook</CustomButton>
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Apple</CustomButton>
-                </div>
+                </div> */}
             </form>
         </FormikProvider>
     )

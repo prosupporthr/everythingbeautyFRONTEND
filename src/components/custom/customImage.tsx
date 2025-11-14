@@ -22,7 +22,7 @@ export default function CustomImage({
   fillContainer = false,
   aspectRatio,
   overlayer,
-  nopopup,
+  nopopup = true,
   ...rest
 }: Props) {
   const [imgSrc, setImgSrc] = React.useState<string | StaticImageData>(src);

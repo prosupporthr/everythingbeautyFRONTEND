@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 import { menulist } from "@/helper/services/databank";
 import { textLimit } from "@/helper/utils/textlimit";
 import { IoChevronDown } from "react-icons/io5";
-import UserCard from "../shared/userCard";
-import Cookies from "js-cookie";
+import UserCard from "../shared/userCard"; 
 import { useUserStore } from "@/hooks/user";
 import { userAtom } from "@/store/user";
 
