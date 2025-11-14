@@ -20,7 +20,7 @@ export default function BusinessList(
                 <p className=" text-2xl font-semibold " >{title}</p>
                 <button onClick={()=> router.push("/businesslist")} className=" text-brand font-bold " >See all</button>
             </div>
-            <LoadingLayout loading={isLoading} >
+            <LoadingLayout loading={isLoading} lenght={data?.length} >
                 <div className=" w-full grid grid-cols-4 gap-4 " >
                     {data?.map((item) => {
                         return (
