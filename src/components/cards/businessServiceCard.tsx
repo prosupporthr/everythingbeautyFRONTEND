@@ -1,0 +1,74 @@
+"use client"
+import { IServiceDetail } from "@/helper/model/business";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { IoIosMore } from "react-icons/io";
+import { CustomImage } from "../custom";
+import { DeleteModal } from "../modals";
+
+export default function BusinessServiceCard(
+    { item, option = true, setSelected, selected }: { item: IServiceDetail, option?: boolean, setSelected?: (by: string) => void, selected?: string }
+) {
+
+    const [show, setShow] = useState(false)
+    const router = useRouter()
+    const param = useParams();
+    const id = param.id as string;
+    const [isOpen, setIsOpen] = useState(false)
+
+    const handleEdit = (data: "edit" | "delete") => {
+        setShow(false)
+        if (data === "edit") {
+            router.push(`/business/${id}/edit/${item?._id}/services`)
+        } else {
+            setIsOpen(true)
+        }
+    } 
+
+    const handleClick = () => {
+        if(option) {
+            // router.push(`/business/${id}/edit/${item?._id}/services`)
+        } else if(setSelected) {
+            setSelected(item?._id)
+        }
+    }
+
+    return (
+        <button onClick={handleClick} className={` w-full flex flex-col border ${option ? "" : selected === item?._id ? " border-brand " : ""} rounded-[10px] text-left `} >
+            <div className={` w-full flex gap-3 ${option ? "border-b h-[102px] px-6 " : " p-3 "} items-center  `} >
+                <div className=" w-[63px] h-[54px] rounded-lg bg-gray-200 " >
+                    <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
+                </div>
+                <div className=" flex-col flex " >
+                    <p className={` {} font-semibold `} >{item?.name}</p>
+                    <p className=" text-sm text-secondary " >${item?.hourlyRate}</p>
+                </div>
+            </div>
+            {option && (
+                <div className=" w-full h-[68px] flex justify-center items-center " >
+
+                    <Popover showArrow isOpen={show} onOpenChange={setShow} backdrop={"opaque"} offset={10} placement="top">
+                        <PopoverTrigger>
+                            <button className=" w-8 h-8 rounded-full flex justify-center items-center bg-[#FCFCFC] " >
+                                <IoIosMore size={"20px"} />
+                            </button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-[100px]">
+                            <div className=" w-full flex flex-col gap-1 " >
+                                <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
+                                    <button onClick={() => handleEdit("edit")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Edit</button>
+                                </div>
+                                <div className=" py-1 flex flex-col gap-2 " >
+                                    <button onClick={() => handleEdit("delete")} className=" h-[40px] text-[#FF554A] flex w-full justify-center items-center text-sm font-medium " >Delete</button>
+                                </div>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+            )}
+            <DeleteModal isOpen={isOpen} onClose={setIsOpen} type={"Service"} id={item?._id} name={item?.name} />
+        </button>
+    )
+}
