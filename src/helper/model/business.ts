@@ -130,4 +130,5 @@ export interface IServiceDetail {
     "pictures": string[],
     "createdAt": string,
     "updatedAt": string,
+    business: IBusinessDetails
 }
