@@ -15,6 +15,8 @@ import { IUserDetail } from "@/helper/model/user";
 import { IoArrowBackOutline } from "react-icons/io5";
 import ReviewSection from "@/components/landing/reviewsection";
 import { MapView } from "@/components/map_component";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
 
 export default function SaleProductPage() {
 
@@ -29,6 +31,7 @@ export default function SaleProductPage() {
     })
 
     const [status, setStatus] = useState(false)
+    const [user] = useAtom(userAtom)
 
     const [qty, setQty] = useState(0)
 
@@ -87,7 +90,7 @@ export default function SaleProductPage() {
 
     return (
         <LoadingLayout loading={isLoading} >
-            <div className=" w-full flex flex-col gap-4 lg:py-10 py-6 lg:p-10  " >
+            <div className=" w-full flex flex-col gap-4 lg:py-10 pt-6 lg:p-10  " >
                 <div className=" gap-3 items-center lg:flex hidden " >
                     <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
                         <IoArrowBackOutline size={"22px"} />
@@ -139,7 +142,7 @@ export default function SaleProductPage() {
                                 <StarRating />
                                 <p className=" font-medium text-sm " >{data?.business?.rating} Ratings • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >0 Reviews</span> • <span className=" text-brand " >0 sold</span></p>
                             </div>
-                            <p className=" font-semibold text-3xl " >$45</p>
+                            <p className=" font-semibold text-3xl " >{formatNumber(data?.price ?? 0)}</p>
                             <div className=" flex flex-col gap-1 " >
                                 <p className=" font-semibold " >Choose color:</p>
                                 <div className=" w-full flex items-center gap-2 " >
@@ -152,9 +155,11 @@ export default function SaleProductPage() {
                                 <p className=" font-semibold " >Details</p>
                                 <p className=" text-sm " >{data?.description}</p>
                             </div>
-                            <div className=" w-full lg:flex hidden " >
-                                <CheckOutCard />
-                            </div>
+                            {user?._id !== data?.business?.creator?._id && (
+                                <div className=" w-full lg:flex hidden " >
+                                    <CheckOutCard />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -167,9 +172,11 @@ export default function SaleProductPage() {
                     )}
                     <ReviewSection />
                 </div>
-                <div className=" lg:hidden p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30" >
-                    <CheckOutCard />
-                </div>
+                {user?._id !== data?.business?.creator?._id && (
+                    <div className=" lg:hidden p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30" >
+                        <CheckOutCard />
+                    </div>
+                )}
             </div>
         </LoadingLayout>
     )
