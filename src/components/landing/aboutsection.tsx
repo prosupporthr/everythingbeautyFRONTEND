@@ -27,10 +27,10 @@ export default function AboutSection() {
     return (
         <div className=" w-full flex flex-col gap-6 " >
             <div className=" w-full flex flex-col gap-3 " >
-                <p className=" text-2xl font-bold " >Who can join?</p>
+                <p className=" text-xl lg:text-2xl font-bold " >Who can join?</p>
                 <p className=" text-secondary text-sm " >Everything Beauty is designed for a diverse range of users in the hair and beauty ecosystem — whether you're a stylist, salon owner, product seller, or just someone looking for the perfect hairstyle.</p>
             </div>
-            <div className=" w-full grid grid-cols-4 gap-4 " >
+            <div className=" w-full grid lg:grid-cols-4 gap-4 " >
                 {services.map((item) => {
                     return (
                         <div key={item?.name} className=" w-full h-[96px] rounded-3xl px-5 flex items-center border gap-4 border-[#EAEBEDCC] shadow " >
@@ -45,7 +45,7 @@ export default function AboutSection() {
                 })}
             </div>
             <div className=" w-full flex flex-col gap-3 " >
-                <p className=" text-2xl font-bold " >Why Everything Beauty?</p>
+                <p className=" text-xl lg:text-2xl font-bold " >Why Everything Beauty?</p>
                 <span className=" font-bold " >Too many people have dreams, but no clear roadmap to achieve them.</span>
                 <p className=" text-secondary text-sm " >
                     Everything Beauty is designed for a diverse range of users in the hair and beauty ecosystem — whether you're a stylist, salon owner, product seller, or just someone looking for the perfect hairstyle.

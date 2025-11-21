@@ -1,9 +1,14 @@
+"use client"
 import { CustomButton } from "@/components/custom";
+import { useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { LuCalendarFold } from "react-icons/lu";
 
 
 export default function BusinessPage() {
+
+    const router = useRouter()
+
     return (
         <div className=" w-full flex flex-col items-center " >
             <div className=" w-full flex flex-col items-center px-8 " >
@@ -46,7 +51,7 @@ export default function BusinessPage() {
                                 </div>
                                 <p className=" text-sm text-brand " >Details</p>
                             </div>
-                            <CustomButton>Pay</CustomButton>
+                            <CustomButton onClick={()=> router.push("/business/create")} >Pay</CustomButton>
                         </div>
                         <div className=" w-full flex " >
                             <div className=" w-full h-fit bg-white p-6 border border-[#EAEBEDCC] flex flex-col gap-2 rounded-2xl " >

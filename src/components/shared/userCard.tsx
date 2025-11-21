@@ -4,11 +4,11 @@ import { dateFormat } from "@/helper/utils/dateFormat";
 import { Avatar } from "@heroui/react"; 
 
 
-export default function UserCard({ item, showDetail }: { item: IUserDetail, showDetail?: boolean }) { 
+export default function UserCard({ item, showDetail, size }: { item: IUserDetail, showDetail?: boolean, size?: "sm" | "md" | "lg" }) { 
 
     return (
         <button className=" flex gap-2 items-center " >
-            <Avatar src={item?.profilePicture} name={item?.firstName} />
+            <Avatar size={size ?? "md"} src={item?.profilePicture} name={item?.firstName} />
             {showDetail && ( 
                 <div className=" flex flex-col items-start " >
                     <div className=" flex items-center gap-1 " >

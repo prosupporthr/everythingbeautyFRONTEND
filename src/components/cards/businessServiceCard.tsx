@@ -35,14 +35,14 @@ export default function BusinessServiceCard(
     }
 
     return (
-        <button onClick={handleClick} className={` w-full flex flex-col border ${option ? "" : selected === item?._id ? " border-brand " : ""} rounded-[10px] text-left `} >
+        <button onClick={handleClick} className={` flex flex-col border ${option ? " w-full " : selected === item?._id ? " bg-brand text-white lg:w-full w-[200px] " : "  lg:w-full w-[200px] "} rounded-[10px] text-left `} >
             <div className={` w-full flex gap-3 ${option ? "border-b h-[102px] px-6 " : " p-3 "} items-center  `} >
                 <div className=" w-[63px] h-[54px] rounded-lg bg-gray-200 " >
                     <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
                 </div>
                 <div className=" flex-col flex " >
-                    <p className={` {} font-semibold `} >{item?.name}</p>
-                    <p className=" text-sm text-secondary " >${item?.hourlyRate}</p>
+                    <p className={` capitalize font-semibold `} >{item?.name}</p>
+                    <p className=" text-sm " >${item?.hourlyRate}</p>
                 </div>
             </div>
             {option && (

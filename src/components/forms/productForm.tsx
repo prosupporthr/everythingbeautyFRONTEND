@@ -5,6 +5,7 @@ import { CustomInput, CustomButton } from "../custom";
 import { ImagePicker } from "../shared";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import ColorSelector from "../custom/customColorPicker";
 
 export default function ProductForm(
     { formik, imageFile, setImageFile, isLoading, edit, preview } : { formik: FormikProps<IProduct>, imageFile: File | string | null, setImageFile: (by: File | string | null) => void, isLoading: boolean, edit?: boolean, preview?: string }
@@ -28,6 +29,7 @@ export default function ProductForm(
                         <CustomInput textarea label="Describe your Product to make it stand out" name="description" />
                         <CustomInput label="Price per unit" name="price" type="number" />
                         <CustomInput label="Quantity" name="quantity" type="number" />
+                        <ColorSelector />
                         <div className=" w-full flex items-center justify-between " >
                             <p className=" font-medium " >Allowed Customers Review</p>
                             <Switch checked={formik.values.allowReview} color="success" onChange={(e) => formik.setFieldValue("allowReview", e.target.checked)} />
