@@ -1,3 +1,4 @@
+"use client"
 import { CustomButton } from "@/components/custom";
 import { useRouter } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
