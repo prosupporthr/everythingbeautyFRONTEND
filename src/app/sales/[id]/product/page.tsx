@@ -15,6 +15,8 @@ import { IUserDetail } from "@/helper/model/user";
 import { IoArrowBackOutline } from "react-icons/io5";
 import ReviewSection from "@/components/landing/reviewsection";
 import { MapView } from "@/components/map_component";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
 
 export default function SaleProductPage() {
 
@@ -29,6 +31,7 @@ export default function SaleProductPage() {
     })
 
     const [status, setStatus] = useState(false)
+    const [user] = useAtom(userAtom)
 
     const [qty, setQty] = useState(0)
 
@@ -152,9 +155,11 @@ export default function SaleProductPage() {
                                 <p className=" font-semibold " >Details</p>
                                 <p className=" text-sm " >{data?.description}</p>
                             </div>
-                            <div className=" w-full lg:flex hidden " >
-                                <CheckOutCard />
-                            </div>
+                            {user?._id !== data?.business?.creator?._id && (
+                                <div className=" w-full lg:flex hidden " >
+                                    <CheckOutCard />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -167,9 +172,11 @@ export default function SaleProductPage() {
                     )}
                     <ReviewSection />
                 </div>
-                <div className=" lg:hidden p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30" >
-                    <CheckOutCard />
-                </div>
+                {user?._id !== data?.business?.creator?._id && (
+                    <div className=" lg:hidden p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30" >
+                        <CheckOutCard />
+                    </div>
+                )}
             </div>
         </LoadingLayout>
     )
