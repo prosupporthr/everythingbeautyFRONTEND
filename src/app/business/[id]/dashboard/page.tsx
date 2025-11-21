@@ -13,7 +13,7 @@ export default function BusinessDashboardPage() {
     const tab = query?.get("tab");
 
     return (
-        <Suspense fallback={<div className="p-4 text-center ">Loading...</div>}>
+        <Suspense fallback={<div className=" py-4 lg:p-4 text-center ">Loading...</div>}>
             <div className=" flex flex-col w-full pr-[100px]  " >
                 {!tab && (
                     <BusinessOverview />

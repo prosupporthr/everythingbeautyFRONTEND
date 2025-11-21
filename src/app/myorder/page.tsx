@@ -21,8 +21,8 @@ export default function MyOrderPage() {
     const BookingList = lazy(() => import("@/components/order").then(module => ({ default: module.BookingList })));
 
     return (
-        <div className=" w-full flex flex-col py-10 gap-10 h-full ">
-            <div className=" w-full flex flex-col min-h-[50vh] px-8 " >
+        <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
+            <div className=" w-full flex flex-col min-h-[50vh] px-6 lg:px-8 " >
                 <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 " >
                     <div className=" w-full flex flex-col " >
                         <p className=" font-semibold text-3xl " >My order</p>

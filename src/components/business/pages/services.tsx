@@ -17,7 +17,7 @@ export default function Services() {
 
     return (
         <LoadingLayout loading={isLoading} lenght={data?.length} >
-            <div className=" w-full grid grid-cols-4 gap-4 " >
+            <div className=" w-full grid lg:grid-cols-4 gap-4 " >
                 {data?.map((item) => {
                     return (
                         <BusinessServiceCard item={item} key={item?._id} />
