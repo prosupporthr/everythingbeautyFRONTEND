@@ -18,22 +18,24 @@ export default function Overview() {
 
     return (
         <div className=" w-full flex-col flex gap-6 " >
-            <div className=" border-b flex items-end justify-center gap-6 " >
-                <div className=" py-2 px-6 bg-[#F5EEFF] text-brand rounded-t-2xl " >
+            <div className=" border-b flex overflow-x-auto lg:justify-center gap-6  " >
+               <div className=" w-fit flex gap-4 items-end " >
+               <div className=" py-2 px-5 w-fit  bg-[#F5EEFF] text-brand rounded-t-2xl " >
                     <p className=" text-sm font-medium " >Dashboard</p>
                 </div>
-                <div className=" py-4 w-[190px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
+                <div className=" py-4 w-[200px] lg:w-[180px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
                     <p className=" font-semibold " >0</p>
                     <p className=" text-sm font-semibold " >Booking for this week</p>
                 </div>
-                <div className=" py-4 w-[190px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
+                <div className=" py-4 w-[200px] lg:w-[180px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
                     <p className=" font-semibold " >0</p>
                     <p className=" text-sm font-semibold " >Total Earnings</p>
                 </div>
-                <div className=" py-4 w-[190px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
+                <div className=" py-4 w-[200px] lg:w-[180px] px-4 flex flex-col gap-2 bg-brand text-white rounded-t-2xl " >
                     <p className=" font-semibold " >0</p>
                     <p className=" text-sm font-semibold " >Booking Completed</p>
                 </div>
+               </div>
             </div>
             <div className=" w-full flex items-center justify-between " >
                 <p className=" text-2xl font-medium " >Schedule</p> 

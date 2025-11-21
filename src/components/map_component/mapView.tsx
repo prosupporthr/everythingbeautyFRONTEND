@@ -92,7 +92,7 @@ const MapView: React.FC<Props> = ({
 
       setMarker?.({ lat, lng });
     },
-    [hidesearch, setAddress, setMarker, setState]
+    [hidesearch, setAddress, setMarker, setState, marker]
   );
 
   // Handle latlng or geolocation

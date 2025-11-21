@@ -29,33 +29,46 @@ export default function OrderedProductPage() {
     return (
         <div className=" w-full min-h-[50vh] " >
             <LoadingLayout loading={isLoading} >
-                <div className=" w-full flex flex-col py-10 gap-10 h-full ">
-                    <div className=" w-full flex flex-col px-8 " >
+                <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
+                    <div className=" w-full flex flex-col px-6 lg:px-8 " >
                         <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 " >
                             <div className=" flex gap-3 items-center " >
                                 <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
                                     <IoArrowBackOutline size={"22px"} />
                                 </button>
-                                <p className=" text-2xl font-bold capitalize " >My order</p>
+                                <p className=" text-lg lg:text-2xl font-bold capitalize " >My order</p>
                             </div>
 
-                            <div className=" w-full flex gap-12 p-4 " >
+                            <div className=" w-full flex lg:flex-row flex-col gap-6 lg:gap-12 lg:p-4 " >
                                 <div className=" w-full flex flex-col gap-4 " >
-                                    <div className=" flex items-center gap-3 pb-3 border-b " >
-                                        <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
-                                            <RiCalendar2Line size={"20px"} />
+                                    <div className=" hidden lg:flex items-center gap-3 pb-3 border-b " >
+                                        <div className=" w-fit " >
+                                            <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                                                <RiCalendar2Line size={"20px"} />
+                                            </div>
                                         </div>
                                         <div className=" flex flex-col text-xs " >
                                             <p className=" font-bold " >{`You won't be charged until Vendors accepts your request.`}</p>
                                             <p className=" font-medium " >{`This usually takes up to 24 hours`}</p>
                                         </div>
                                     </div>
-                                    <div className=" w-full flex gap-2 items-center pb-3 border-b " >
-                                        <div className=" w-[123px] h-[103px] rounded-2xl bg-gray-200 " >
+                                    <div className=" w-full flex gap-4 lg:gap-2 lg:flex-row flex-col lg:items-center pb-3 border-b " >
+                                        <div className=" w-full lg:w-[123px] h-[200px] lg:h-[103px] rounded-2xl bg-gray-200 " >
                                             <CustomImage alt={data?.product?.name as string} style={{
                                                 borderRadius: "16px"
                                             }}
                                                 src={data?.product?.pictures[0] as string} fillContainer />
+                                        </div> 
+                                        <div className=" lg:hidden flex items-center gap-3 pb-3 border-b " >
+                                            <div className=" w-fit " >
+                                                <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                                                    <RiCalendar2Line size={"20px"} />
+                                                </div>
+                                            </div>
+                                            <div className=" flex flex-col text-xs " >
+                                                <p className=" font-bold " >{`You won't be charged until Vendors accepts your request.`}</p>
+                                                <p className=" font-medium " >{`This usually takes up to 24 hours`}</p>
+                                            </div>
                                         </div>
                                         <div className=" flex flex-col gap-1 text-sm " >
                                             <div className=" flex gap-4 items-center " >

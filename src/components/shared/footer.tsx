@@ -10,12 +10,12 @@ export default function Footer() {
     return (
         <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
             <div className=" max-w-[1276px] w-full flex flex-col gap-6 " >
-                <div className=" w-full flex justify-between " >
+                <div className=" w-full flex lg:flex-row flex-col gap-6 justify-between " >
                     <div className=" flex flex-col gap-1 max-w-[308px] " >
                         <p className=" text-xl font-bold text-brand " >Everything Beauty</p>
                         <p className=" text-sm text-secondary " >Bringing the military community together to share homes, rooms, and spaces. </p>
                     </div>
-                    <div className=" flex " >
+                    <div className=" flex lg:flex-row flex-col gap-6 lg:gap-0" >
                         <div className=" w-[134px] flex flex-col gap-4 " >
                             <p className=" text-xl font-bold text-brand " >Links</p>
                             <p className=" text-sm " >Home</p>

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { menulist } from "@/helper/services/databank";
 import { textLimit } from "@/helper/utils/textlimit";
 import { IoChevronDown } from "react-icons/io5";
-import UserCard from "../shared/userCard"; 
+import UserCard from "../shared/userCard";
 import { useUserStore } from "@/hooks/user";
 import { userAtom } from "@/store/user";
 
@@ -23,8 +23,8 @@ export default function Navbar() {
     const { data, isLoading } = useUserStore();
     const [_, setUser] = useAtom(userAtom)
 
-    useEffect(()=> {
-        if(data?._id) {
+    useEffect(() => {
+        if (data?._id) {
             setUser(data)
         }
     }, [data])
@@ -48,29 +48,31 @@ export default function Navbar() {
 
     return (
         <div className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `} >
-            <div className={` w-full ${(pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`)) ? "hidden" : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `} >
+            <div className={` w-full ${(pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`)) ? "hidden" : (pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`)) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `} >
                 <button onClick={() => router.push("/")} >
                     <CustomImage nopopup src={"/images/logo.png"} alt="logo" width={92} height={43} />
                 </button>
                 {!isLoading && (
 
                     <div className=" flex gap-3 items-center " >
-                        {!data?.business?._id && (
-                            <CustomButton onClick={() => router.push("/business")} variant="outlinebrand" className=" text-primary " >Join as Stylist</CustomButton>
+                        {data?.firstName && (
+                            <div className=" w-[110px] " >
+                                <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Join as Stylist</CustomButton>
+                            </div>
                         )}
 
                         <Popover isOpen={show} onOpenChange={setShow} showArrow backdrop={"opaque"} offset={10} placement="top">
                             <PopoverTrigger>
-                                <div className={` z-50 bg-white h-[50px] ${data?.firstName ? " px-3 " : " px-5 "} rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
+                                <div className={` z-50 bg-white h-[45px] text-xs ${data?.firstName ? " px-2 " : " px-5 "} rounded-[14px] lg:rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
                                     {data?.firstName && (
                                         <div className=" flex items-center gap-3 " >
-                                            <UserCard item={data} />
+                                            <UserCard size="sm" item={data} />
                                             <IoChevronDown size={"17px"} />
                                         </div>
                                     )}
                                     {!data?.firstName && (
-                                        <div className=" flex items-center gap-3 " >
-                                            <p>Menu</p>
+                                        <div className=" flex items-center gap-2 " >
+                                            <p className=" lg:flex hidden " >Menu</p>
                                             <RxHamburgerMenu size={"20px"} />
                                         </div>
                                     )}
@@ -117,7 +119,7 @@ export default function Navbar() {
                                                     )
                                                 } else {
                                                     return (
-                                                        <button onClick={()=> HandleRouter(item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
+                                                        <button onClick={() => HandleRouter(item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
                                                             <div className=" w-5 h-5  rounded-md " >
                                                                 <item.icon size={"20px"} />
                                                             </div>

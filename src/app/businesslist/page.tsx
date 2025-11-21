@@ -13,10 +13,7 @@ export default function BusinessListPage() {
     const [marker, setMarker] = useState({} as google.maps.LatLngLiteral | null)
     const { data = [], isLoading } = useFetchData<IBusinessDetails[]>({
         endpoint: `/business`, name: ["business"]
-    })
-
-    console.log(marker);
-
+    }) 
 
     return (
         <div className=" w-full flex gap-6 " >
