@@ -74,6 +74,9 @@ export default function ColorSelector() {
         setFieldValue("color", filtered);
     };
 
+    console.log(colors);
+    
+
     return (
         <div className="flex flex-col gap-2 w-full">
             <p className="font-medium text-gray-700">Color</p>

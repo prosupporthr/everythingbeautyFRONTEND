@@ -87,7 +87,7 @@ export default function SaleProductPage() {
 
     return (
         <LoadingLayout loading={isLoading} >
-            <div className=" w-full flex flex-col gap-4 lg:py-10 py-6 lg:p-10  " >
+            <div className=" w-full flex flex-col gap-4 lg:py-10 pt-6 lg:p-10  " >
                 <div className=" gap-3 items-center lg:flex hidden " >
                     <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
                         <IoArrowBackOutline size={"22px"} />
@@ -139,7 +139,7 @@ export default function SaleProductPage() {
                                 <StarRating />
                                 <p className=" font-medium text-sm " >{data?.business?.rating} Ratings • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >0 Reviews</span> • <span className=" text-brand " >0 sold</span></p>
                             </div>
-                            <p className=" font-semibold text-3xl " >$45</p>
+                            <p className=" font-semibold text-3xl " >{formatNumber(data?.price ?? 0)}</p>
                             <div className=" flex flex-col gap-1 " >
                                 <p className=" font-semibold " >Choose color:</p>
                                 <div className=" w-full flex items-center gap-2 " >
