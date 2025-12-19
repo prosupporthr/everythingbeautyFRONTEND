@@ -4,6 +4,14 @@ export const URLS = {
     VERIFY: `/user/verify-otp`, 
     UPLOAD: "/upload/file",
     BUSINESS: "/business",
+    CREATECHAT: "/messaging/chats",
+    ADDRESS: "/address",
+    SENDCHAT: "/messaging/messages",
+    REVIEW: "/review",
+    REVIEWBYUSERID: (item: string) => `/review/pending/${item}`,
+    ADDRESSBYID: (item: string) => `/address/${item}`,
+    CHATLIST: (item: string) => `/messaging/chats/user/${item}`,
+    CHATMESSAGES: (item: string) => `/messaging/chats/${item}/messages`,
     BOOKING: "/booking",
     ORDER: "/order",
     SERVICE: "/service",
@@ -11,7 +19,9 @@ export const URLS = {
     PRODUCT: "/product",
     BUSINESSBYID: (item: string) => `/business/${item}`,
     PRODUCTBYID: (item: string) => `/product/${item}`,
-    USERUPDATE: (item: string) => `/user/${item}`
+    USERUPDATE: (item: string) => `/user/${item}`,
+    BOOKMARK: `/bookmarks/toggle`,
+    BOOKMARKBYID: (item: string) => `/bookmarks/${item}`
 }
 
 // export const IMAGE_URL = process.env.NEXT_PUBLIC_RESOURCE_URL as string; 

@@ -21,6 +21,8 @@ unsecureHttpService.interceptors.response.use(
 httpService.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = localStorage.getItem("accesstoken");
+
+    config.headers.set("user-type", "USER") 
     if (token) {
       config.headers.set("Authorization", `Bearer ${token}`);
     }

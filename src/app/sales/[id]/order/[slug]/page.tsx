@@ -24,6 +24,7 @@ export default function OrderPage() {
     const slug = param.slug as string;
     const query = useSearchParams();
     const qty = query?.get('qty') as string;
+    const color = query?.get('color') as string;
     const [user] = useAtom(userAtom)
 
     const { orderMutation, isLoading: loadingBooking } = useBooking()
@@ -97,6 +98,12 @@ export default function OrderPage() {
                                     <p className=" text-secondary w-[100px] " >Quatity:</p>
                                     <p className=" font-bold text-left " >{formatNumber(Number(qty), "")}</p>
                                 </div>
+                                {color && (
+                                    <div className=" flex gap-4 items-center " >
+                                        <p className=" text-secondary w-[100px] " >Color:</p>
+                                        <p className=" font-bold text-left " >{color}</p>
+                                    </div>
+                                )}
                                 <div className=" flex gap-4 items-center " >
                                     <p className=" text-secondary w-[100px] " >Price:</p>
                                     <p className=" font-bold text-left " >{formatNumber(Number(product?.price))}</p>

@@ -1,3 +1,4 @@
+"use client"
 import { IServices } from "@/helper/model/business";
 import { Switch } from "@heroui/switch";
 import { FormikProps, FormikProvider } from "formik"; 

@@ -30,9 +30,15 @@ export default function BusinessProduct() {
                 price: data.price || 0,
                 allowReview: data.allowReview ?? false,
                 businessId: data.businessId || "", 
+                quantity: data.quantity || "",
+                colors: data?.colors || []
             });
         }
-    }, [data]);
+    }, [data, loading]);
+
+    console.log(data);
+    console.log(formik);
+    
 
     return (
         <LoadingLayout loading={loading} >

@@ -2,6 +2,7 @@ import { IoTrashBinOutline } from "react-icons/io5";
 import { CustomButton } from "../custom";
 import { ModalLayout } from "../shared";
 import useBusiness from "@/hooks/useBusiness";
+import useEditUser from "@/hooks/useEditUser";
 
 export default function DeleteModal({
   isOpen,
@@ -12,7 +13,7 @@ export default function DeleteModal({
 }: {
   isOpen: boolean;
   onClose: (by: boolean) => void;
-  type: "Store" | "Service";
+  type: "Store" | "Service" | "Address" | "Bookmark";
   id: string;
   name: string;
 }) {
@@ -20,10 +21,15 @@ export default function DeleteModal({
   const {
     productDeleteMutation,
     servicesDeleteMutation,
+    bookmarkdeleteMutation
   } = useBusiness({});
 
+  const {
+    deleteAddressMutation
+  } = useEditUser()
+
   const currentMutation =
-    type === "Store" ? productDeleteMutation : servicesDeleteMutation;
+    type === "Store" ? productDeleteMutation : type === "Address" ? deleteAddressMutation : type === "Bookmark" ? bookmarkdeleteMutation : servicesDeleteMutation;
 
   const clickHandler = () => {
     currentMutation.mutate(id, {
@@ -44,7 +50,7 @@ export default function DeleteModal({
           <p className="text-2xl font-bold">Delete {type}</p>
 
           <p className="text-xs font-medium text-center text-secondary">
-            {`Deleting this ${type} named ${name} will permanently delete it. This action cannot be undone, so make sure you're certain before proceeding.`}
+            Deleting this {type} named <span className=" font-bold text-brand " >{name}</span> will permanently delete it. This action cannot be undone, so make sure you're certain before proceeding.
           </p>
         </div>
 

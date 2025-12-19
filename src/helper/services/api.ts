@@ -7,15 +7,22 @@ export type ApiResponse<T> = {
   success: boolean;
 };
 
-export const fetchUnsecureData = async <T>(endpoint: string): Promise<T> => {
-  const response = await unsecureHttpService.get<ApiResponse<T>>(endpoint);
+export const fetchUnsecureData = async <T>(endpoint: string, params?: Record<string, unknown> | undefined): Promise<T> => {
+  const response = await unsecureHttpService.get<ApiResponse<T>>(endpoint, { params });
   return response.data.data; // Extract only the `data` field
 };
 
 export const fetchSecureData = async <T>(
   endpoint: string,
-  params?: Record<string, unknown> // more specific than `any`
+  params?: Record<string, unknown>, // more specific than `any`
+  pagination?: boolean
 ): Promise<T> => {
   const response = await httpService.get<ApiResponse<T>>(endpoint, { params });
-  return response.data.data; // extract only the `data` field
+  if (pagination) {
+    // If pagination, T is expected to be the full ApiResponse shape.
+    return response.data as unknown as T;
+  } else {
+    // If not paginated, T is the data field directly.
+    return response.data.data;
+  }
 };
