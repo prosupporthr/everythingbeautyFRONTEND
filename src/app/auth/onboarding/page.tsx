@@ -1,6 +1,6 @@
 "use client";
 
-import { CustomButton, CustomInput, CustomPhoneInput, CustomSelect } from "@/components/custom";
+import { CustomButton, CustomInput, CustomPhoneInput, CustomSelect, DateOfBirthPicker } from "@/components/custom";
 import CustomDateTimePicker from "@/components/custom/customDatePicker";
 import { ImagePicker, Loader } from "@/components/shared";
 import useUser from "@/hooks/useUser";
@@ -37,6 +37,9 @@ export default function LoginPage() {
         }
     };
 
+    console.log(formik?.values?.dateOfBirth);
+    
+
 
     return (
         <Loader loading={isLoading || isSuccess} >
@@ -69,25 +72,13 @@ export default function LoginPage() {
                                     name="phoneNumber"
                                     placeholder="Enter your mobile number"
                                 />
-
-                                <div className="flex gap-2 w-full">
-                                    <div className="w-1/2">
-                                        <CustomDateTimePicker
-                                            label="Date of Birth"
-                                            name="dateOfBirth"
-                                            withTime={false}
-                                            isDOB={true}
-                                        />
-                                    </div>
-                                    <div className="w-1/2">
-                                        <CustomSelect
-                                            label="Gender"
-                                            name="gender"
-                                            placeholder="Select gender"
-                                            options={genderOptions}
-                                        />
-                                    </div>
-                                </div>
+                                <DateOfBirthPicker label="Date of Birth" name="dateOfBirth" />
+                                <CustomSelect
+                                    label="Gender"
+                                    name="gender"
+                                    placeholder="Select gender"
+                                    options={genderOptions}
+                                />
                             </div>
 
                             <CustomButton

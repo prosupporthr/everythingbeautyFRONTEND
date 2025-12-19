@@ -14,6 +14,7 @@ export { default as CustomStringArrayInput } from "./customStringArrayInput"
 export { default as CustomPhoneInput } from "./customPhoneInput"
 export { default as CustomLocation } from "./customLocation"
 export { default as CustomUserLocation } from "./customUserLocation"
+export { default as DateOfBirthPicker } from "./dateOfBirthPicker"
 
 export { default as CustomEditor } from "./customEditor" 
 
