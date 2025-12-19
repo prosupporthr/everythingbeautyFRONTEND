@@ -17,6 +17,7 @@ import { RatingBusinessModal } from "../modals";
 import { useFetchData } from "@/hooks/useFetchData";
 import { IRating } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
+import { IUserDetail } from "@/helper/model/user";
 
 export default function Navbar() {
 
@@ -34,10 +35,10 @@ export default function Navbar() {
     
     
 
-    const { data, isLoading, error } = useUserStore(); 
+    const { data, isLoading } = useUserStore(); 
     
 
-    const [_, setUser] = useAtom(userAtom)
+    const [user, setUser] = useAtom(userAtom)
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating()
 
 
@@ -89,7 +90,7 @@ export default function Navbar() {
                 {!isLoading && (
 
                     <div className=" flex gap-3 items-center " >
-                        {data?.business === null && (
+                        {user?.business === null && (
                             <div className=" w-[110px] " >
                                 <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Join as Stylist</CustomButton>
                             </div>
@@ -97,14 +98,14 @@ export default function Navbar() {
 
                         <Popover isOpen={show} onOpenChange={setShow} showArrow backdrop={"opaque"} offset={10} placement="top">
                             <PopoverTrigger>
-                                <div className={` z-50 bg-white h-[45px] text-xs ${data?.firstName ? " px-2 " : " px-5 "} rounded-[14px] lg:rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
-                                    {data?.firstName && (
+                                <div className={` z-50 bg-white h-[45px] text-xs ${user?.firstName ? " px-2 " : " px-5 "} rounded-[14px] lg:rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
+                                    {user?.firstName && (
                                         <div className=" flex items-center gap-3 " >
-                                            <UserCard size="sm" item={data} />
+                                            <UserCard size="sm" item={user as IUserDetail} />
                                             <IoChevronDown size={"17px"} />
                                         </div>
                                     )}
-                                    {!data?.firstName && (
+                                    {!user?.firstName && (
                                         <div className=" flex items-center gap-2 " >
                                             <p className=" lg:flex hidden " >Menu</p>
                                             <RxHamburgerMenu size={"20px"} />
@@ -114,7 +115,7 @@ export default function Navbar() {
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[227px]">
-                                {!data?.firstName && (
+                                {!user?.firstName && (
                                     <div className=" w-full flex flex-col gap-1 " >
                                         <div className=" py-3 border-b border-[#E7E7E7] flex flex-col gap-2 " >
                                             <CustomButton onClick={() => HandleRouter("/auth/signup")} height="40px" >Sign up</CustomButton>
@@ -135,7 +136,7 @@ export default function Navbar() {
                                     </div>
                                 )}
 
-                                {data?.firstName && (
+                                {user?.firstName && (
                                     <div className=" w-full flex flex-col gap-1 " >
                                         <div className=" py-2 border-b border-[#E7E7E7] flex flex-col gap-2 " >
                                             <button className=" h-[40px] flex w-full justify-center items-center text-xl font-bold capitalize " >{textLimit(data?.firstName + " " + data?.lastName, 20)}</button>
@@ -166,7 +167,7 @@ export default function Navbar() {
                                                 FAQs
                                             </button>
                                         </div>
-                                        {data?.business?._id && (
+                                        {user?.business?._id && (
                                             <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
                                                 <button onClick={() => handleClick("dashboard")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >{data?._id ? "Dashboard" : "Join as a stylist"}</button>
                                             </div>
