@@ -7,12 +7,12 @@ export const menulist = [
     {
         title: "My Profile",
         icon: BsPersonCircle,
-        link: ""
+        link: "/profile"
     },
     {
         title: "Message",
         icon: BiMessageDetail,
-        link: ""
+        link: "/message"
     },
     {
         title: "Settings",
@@ -22,7 +22,7 @@ export const menulist = [
     {
         title: "Favourite",
         icon: IoHeartOutline,
-        link: ""
+        link: "/bookmark"
     },
     {
         title: "My Order",

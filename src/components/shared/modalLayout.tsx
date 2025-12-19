@@ -5,7 +5,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
-  ModalBody, 
+  ModalBody,
 } from "@heroui/react";
 
 interface CustomModalProps {
@@ -15,6 +15,7 @@ interface CustomModalProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   children: React.ReactNode;
   footer?: React.ReactNode;
+  showCloseIcon?: boolean; // ✅ NEW
 }
 
 export default function CustomModal({
@@ -22,23 +23,31 @@ export default function CustomModal({
   onClose,
   title,
   size = "md",
-  children, 
+  children,
+  showCloseIcon = true, // ✅ default visible
 }: CustomModalProps) {
   return (
-    <Modal isOpen={isOpen} placement="center" size={size} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      placement="center"
+      size={size}
+      onClose={onClose}
+      hideCloseButton={!showCloseIcon} // ✅ toggle close icon
+    >
       <ModalContent>
         {() => (
           <>
             {title && (
-              <ModalHeader className="flex flex-col gap-1 text-center " >{title}</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1 text-center">
+                {title}
+              </ModalHeader>
             )}
-            <ModalBody className={` ${!title ? "pt-6" : "pt-0"} max-h-[80vh] overflow-y-auto `} >{children}</ModalBody>
-            {/* <ModalFooter>
-              {footer && (
-                footer
-              ) 
-              }
-            </ModalFooter> */}
+
+            <ModalBody
+              className={`${!title ? "pt-6" : "pt-0"} max-h-[80vh] overflow-y-auto`}
+            >
+              {children}
+            </ModalBody>
           </>
         )}
       </ModalContent>

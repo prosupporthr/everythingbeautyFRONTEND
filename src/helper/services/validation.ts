@@ -46,9 +46,30 @@ export const productSchema = Yup.object().shape({
     businessId: Yup.string().required("Business ID is required"),
     name: Yup.string().required("Business name is required"),
     description: Yup.string().required("Description is required"),
+    quantity: Yup.string().required("Quantity is required"),
     price: Yup.number()
         .nullable()
         .min(0, "Hourly rate must be positive")
         .required("Hourly rate is required"),
     allowReview: Yup.boolean(),
+});
+
+
+
+export const reviewSchema = Yup.object().shape({
+    userId: Yup.string()
+        .required("User ID is required"),
+
+    businessId: Yup.string()
+        .required("Business ID is required"),
+
+    description: Yup.string()
+        .trim()
+        .required("Description is required")
+        .min(5, "Description must be at least 5 characters"),
+
+    rating: Yup.number()
+        .required("Rating is required")
+        .min(1, "Rating must be at least 1")
+        .max(5, "Rating cannot be more than 5"),
 });

@@ -1,23 +1,24 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  DirectionsRenderer,
-} from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { Button, Card } from "@heroui/react";
 import MapSearch from "./mapSearch";
 import LoadingLayout from "../shared/loadingLayout";
+
+// ---------------- STATIC LIBRARIES (for stable useLoadScript) ----------------
+const LIBRARIES: ("places")[] = ["places"];
 
 interface Props {
   hidesearch?: boolean;
   height?: string;
   view?: boolean;
-  latlng?: string;
+  latlng?: google.maps.LatLngLiteral;
+  other?: boolean;
   zoom?: number;
   outclick?: boolean;
+  handleSubmit?: () => void;
+  setOtherAddress?: (data: { country: string; state: string; city: string }) => void;
   setMyLocat?: (location: google.maps.LatLngLiteral) => void;
   marker?: google.maps.LatLngLiteral | null;
   setMarker?: (marker: google.maps.LatLngLiteral) => void;
@@ -26,136 +27,185 @@ interface Props {
   setOpen?: (state: boolean) => void;
 }
 
+const DEFAULT_CENTER = { lat: 9.082, lng: 8.6753 };
+
 const MapView: React.FC<Props> = ({
   hidesearch = false,
   height = "47vh",
   latlng,
   outclick,
+  other,
+  setOtherAddress,
   zoom = 14,
   view = false,
   setMyLocat,
   marker,
+  handleSubmit,
   setMarker,
   setAddress,
   setState,
   setOpen,
 }) => {
-  const [directionsResponse, setDirectionsResponse] =
-    useState<google.maps.DirectionsResult | null>(null);
-
-  const [center, setCenter] = useState<google.maps.LatLngLiteral>({
-    lat: 9.082, // Default to Nigeria
-    lng: 8.6753,
-  });
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
-    libraries: ["places"],
-  });
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>(DEFAULT_CENTER);
+  const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [scale, setScale] = useState(8); // for pulsing animation
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
-  const onMapLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
+    libraries: LIBRARIES,
+  });
 
-  const panTo = useCallback(({ lat, lng }: google.maps.LatLngLiteral) => {
-    mapRef.current?.panTo({ lat, lng });
+  // ---------------- HELPERS ----------------
+
+  const panTo = useCallback((loc: google.maps.LatLngLiteral) => {
+    mapRef.current?.panTo(loc);
     mapRef.current?.setZoom(14);
   }, []);
 
-  const onMapClick = useCallback(
-    (e: google.maps.MapMouseEvent) => {
-      if (hidesearch || !e.latLng) return;
+  const extractAddressData = useCallback(
+    (components: google.maps.GeocoderAddressComponent[]) => {
+      const get = (type: string) =>
+        components.find((c) => c.types.includes(type))?.long_name || "";
 
-      const geocoder = new google.maps.Geocoder();
-      const lat = e.latLng.lat();
-      const lng = e.latLng.lng();
-
-      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-        if (status === "OK" && results?.[0]) {
-          const address = results[0].formatted_address;
-          const components = results[0].address_components;
-
-          const countryIndex = components.length - 1;
-          const newState =
-            components[countryIndex]?.types[0] === "country"
-              ? components[countryIndex - 1]?.long_name
-              : components[countryIndex - 2]?.long_name;
-
-          setState?.(newState || "");
-          setAddress?.(address);
-        } else {
-          console.error("Error fetching address:", status);
-        }
-      });
-
-      setMarker?.({ lat, lng });
+      return {
+        country: get("country"),
+        state: get("administrative_area_level_1"),
+        city: get("locality") || get("administrative_area_level_2"),
+      };
     },
-    [hidesearch, setAddress, setMarker, setState, marker]
+    []
   );
 
-  // Handle latlng or geolocation
-  useEffect(() => {
-    if (latlng) {
-      const [lat, lng] = latlng.split(" ").map(Number);
+  // const parseLatLng = useCallback((value?: string): google.maps.LatLngLiteral | null => {
+  //   if (!value) return null;
+  //   const cleaned = value.replace(",", " ").trim();
+  //   const [lat, lng] = cleaned.split(/\s+/).map(Number);
+  //   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  //   return { lat, lng };
+  // }, []);
+
+  // ---------------- MAP CLICK ----------------
+
+  const onMapClick = useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (hidesearch || !e.latLng || !window.google) return;
+
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
       const loc = { lat, lng };
-      setCenter(loc);
       setMarker?.(loc);
-    } else {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const loc = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setCenter(loc);
-          if (hidesearch) setMyLocat?.(loc);
-        },
-        () => {
-          setCenter({ lat: 9.082, lng: 8.6753 }); // fallback
+
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ location: loc }, (results, status) => {
+        if (status !== "OK" || !results?.[0]) return;
+
+        const { formatted_address, address_components } = results[0];
+        const { country, state, city } = extractAddressData(address_components);
+
+        setAddress?.(formatted_address);
+        setState?.(state);
+
+        if (other) {
+          setOtherAddress?.({ country, state, city });
         }
-      );
+      });
+    },
+    [hidesearch, other, extractAddressData, setMarker, setAddress, setState, setOtherAddress]
+  );
+
+  // ---------------- INITIAL LOCATION ----------------
+
+  console.log(center);
+  console.log(latlng);
+  
+
+  useEffect(() => {
+
+    if (latlng?.lat) {
+      setCenter(latlng);
+      setMarker?.(latlng);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const loc = { lat: coords.latitude, lng: coords.longitude };
+
+        if (!latlng?.lat) {
+          setMyLocat?.(loc);
+          setCenter(loc);
+        }
+        setMyLocation(loc);
+      },
+      () => setCenter(DEFAULT_CENTER),
+      { enableHighAccuracy: true }
+    );
   }, []);
 
-  // Handle external trigger click
+  // ---------------- EXTERNAL PAN ----------------
+
   useEffect(() => {
-    if (outclick && mapRef.current && marker) {
-      panTo(marker);
-    }
+    if (outclick && marker) panTo(marker);
   }, [outclick, marker, panTo]);
 
+  // ---------------- PULSING ANIMATION ----------------
+
+  // useEffect(() => {
+  //   if (!myLocation) return;
+  //   let growing = true;
+  //   const interval = setInterval(() => {
+  //     setScale((prev) => {
+  //       if (prev >= 12) growing = false;
+  //       if (prev <= 8) growing = true;
+  //       return growing ? prev + 0.5 : prev - 0.5;
+  //     });
+  //   }, 100);
+  //   return () => clearInterval(interval);
+  // }, [myLocation]);
+
+  // ---------------- SELECT MY LOCATION ----------------
+
+  const selectMyLocation = useCallback(() => {
+    if (!myLocation || !window.google) return;
+    setMarker?.(myLocation);
+    panTo(myLocation);
+
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: myLocation }, (results, status) => {
+      if (status !== "OK" || !results?.[0]) return;
+      const { formatted_address, address_components } = results[0];
+      const { country, state, city } = extractAddressData(address_components);
+
+      setAddress?.(formatted_address);
+      setState?.(state);
+
+      if (other) {
+        setOtherAddress?.({ country, state, city });
+      }
+    });
+  }, [myLocation, panTo, extractAddressData, setMarker, setAddress, setState, setOtherAddress, other]);
+
+  // ---------------- UI ----------------
+
   if (loadError) {
-    return (
-      <div className="p-4 text-center text-red-500">
-        Failed to load Google Maps.
-      </div>
-    );
+    return <div className="p-4 text-center text-red-500">Failed to load Google Maps</div>;
   }
 
   return (
-    <Card
-      className="relative w-full rounded-3xl overflow-hidden bg-white"
-      style={{ height }}
-    >
+    <Card className="relative w-full rounded-3xl overflow-hidden bg-white" style={{ height }}>
       <LoadingLayout loading={!isLoaded}>
         {isLoaded && (
           <GoogleMap
-            mapContainerStyle={{
-              width: "100%",
-              height,
-              borderBottomLeftRadius: "16px",
-              borderBottomRightRadius: "16px",
-            }}
-            center={center}
+            mapContainerStyle={{ width: "100%", height }}
+            center={outclick ? latlng : center}
             zoom={zoom}
-            options={{
-              disableDefaultUI: true,
-              zoomControl: !zoom,
-            }}
-            onLoad={onMapLoad}
+            options={{ disableDefaultUI: true }}
+            onLoad={(map) => { mapRef.current = map; }}
             onClick={onMapClick}
           >
             {!hidesearch && (
@@ -168,25 +218,50 @@ const MapView: React.FC<Props> = ({
               />
             )}
 
-            {directionsResponse && (
-              <DirectionsRenderer directions={directionsResponse} />
-            )}
-
+            {/* Selected location */}
             {marker && <Marker position={marker} />}
+
+            {/* User location with pulsing animation */}
+            {myLocation && (
+              <Marker
+                position={myLocation}
+                onClick={selectMyLocation}
+                icon={{
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: scale,
+                  fillColor: "#1A73E8",
+                  fillOpacity: 1,
+                  strokeColor: "#ffffff",
+                  strokeWeight: 2,
+                }}
+              />
+            )}
           </GoogleMap>
         )}
       </LoadingLayout>
 
-      {!view && setOpen && (
-        <div className="absolute bottom-3 right-3">
-          <Button
-            className="rounded-full w-[80px] h-[40px] text-[14px]"
-            onPress={() => setOpen(false)}
-          >
-            Done
+      <div className="absolute bottom-3 right-3 flex gap-2">
+        {/* Button to select my location */}
+        {(!outclick) && (
+          <Button className="rounded-full px-4 h-[40px] text-[14px]" onPress={selectMyLocation}>
+            Use my location
           </Button>
-        </div>
-      )}
+        )}
+
+        {/* Save / Done buttons */}
+        {other ? (
+          <Button className="rounded-full w-[80px] h-[40px] text-[14px]" onPress={handleSubmit}>
+            Save
+          </Button>
+        ) : (
+          !view &&
+          setOpen && (
+            <Button className="rounded-full w-[80px] h-[40px] text-[14px]" onPress={() => setOpen(false)}>
+              Done
+            </Button>
+          )
+        )}
+      </div>
     </Card>
   );
 };

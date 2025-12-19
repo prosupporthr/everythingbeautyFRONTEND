@@ -15,7 +15,7 @@ import { useFormikContext, FormikValues, getIn } from "formik";
 
 export default function ColorSelector() {
     const { values, setFieldValue } = useFormikContext<FormikValues>();
-    const colors = getIn(values, "color") || [];
+    const colors = getIn(values, "colors") || [];
 
     const [open, setOpen] = useState(false);
     const [pickedColor, setPickedColor] = useState("");
@@ -43,7 +43,7 @@ export default function ColorSelector() {
         const exists = colors.some((c: any) => c.color === option.value);
         if (exists) return;
 
-        setFieldValue("color", [...colors, { label: option.label, color: option.value }]);
+        setFieldValue("colors", [...colors, { label: option.label, color: option.value }]);
         setPickedColor(""); // reset dropdown
     };
 
@@ -63,7 +63,7 @@ export default function ColorSelector() {
             return;
         }
 
-        setFieldValue("color", [...colors, customColor]);
+        setFieldValue("colors", [...colors, { label: customColor.label, color: customColor.value }]);
         setOpen(false);
         setCustomColor({ label: "", value: "" });
     };

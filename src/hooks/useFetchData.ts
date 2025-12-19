@@ -3,7 +3,6 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { fetchSecureData, fetchUnsecureData } from "@/helper/services/api";
 
-
 interface UseFetchDataOptions {
   endpoint: string;
   name?: string[];
@@ -11,7 +10,24 @@ interface UseFetchDataOptions {
   id?: string | number;
   queryKey?: (string | number | undefined)[];
   enable?: boolean;
+  pagination?: boolean
 }
+
+const buildQueryKey = (
+  name?: string[],
+  endpoint?: string,
+  id?: string | number,
+  queryKey: (string | number | undefined)[] = [],
+  params?: Record<string, unknown>
+) => {
+  return [
+    ...(name ?? []),     // Safe spread
+    endpoint,
+    id,
+    ...queryKey,
+    params ? JSON.stringify(params) : "{}",
+  ];
+};
 
 export const useFetchData = <T>({
   endpoint,
@@ -19,11 +35,12 @@ export const useFetchData = <T>({
   params,
   id,
   queryKey = [],
+  pagination,
   enable = true,
 }: UseFetchDataOptions): UseQueryResult<T> => {
   return useQuery<T>({
-    queryKey: [name, endpoint, id, ...queryKey, JSON.stringify(params ?? {})],
-    queryFn: () => fetchSecureData<T>(endpoint, params),
+    queryKey: buildQueryKey(name, endpoint, id, queryKey, params),
+    queryFn: () => fetchSecureData<T>(endpoint, params, pagination),
     enabled: enable,
   });
 };
@@ -37,8 +54,8 @@ export const useUnsecureFetchData = <T>({
   enable = true,
 }: UseFetchDataOptions): UseQueryResult<T> => {
   return useQuery<T>({
-    queryKey: [name, endpoint, id, ...queryKey, JSON.stringify(params ?? {})],
-    queryFn: () => fetchSecureData<T>(endpoint, params),
+    queryKey: buildQueryKey(name, endpoint, id, queryKey, params),
+    queryFn: () => fetchUnsecureData<T>(endpoint, params), // FIXED
     enabled: enable,
   });
 };

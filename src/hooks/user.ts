@@ -9,22 +9,39 @@ import { useAtom } from "jotai";
 
 /** 🔹 Fetch user data using the userid from cookies */
 async function fetchUser(): Promise<IUserDetail | null> {
-  const id = localStorage.getItem("userid") as string;
+
+  const id =
+  typeof window !== "undefined"
+    ? localStorage.getItem("userid")
+    : null; 
+
   if (!id) return null;
 
   try {
     const res = await httpService.get<{ data: IUserDetail }>(`/user/${id}`); 
+
+    console.log(res);
+    
+
     return res.data.data;
   } catch (error) {
+
+
+    console.log("error");
+
     const err = error as AxiosError<{ message?: string }>;
 
+    console.log("error");
+    
+    console.log(error);
+    
     // 🧹 Clear tokens and redirect on failure
     // Cookies.remove("userid");
     // Cookies.remove("accesstoken");
     localStorage.clear()
-    // if (typeof window !== "undefined") {
-    //   window.location.href = "/";
-    // }
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
 
     throw new Error(err.response?.data?.message || err.message);
   }
@@ -36,7 +53,10 @@ async function fetchUser(): Promise<IUserDetail | null> {
  * - Handles error + redirect logic
  */
 export function useUserStore() {
-  const id = localStorage.getItem("userid") as string;
+  const id =
+  typeof window !== "undefined"
+    ? localStorage.getItem("userid")
+    : null; 
 
   const [user] = useAtom(userAtom)
   return useQuery({

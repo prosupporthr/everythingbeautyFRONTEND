@@ -11,6 +11,12 @@ import { IoChevronDown } from "react-icons/io5";
 import UserCard from "../shared/userCard";
 import { useUserStore } from "@/hooks/user";
 import { userAtom } from "@/store/user";
+import { useQueryClient } from "@tanstack/react-query";
+import useRating from "@/hooks/useRating";
+import { RatingBusinessModal } from "../modals";
+import { useFetchData } from "@/hooks/useFetchData";
+import { IRating } from "@/helper/model/business";
+import { URLS } from "@/helper/services/urls";
 
 export default function Navbar() {
 
@@ -19,24 +25,42 @@ export default function Navbar() {
     const param = useParams();
     const id = param.id;
     const [show, setShow] = useState(false)
+    const queryClient = useQueryClient()
 
-    const { data, isLoading } = useUserStore();
+    const showreview =  
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("show")
+      : null; 
+    
+    
+
+    const { data, isLoading, error } = useUserStore(); 
+    
+
     const [_, setUser] = useAtom(userAtom)
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating()
+
+
+    const { data: review = [] } = useFetchData<IRating[]>({
+        endpoint: URLS.REVIEWBYUSERID(data?._id as string), name: ["review"],
+        enable: data?._id ? true : false
+    })
 
     useEffect(() => {
         if (data?._id) {
             setUser(data)
+        } else if(data === null) {
+            router.push("/")
         }
     }, [data])
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
             router.push(data?._id ? `/business/${data?.business?._id}/dashboard` : "/business")
-        } else if (item === "logout") {
-            // Cookies.set("accesstoken", "")
-            // Cookies.set("userid", "")
+        } else if (item === "logout") { 
             localStorage.clear()
-            router.push("/auth")
+            router.push("/")
+            queryClient.invalidateQueries({queryKey: ["user"]})
         }
         setShow(false)
     }
@@ -44,8 +68,18 @@ export default function Navbar() {
     const HandleRouter = (item: string) => {
         router.push(item)
         setShow(false)
-    }
+    } 
 
+    useEffect(()=> {
+        if(review[0]?.business?._id && data?._id && !showreview){
+            formik.setFieldValue("businessId", review[0]?.business?._id)
+            formik.setFieldValue("userId", data?._id)
+
+            setIsOpen(true)
+            sessionStorage.setItem("show", "true")
+        }
+    }, [review]) 
+    
     return (
         <div className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `} >
             <div className={` w-full ${(pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`)) ? "hidden" : (pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`)) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `} >
@@ -55,7 +89,7 @@ export default function Navbar() {
                 {!isLoading && (
 
                     <div className=" flex gap-3 items-center " >
-                        {data?.firstName && (
+                        {data?.business === null && (
                             <div className=" w-[110px] " >
                                 <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Join as Stylist</CustomButton>
                             </div>
@@ -119,7 +153,7 @@ export default function Navbar() {
                                                     )
                                                 } else {
                                                     return (
-                                                        <button onClick={() => HandleRouter(item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
+                                                        <button onClick={() => HandleRouter(item?.title === "My Profile" ? item?.link+"/"+data?._id :item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
                                                             <div className=" w-5 h-5  rounded-md " >
                                                                 <item.icon size={"20px"} />
                                                             </div>
@@ -148,6 +182,7 @@ export default function Navbar() {
                     </div>
                 )}
             </div>
+            <RatingBusinessModal tab={tab} open={isOpen} setOpen={setIsOpen} data={review[0]} formik={formik} loading={loading} />
         </div>
     )
 }

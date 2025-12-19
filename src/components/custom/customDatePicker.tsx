@@ -14,7 +14,7 @@ import {
 
 interface IProps {
   borderWidth?: string;
-  name?: string; // ✅ optional for standalone mode
+  name?: string;
   label?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -22,10 +22,13 @@ interface IProps {
   defaultHour?: number;
   defaultMinute?: number;
 
-  /** ✅ Standalone mode props */
+  /** Standalone mode */
   useFormik?: boolean;
-  value?: string; // ISO string
+  value?: string;
   onChange?: (value: string) => void;
+
+  /** NEW — Date of Birth mode (18+ only) */
+  isDOB?: boolean;
 }
 
 export default function CustomDateTimePicker({
@@ -39,8 +42,14 @@ export default function CustomDateTimePicker({
   useFormik = true,
   value,
   onChange,
+  isDOB = false,
 }: IProps) {
-  /** ✅ Try to use Formik if enabled */
+  // If DOB mode is enabled, disable time selection
+  if (isDOB) {
+    withTime = false;
+  }
+
+  /** Try to use Formik if enabled */
   let formikValue: string | undefined;
   let formikError: string | null = null;
   let formikTouched: boolean = false;
@@ -54,16 +63,16 @@ export default function CustomDateTimePicker({
       formikValue = getIn(formik.values, name);
       setFormikValue = formik.setFieldValue;
     } catch {
-      console.warn("CustomDateTimePicker: Formik not detected — using standalone mode.");
+      console.warn("CustomDateTimePicker: Formik not detected — switching to standalone mode.");
       useFormik = false;
     }
   }
 
-  /** ✅ RAW value (either from Formik or from props) */
+  /** RAW value (Formik or standalone) */
   const rawValue = useFormik ? formikValue : value;
   let dateValue: DateValue | null = null;
 
-  /** ✅ Convert ISO → DatePicker value */
+  /** Convert ISO → DatePicker value */
   if (rawValue) {
     try {
       const js = new Date(rawValue);
@@ -89,7 +98,7 @@ export default function CustomDateTimePicker({
     }
   }
 
-  /** ✅ When user picks a date/time */
+  /** Handle user selection */
   const handleChange = (item: DateValue | null) => {
     if (!item) {
       if (useFormik && setFormikValue) setFormikValue(name, null);
@@ -124,33 +133,49 @@ export default function CustomDateTimePicker({
     else onChange?.(iso);
   };
 
+  /** ---------- DOB MODE RESTRICTIONS (compute without subtractYears) ---------- */
+  const localTZ = getLocalTimeZone();
+  const todayDate = today(localTZ);
+
+  // Compute JS date for today minus 18 years
+  const jsToday = new Date();
+  // Use localTZ offset if necessary — but for DOB boundary a plain JS date is fine:
+  jsToday.setFullYear(jsToday.getFullYear() - 18);
+
+  const yyyy = jsToday.getFullYear();
+  const mm = String(jsToday.getMonth() + 1).padStart(2, "0");
+  const dd = String(jsToday.getDate()).padStart(2, "0");
+
+  // maxDOB = today - 18 years, as CalendarDate via parseDate
+  const maxDOB = parseDate(`${yyyy}-${mm}-${dd}`);
+  const minDOB = parseDate("1900-01-01"); // Earliest allowed DOB
+
+  /** ---------- NORMAL MODE RESTRICTIONS ---------- */
+  const minNormal = today(localTZ); // Cannot pick past days for normal mode
+
   return (
     <div className="w-full flex flex-col gap-0.5">
-      {label && (
-        <p className="text-sm text-gray-700 font-medium">{label}</p>
-      )}
+      {label && <p className="text-sm text-gray-700 font-medium">{label}</p>}
 
       <DatePicker
         isDisabled={disabled}
         value={dateValue ?? undefined}
-        granularity={withTime ? "minute" : "day"}
-        minValue={today(getLocalTimeZone())}
+        granularity={withTime && !isDOB ? "minute" : "day"}
+        minValue={isDOB ? minDOB : minNormal}
+        maxValue={isDOB ? maxDOB : undefined}
         hourCycle={12}
         style={{
-          borderWidth: borderWidth ?? "1px", 
+          borderWidth: borderWidth ?? "1px",
         }}
         onChange={handleChange}
         classNames={{
-          inputWrapper:
-            "bg-white border-gray-300 rounded-xl h-[45px]",
+          inputWrapper: "bg-white border-gray-300 rounded-xl h-[45px]",
           input: "text-gray-900",
         }}
       />
 
       {useFormik && formikTouched && formikError && (
-        <p className="text-xs text-red-600 font-medium ml-2">
-          {formikError}
-        </p>
+        <p className="text-xs text-red-600 font-medium ml-2">{formikError}</p>
       )}
     </div>
   );

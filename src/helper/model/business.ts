@@ -74,7 +74,7 @@ export interface IOrderDetail {
     "createdAt": string,
     "updatedAt": string,
     "__v": 0,
-    "user":IUserDetail,
+    "user": IUserDetail,
     "product": IProductDetail,
     "business": IBusinessDetails
 }
@@ -90,7 +90,7 @@ export interface IBookingDetail {
     "paymentStatus": string,
     "status": string,
     "createdAt": string,
-    "updatedAt": string, 
+    "updatedAt": string,
     "service": IServiceDetail,
     "user": IUserDetail
 }
@@ -101,7 +101,16 @@ export interface IProduct {
     "description": string,
     "price": number,
     "allowReview": boolean,
-    "pictures"?: string[]
+    "pictures"?: string[],
+    colors?: { label: string, color: string }[]
+    quantity?: string | number
+}
+
+export interface IBookingmark {
+    "userId": string,
+    "type": string,
+    "serviceId"?: string,
+    "productId"?: string
 }
 
 export interface IProductDetail {
@@ -113,7 +122,11 @@ export interface IProductDetail {
     "allowReview": boolean,
     "pictures": string[],
     "price": number,
-    "colors": string[],
+    "colors": {
+        label: string;
+        color: string;
+    }[],
+    quantity: string | number
     "createdAt": string,
     "updatedAt": string,
     business: IBusinessDetails
@@ -131,4 +144,25 @@ export interface IServiceDetail {
     "createdAt": string,
     "updatedAt": string,
     business: IBusinessDetails
+}
+
+export interface IRating {
+    "business": {
+        "_id": string,
+        "name": string,
+        "location": string,
+        "pictures": string[],
+        "rating": number,
+        "approved": boolean,
+        "enabled": boolean
+    },
+    "orders": string[],
+    "bookings": string[]
+}
+
+export interface IRatingForm {
+    "userId": string,
+    "businessId": string,
+    "description": string,
+    "rating": number
 }

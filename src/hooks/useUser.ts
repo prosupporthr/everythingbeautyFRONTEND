@@ -1,7 +1,7 @@
 import { handleError } from "@/helper/services/errorHandler"
 import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useFormik } from "formik"
 import { useRouter } from "next/navigation"
 import { useUploadMutation } from "./useUpload"
@@ -14,8 +14,12 @@ import { userSchema } from "@/helper/services/validation"
 const useUser = () => {
 
     const router = useRouter()
-    const userId = localStorage.getItem("userid") as string
+    const userId =  typeof window !== "undefined"
+      ? localStorage.getItem("userid") as string
+      : ""; 
+      
     const [imageFile, setImageFile] = useState<File | string | null>("");
+    const queryClient = useQueryClient()
 
     /** 🔹 Login */
     const userMutation = useMutation({
@@ -29,6 +33,7 @@ const useUser = () => {
                 color: "success",
             })
             router.push(`/`)
+            queryClient.invalidateQueries({queryKey: ["user"]})
         },
     })
 
@@ -61,9 +66,12 @@ const useUser = () => {
 
     const isLoading = uploadMutation.isPending || userMutation.isPending
 
+    const isSuccess = userMutation.isSuccess || uploadMutation.isSuccess
+
     return {
         formik,
         isLoading,
+        isSuccess,
         setImageFile,
         imageFile
     }

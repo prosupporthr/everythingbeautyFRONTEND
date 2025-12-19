@@ -11,7 +11,7 @@ import { BsArrowLeftCircle } from "react-icons/bs";
 
 export default function VerificationPage() {
 
-    const { verifyMutation, isOpen, setIsOpen } = useAuth()
+    const { verifyMutation, isOpen, setIsOpen, isSuccess, isLoading } = useAuth()
     const [value, setValue] = useState("");
     const router = useRouter()
 
@@ -45,9 +45,9 @@ export default function VerificationPage() {
                     onValueChange={setValue}
                 /> 
                 <p className=" text-sm text-secondary " >Waiting to resend OTP in  <span className=" font-medium text-primary cursor-pointer " >59 Secs</span></p>
-                <CustomButton isLoading={verifyMutation?.isPending} isDisabled={value.length >= 6 ? false : true} fullWidth height="56px" onClick={clickHandler} >Continue</CustomButton>
+                <CustomButton isDisabled={value.length >= 6 ? false : true} fullWidth height="56px" onClick={clickHandler} >Continue</CustomButton>
             </div>
-            <AccountVerified isOpen={verifyMutation?.isPending || isOpen} setIsOpen={setIsOpen} />
+            <AccountVerified isOpen={isLoading || isSuccess || isOpen} setIsOpen={setIsOpen} />
         </>
     )
 }

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import { Provider } from "../provider";
+import { Provider, ScreenData } from "../provider";
 import { Navbar } from "@/components/landing";
 import { Footer } from "@/components/shared";
 import { BusinessSidebar } from "@/components/business";
 
 const dmSans = DM_Sans({
-  variable: "--font-dms-sans",
   subsets: ["latin"],
 });
 
@@ -24,18 +23,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${dmSans.variable} antialiased`}
-      >
+    <html lang="en" className={dmSans.className}>
+      <body className="antialiased">
         <Provider>
           <div className=" w-full h-screen flex flex-col overflow-y-auto bg-white " >
             <Navbar />
-            <div className=" w-full flex flex-col h-auto " >
+            <ScreenData>
               {children}
-            </div>
-            <Footer /> 
-            <BusinessSidebar /> 
+            </ScreenData>
+            <Footer />
+            <BusinessSidebar />
           </div>
         </Provider>
       </body>
