@@ -3,8 +3,8 @@
 import { useFormik } from "formik"
 import { addToast } from "@heroui/toast"
 import { unsecureHttpService } from "@/helper/services/httpService"
-import { useMutation } from "@tanstack/react-query"
-import { useRouter } from "next/navigation" 
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { ILogin, IAuth } from "@/helper/model/auth"
 import { emailSchema } from "@/helper/services/validation"
 import { handleError } from "@/helper/services/errorHandler"
@@ -14,6 +14,7 @@ import { useState } from "react"
 const useAuth = () => {
 
     const [isOpen, setIsOpen] = useState(false);
+    const queryClient = useQueryClient()
 
     const router = useRouter()
     /** 🔹 Login */
@@ -64,6 +65,7 @@ const useAuth = () => {
             if (user?.firstName) {
                 setIsOpen(true)
                 router.push("/")
+                queryClient.invalidateQueries({ queryKey: ["user"] })
             } else {
                 router.push("/auth/onboarding")
             }
@@ -89,10 +91,17 @@ const useAuth = () => {
         signupMutation.isPending ||
         verifyMutation.isPending
 
+    /** 🔹 Loading State */
+    const isSuccess =
+        loginMutation.isSuccess ||
+        signupMutation.isSuccess ||
+        verifyMutation.isSuccess
+
     return {
         formik,
         formikSignup,
         isLoading,
+        isSuccess,
         verifyMutation,
         isOpen,
         setIsOpen

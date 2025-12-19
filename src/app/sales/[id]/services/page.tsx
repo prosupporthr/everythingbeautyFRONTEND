@@ -1,7 +1,7 @@
 "use client"
 import { CustomButton, CustomImage, CustomSelect, CustomTimePicker } from "@/components/custom";
 import CustomDateTimePicker from "@/components/custom/customDatePicker";
-import { LoadingLayout, StarRating } from "@/components/shared";
+import { LoadingLayout, MessageBtn, StarRating } from "@/components/shared";
 import { useEffect, useState } from "react";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { RiShareLine } from "react-icons/ri";
@@ -22,6 +22,7 @@ import { useAtom } from "jotai";
 import { MapView } from "@/components/map_component";
 import { ProductList } from "@/components/product";
 import ReviewSection from "@/components/landing/reviewsection";
+import useBusiness from "@/hooks/useBusiness";
 
 export default function SaleServicePage() {
 
@@ -62,7 +63,6 @@ export default function SaleServicePage() {
 
         return date.toISOString();
     }
-
 
     const options = convertDataForSelect(services, ["name", "_id"]);
 
@@ -114,8 +114,7 @@ export default function SaleServicePage() {
 
         const id = services.findIndex(service => service?._id + "" === item + "");
         setIndex(id)
-    }
-
+    } 
 
     return (
         <LoadingLayout loading={isLoading || loading} >
@@ -167,18 +166,17 @@ export default function SaleServicePage() {
                                 <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
                                     <RiShareLine size={"24px"} />
                                 </button>
-                                <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
+                                {/* <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
                                     <IoMdHeartEmpty size={"24px"} />
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                         <p className=" text-xl lg:text-2xl font-semibold " >Service offered</p>
                         <div className=" w-full flex border-b pb-4 gap-4 overflow-x-auto " >
-                            {services.map((item) => {
-                                return (
-                                    // <CustomButton onClick={()=> setSelectedOption({ ...selectedOption, service: item.value })} key={item?.value} height="45px" variant={item.value === selectedOption?.service ? "outlinebrand" : "outline"} >{item?.label}</CustomButton>
-                                    <div className=" w-fit " >
-                                        <BusinessServiceCard selected={selectedOption?.service} setSelected={(item) => handleChange(item)} item={item} key={item?._id} option={false} />
+                            {services.map((item, index) => {
+                                return ( 
+                                    <div className=" w-fit " key={index} >
+                                        <BusinessServiceCard bookmark={true} selected={selectedOption?.service} setSelected={(item) => handleChange(item)} item={item} key={item?._id} option={false} />
                                     </div>
                                 )
                             })}
@@ -188,8 +186,8 @@ export default function SaleServicePage() {
                             <div className=" pl-10 flex flex-col gap-3 " >
                                 {/* <p className=" text-sm " >Norem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputatelibero et velit interdum, ac aliquet odio mattis.</p> */}
                                 <div className=" w-full flex gap-2 " >
-                                    <CustomButton variant="outlinebrand" height="45px" >View Profile</CustomButton>
-                                    <CustomButton height="45px" >Messages</CustomButton>
+                                <CustomButton onClick={()=> router.push(`/profile/${data?.creator?._id}`)} variant="outlinebrand" height="40px" >View Profile</CustomButton>
+                                    <MessageBtn user={user as IUserDetail} business={data as IBusinessDetails} creator={data?.creator as IUserDetail} />
                                 </div>
                             </div>
                         </div>
@@ -225,7 +223,7 @@ export default function SaleServicePage() {
                             {marker?.lat && (
                                 <div className=" flex flex-col gap-6 w-full " >
                                     <p className=" text-lg lg:text-2xl font-semibold " >Location and surroundings</p>
-                                    <MapView hidesearch={true} marker={marker} setMarker={setMarker} outclick={true} height="460px" />
+                                    <MapView hidesearch={true} marker={marker} latlng={marker} setMarker={setMarker} outclick={true} height="460px" />
                                 </div>
                             )}
                             <ReviewSection />

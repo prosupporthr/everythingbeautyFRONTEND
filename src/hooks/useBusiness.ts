@@ -8,7 +8,7 @@ import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
 import { useState } from "react" 
 import { businessSchema, productSchema, serviceSchema } from "@/helper/services/validation"
-import { IBusiness, IProduct, IServices } from "@/helper/model/business"
+import { IBookingmark, IBusiness, IProduct, IServices } from "@/helper/model/business"
 
 interface IProps {
     services?: boolean,
@@ -102,6 +102,40 @@ const useBusiness = (
                 color: "success",
             })
             router.push(`/business/${id}/dashboard?tab=store`)
+        },
+    })
+
+    /** 🔹 Product */
+    const bookmarkMutation = useMutation({
+        mutationFn: (data: IBookingmark) =>
+            httpService.post(URLS.BOOKMARK, data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }) 
+            queryClient.invalidateQueries({ queryKey: ["service"] })
+            queryClient.invalidateQueries({ queryKey: ["business"] })
+            queryClient.invalidateQueries({ queryKey: ["bookmarks"] })
+            queryClient.invalidateQueries({ queryKey: ["product"] })
+        },
+    })
+
+
+    /** 🔹 Product */
+    const bookmarkdeleteMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.BOOKMARKBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })  
+            queryClient.invalidateQueries({ queryKey: ["bookmarks"] }) 
         },
     })
 
@@ -224,6 +258,7 @@ const useBusiness = (
             "description": "",
             "price": 0,
             "allowReview": false,
+            quantity: ""
         },
         validationSchema: productSchema,
         onSubmit: (data) => {
@@ -243,7 +278,7 @@ const useBusiness = (
         },
     })
 
-    const isLoading = uploadMutation.isPending || businessMutation.isPending || servicesMutation.isPending || servicesEditMutation.isPending || servicesDeleteMutation.isPending || productMutation.isPending || productEditMutation.isPending || productDeleteMutation.isPending
+    const isLoading = uploadMutation.isPending || businessMutation.isPending || servicesMutation.isPending || servicesEditMutation.isPending || servicesDeleteMutation.isPending || productMutation.isPending || productEditMutation.isPending || productDeleteMutation.isPending || bookmarkMutation.isPending || bookmarkdeleteMutation.isPending
 
     return {
         formik,
@@ -252,6 +287,9 @@ const useBusiness = (
         isLoading,
         productDeleteMutation,
         servicesDeleteMutation,
+        bookmarkMutation,
+        bookmarkdeleteMutation,
+        userId,
         setImageFile,
         imageFile
     }

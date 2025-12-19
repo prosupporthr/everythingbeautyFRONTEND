@@ -70,7 +70,19 @@ export default function CustomButtonField({
                 {value || placeholder || "Select Business Location"}
             </Button>
             <ModalLayout size="2xl" isOpen={open} title="Select Location" onClose={() => setOpen(false)} >
-                <MapView setOpen={setOpen} marker={marker} setAddress={selectAddress} setMarker={selectLocation} zoom={15} latlng={lat + " " + lng} height={'50vh'}/>
+                <MapView
+                    setOpen={setOpen}
+                    marker={marker}
+                    setAddress={selectAddress}
+                    setMarker={selectLocation}
+                    zoom={15}
+                    latlng={
+                        lat && lng
+                            ? { lat: parseFloat(lat), lng: parseFloat(lng) }
+                            : undefined
+                    }
+                    height={'50vh'}
+                />
             </ModalLayout>
 
             {isTouched && error && (

@@ -10,3 +10,6 @@ export { default as BusinessBookingCard } from "./businessBookingCard"
 export { default as SalesServiceCard } from "./salesServiceCard"
 export { default as BookingCard } from "./bookingCard"
 export { default as OrderCard } from "./orderCard"
+
+export { default as UserChatCard } from "./userChatCard"
+export { default as MessageCard } from "./messageCard"

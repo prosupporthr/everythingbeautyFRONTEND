@@ -3,12 +3,16 @@ import { IServiceDetail } from "@/helper/model/business";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { IoIosMore } from "react-icons/io";
+import { IoIosMore, IoMdHeartEmpty } from "react-icons/io";
 import { CustomImage } from "../custom";
 import { DeleteModal } from "../modals";
+import useBusiness from "@/hooks/useBusiness";
+import { userAtom } from "@/store/user";
+import { useAtom } from "jotai";
+import { Spinner } from "@heroui/spinner";
 
 export default function BusinessServiceCard(
-    { item, option = true, setSelected, selected }: { item: IServiceDetail, option?: boolean, setSelected?: (by: string) => void, selected?: string }
+    { item, option = true, setSelected, selected, bookmark }: { item: IServiceDetail, option?: boolean, setSelected?: (by: string) => void, selected?: string, bookmark?: boolean }
 ) {
 
     const [show, setShow] = useState(false)
@@ -17,6 +21,9 @@ export default function BusinessServiceCard(
     const id = param.id as string;
     const [isOpen, setIsOpen] = useState(false)
 
+    const [user] = useAtom(userAtom)
+    const { bookmarkMutation } = useBusiness({})
+
     const handleEdit = (data: "edit" | "delete") => {
         setShow(false)
         if (data === "edit") {
@@ -24,18 +31,18 @@ export default function BusinessServiceCard(
         } else {
             setIsOpen(true)
         }
-    } 
+    }
 
     const handleClick = () => {
-        if(option) {
+        if (option) {
             // router.push(`/business/${id}/edit/${item?._id}/services`)
-        } else if(setSelected) {
+        } else if (setSelected) {
             setSelected(item?._id)
         }
     }
 
     return (
-        <button onClick={handleClick} className={` flex flex-col border ${option ? " w-full " : selected === item?._id ? " bg-brand text-white lg:w-full w-[200px] " : "  lg:w-full w-[200px] "} rounded-[10px] text-left `} >
+        <div onClick={handleClick} className={` cursor-pointer flex flex-col border ${option ? " w-full " : selected === item?._id ? " bg-brand text-white lg:w-full w-[200px] " : "  lg:w-full w-[200px] "} rounded-[10px] text-left `} >
             <div className={` w-full flex gap-3 ${option ? "border-b h-[102px] px-6 " : " p-3 "} items-center  `} >
                 <div className=" w-[63px] h-[54px] rounded-lg bg-gray-200 " >
                     <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
@@ -44,6 +51,19 @@ export default function BusinessServiceCard(
                     <p className={` capitalize font-semibold `} >{item?.name}</p>
                     <p className=" text-sm " >${item?.hourlyRate}</p>
                 </div>
+                {bookmark && (
+                    <button onClick={()=> bookmarkMutation.mutate({
+                        userId: user?._id as string,
+                        type: "service",
+                        serviceId: item?._id
+                    })} disabled={bookmarkMutation?.isPending} className=" w-8 h-8 rounded-full flex justify-center items-center border " >
+                        {bookmarkMutation?.isPending ? (
+                            <Spinner size="sm" />
+                        ): (
+                            <IoMdHeartEmpty size={"16px"} />
+                        )}
+                    </button>
+                )}
             </div>
             {option && (
                 <div className=" w-full h-[68px] flex justify-center items-center " >
@@ -69,6 +89,6 @@ export default function BusinessServiceCard(
                 </div>
             )}
             <DeleteModal isOpen={isOpen} onClose={setIsOpen} type={"Service"} id={item?._id} name={item?.name} />
-        </button>
+        </div>
     )
 }
