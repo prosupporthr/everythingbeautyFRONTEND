@@ -6,16 +6,20 @@ import {
     CustomPhoneInput,
     CustomSelect,
     CustomUserLocation,
+    DateOfBirthPicker,
 } from "@/components/custom";
+import CustomDateTimePicker from "@/components/custom/customDatePicker";
 import { DeleteModal } from "@/components/modals";
 import { ImagePicker, LoadingLayout } from "@/components/shared";
 import { IAddressDetail } from "@/helper/model/auth";
 import { IUserDetail } from "@/helper/model/user";
 import useEditUser from "@/hooks/useEditUser";
 import { useFetchData } from "@/hooks/useFetchData";
+import { userAtom } from "@/store/user";
 import { Spinner } from "@heroui/spinner";
 import { Switch } from "@heroui/switch";
 import { FormikProvider } from "formik";
+import { useAtom } from "jotai";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosAdd } from "react-icons/io";
@@ -41,6 +45,9 @@ export default function EditProfile() {
     const [selected, setSelected] = useState<IAddressDetail>()
     const [isOpen, setIsOpen] = useState(false)
 
+
+    const [_, setUser] = useAtom(userAtom)
+
     const { editAddressMutation, isLoading: loading } = useEditUser()
 
     const {
@@ -57,9 +64,13 @@ export default function EditProfile() {
         }
     }, [addressData]);
 
+    const [ email, setEmail ] = useState("")
+
     /* ---------------- PREFILL FORM ---------------- */
     useEffect(() => {
         if (!user) return;
+
+        if(email) return
 
         formik.setValues({
             firstName: user.firstName ?? "",
@@ -73,8 +84,14 @@ export default function EditProfile() {
             officeAddress: user.officeAddress ?? "",
             country: user.country ?? "",
         });
+
+        setEmail(user?.email)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    useEffect(()=> {
+        setUser(user)
+    }, [user])
 
     /* ---------------- PRIMARY ADDRESS TOGGLE ---------------- */
     const handlePrimaryToggle = (item: IAddressDetail) => {
@@ -98,6 +115,9 @@ export default function EditProfile() {
         setIsOpen(true)
     }
 
+    console.log(formik.values?.dateOfBirth);
+    
+
     return (
         <FormikProvider value={formik}>
             <div className="w-full min-h-[50vh] bg-[#F9F9F9] p-8">
@@ -117,7 +137,13 @@ export default function EditProfile() {
                                     <CustomInput label="First name" name="firstName" />
                                     <CustomInput label="Last name" name="lastName" />
                                     <CustomPhoneInput label="Mobile number" name="phoneNumber" />
-
+                                    {/* <CustomDateTimePicker
+                                        label="Date of Birth"
+                                        name="dateOfBirth"
+                                        withTime={false}
+                                        isDOB={true}
+                                    /> */}
+                                    <DateOfBirthPicker label="Date of Birth" name="dateOfBirth" />
                                     <CustomSelect
                                         name="gender"
                                         label="Gender"

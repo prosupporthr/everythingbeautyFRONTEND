@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { DatePicker, DateValue } from "@heroui/react";
+
+import { DateValue, DatePicker } from "@heroui/react"; 
 import { useFormikContext, getIn, FormikValues } from "formik";
 import {
   getLocalTimeZone,
@@ -10,6 +10,7 @@ import {
   CalendarDateTime,
   parseDate,
   parseDateTime,
+  CalendarDate,
 } from "@internationalized/date";
 
 interface IProps {
@@ -70,7 +71,8 @@ export default function CustomDateTimePicker({
 
   /** RAW value (Formik or standalone) */
   const rawValue = useFormik ? formikValue : value;
-  let dateValue: DateValue | null = null;
+  let dateValue: DateValue | null | undefined = null;
+  
 
   /** Convert ISO → DatePicker value */
   if (rawValue) {
@@ -158,8 +160,9 @@ export default function CustomDateTimePicker({
       {label && <p className="text-sm text-gray-700 font-medium">{label}</p>}
 
       <DatePicker
-        isDisabled={disabled}
-        value={dateValue ?? undefined}
+        isDisabled={disabled} 
+        // @ts-expect-error — HeroUI + internationalized date type mismatch is safe here
+        value={dateValue}
         granularity={withTime && !isDOB ? "minute" : "day"}
         minValue={isDOB ? minDOB : minNormal}
         maxValue={isDOB ? maxDOB : undefined}
@@ -167,9 +170,10 @@ export default function CustomDateTimePicker({
         style={{
           borderWidth: borderWidth ?? "1px",
         }}
+        startView="year"       // <-- Opens the year selection first
         onChange={handleChange}
         classNames={{
-          inputWrapper: "bg-white border-gray-300 rounded-xl h-[45px]",
+          inputWrapper: "bg-white border border-gray-300 rounded-xl h-[45px]",
           input: "text-gray-900",
         }}
       />
