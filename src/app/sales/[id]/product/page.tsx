@@ -1,6 +1,6 @@
 "use client"
 import { CustomButton, CustomImage } from "@/components/custom";
-import { LoadingLayout, MessageBtn, StarRating } from "@/components/shared";
+import { BookmarkBtn, LoadingLayout, MessageBtn, StarRating } from "@/components/shared";
 import { useEffect, useState } from "react";
 import { RiAddFill } from "react-icons/ri";
 import { useFetchData } from "@/hooks/useFetchData";
@@ -117,6 +117,8 @@ export default function SaleProductPage() {
         )
     }
 
+    console.log(data)
+
     return (
         <LoadingLayout loading={isLoading} >
             <div className=" w-full flex flex-col gap-4 lg:py-10 pt-6 lg:p-10  " >
@@ -166,18 +168,7 @@ export default function SaleProductPage() {
                             </div>
                             <div className=" w-full pb-4 border-b flex justify-between " >
                                 <p className=" text-xl font-semibold capitalize max-w-[70%] " >{data?.name}</p>
-
-                                <button onClick={() => bookmarkMutation.mutate({
-                                    userId: user?._id as string,
-                                    type: "product", 
-                                    productId: data?._id
-                                })} disabled={bookmarkMutation?.isPending} className=" w-8 h-8 rounded-full flex justify-center items-center border " >
-                                    {bookmarkMutation?.isPending ? (
-                                        <Spinner size="sm" />
-                                    ) : (
-                                        <IoMdHeartEmpty size={"16px"} />
-                                    )}
-                                </button>
+                                <BookmarkBtn item={data as IProductDetail} type="product" />
                             </div>
                             <div className=" w-full flex gap-3 " >
                                 <StarRating />

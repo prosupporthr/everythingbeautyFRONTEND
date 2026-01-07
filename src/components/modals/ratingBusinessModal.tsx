@@ -1,7 +1,7 @@
 import { IRating, IRatingForm } from "@/helper/model/business";
 import { ModalLayout, StarRating } from "../shared";
 import { FormikProps, FormikProvider } from "formik";
-import { CustomButton, CustomInput, CustomStarRating } from "../custom";
+import { CustomButton, CustomImage, CustomInput, CustomStarRating } from "../custom";
 
 
 export default function RatingBusinessModal(
@@ -13,8 +13,11 @@ export default function RatingBusinessModal(
             <ModalLayout size={tab ? "xs" : "md"} isOpen={open} onClose={() => setOpen(false)} showCloseIcon={false} >
                 {!tab && (
                     <form onSubmit={formik.handleSubmit} className=" w-full flex-col flex gap-4 items-center " >
-                        <div className=" w-full h-[200px] rounded-2xl bg-red-500 " >
+                        <div className=" w-full h-[200px] rounded-2xl bg-gray-400 " >
 
+                        <CustomImage alt={(data?.business?.name) as string} style={{
+                                borderRadius: "16px"
+                            }} fillContainer src={(data?.business?.pictures[0]) as string} />
                         </div>
                         <div className=" w-full flex flex-col items-center " >
                             <p className=" font-bold text-lg " >{data?.business?.name}</p>
