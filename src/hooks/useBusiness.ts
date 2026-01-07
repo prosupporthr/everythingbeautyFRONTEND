@@ -1,3 +1,4 @@
+"use client"
 import { handleError } from "@/helper/services/errorHandler"
 import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"

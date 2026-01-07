@@ -53,7 +53,7 @@ export default function Bookmark() {
 
     return (
         <div className=" w-full flex-1 relative flex flex-col py-6 px-6 gap-8 lg:px-8 items-center  " >
-            <div className=" max-w-[1329px] w-full h-full flex flex-col gap-4 " >
+            <div className=" w-full flex flex-col gap-4 " >
                 <div className=" flex flex-col " >
                     <p className=" text-2xl font-medium capitalize " >Favourite</p>
                     <p className=" text-sm " >See all orders  on Everything Beauty</p>
@@ -66,10 +66,10 @@ export default function Bookmark() {
                             <>
                                 {item?.type === "product" && (
                                     <div className=" w-full flex flex-col p-4 rounded-2xl shadow gap-2 " >
-                                        <div className=" w-full flex h-[170px] bg-amber-400 rounded-md " >
-                                            {/* <CustomImage alt={data?.name as string} style={{
+                                        <div className=" w-full flex h-[170px] bg-gray-400 rounded-md " >
+                                            <CustomImage alt={(item?.product?.name) as string} style={{
                             borderRadius: "16px"
-                        }} fillContainer src={data?.pictures[0] as string} /> */}
+                        }} fillContainer src={(item?.product?.pictures[0]) as string} />
                                         </div>
                                         <div className=" flex flex-col w-full gap-1 " >
                                             <div className=" w-full flex items-center justify-between " >
@@ -93,10 +93,10 @@ export default function Bookmark() {
 
                                 {item?.type === "service" && (
                                     <div className=" w-full flex flex-col p-4 rounded-2xl shadow gap-2 " >
-                                        <div className=" w-full flex h-[170px] bg-amber-400 rounded-md " >
-                                            {/* <CustomImage alt={data?.name as string} style={{
-                            borderRadius: "16px"
-                        }} fillContainer src={data?.pictures[0] as string} /> */}
+                                        <div className=" w-full flex h-[170px] bg-gray-400 rounded-md " >
+                                                <CustomImage alt={(item?.service?.name) as string} style={{
+                                borderRadius: "16px"
+                            }} fillContainer src={(item?.service?.pictures[0]) as string} />
                                         </div>
                                         <div className=" flex flex-col w-full gap-1 " >
                                             <div className=" w-full flex items-center justify-between " >

@@ -36,7 +36,7 @@ export interface IBusinessDetails {
     "isDeleted": boolean,
     "userId": string,
     "name": string,
-    "location": string,
+    "location": string, 
     "long": string,
     "lat": string,
     "days": number[],
@@ -127,6 +127,7 @@ export interface IProductDetail {
         color: string;
     }[],
     quantity: string | number
+    "hasBookmarked": boolean,
     "createdAt": string,
     "updatedAt": string,
     business: IBusinessDetails
@@ -139,6 +140,7 @@ export interface IServiceDetail {
     "name": string,
     "description": string,
     "hourlyRate": number,
+    "hasBookmarked": boolean,
     "allowReview": boolean,
     "pictures": string[],
     "createdAt": string,
