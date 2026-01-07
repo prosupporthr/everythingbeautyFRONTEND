@@ -52,8 +52,10 @@ const MapView: React.FC<Props> = ({
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
+  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string ?? "AIzaSyCk55j_rxvh2Xwau4ifeyzl2uSv4W6nbw0"
+
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY as string,
+    googleMapsApiKey: API_KEY,
     libraries: LIBRARIES,
   });
 

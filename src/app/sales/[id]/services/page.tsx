@@ -21,8 +21,7 @@ import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
 import { MapView } from "@/components/map_component";
 import { ProductList } from "@/components/product";
-import ReviewSection from "@/components/landing/reviewsection";
-import useBusiness from "@/hooks/useBusiness";
+import ReviewSection from "@/components/landing/reviewsection"; 
 
 export default function SaleServicePage() {
 

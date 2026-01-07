@@ -3,13 +3,14 @@ import { IServiceDetail } from "@/helper/model/business";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { IoIosMore, IoMdHeartEmpty } from "react-icons/io";
+import { IoIosMore, IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { CustomImage } from "../custom";
 import { DeleteModal } from "../modals";
 import useBusiness from "@/hooks/useBusiness";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
 import { Spinner } from "@heroui/spinner";
+import { BookmarkBtn } from "../shared";
 
 export default function BusinessServiceCard(
     { item, option = true, setSelected, selected, bookmark }: { item: IServiceDetail, option?: boolean, setSelected?: (by: string) => void, selected?: string, bookmark?: boolean }
@@ -19,10 +20,7 @@ export default function BusinessServiceCard(
     const router = useRouter()
     const param = useParams();
     const id = param.id as string;
-    const [isOpen, setIsOpen] = useState(false)
-
-    const [user] = useAtom(userAtom)
-    const { bookmarkMutation } = useBusiness({})
+    const [isOpen, setIsOpen] = useState(false) 
 
     const handleEdit = (data: "edit" | "delete") => {
         setShow(false)
@@ -52,17 +50,7 @@ export default function BusinessServiceCard(
                     <p className=" text-sm " >${item?.hourlyRate}</p>
                 </div>
                 {bookmark && (
-                    <button onClick={()=> bookmarkMutation.mutate({
-                        userId: user?._id as string,
-                        type: "service",
-                        serviceId: item?._id
-                    })} disabled={bookmarkMutation?.isPending} className=" w-8 h-8 rounded-full flex justify-center items-center border " >
-                        {bookmarkMutation?.isPending ? (
-                            <Spinner size="sm" />
-                        ): (
-                            <IoMdHeartEmpty size={"16px"} />
-                        )}
-                    </button>
+                    <BookmarkBtn item={item as IServiceDetail} type="service" />
                 )}
             </div>
             {option && (
