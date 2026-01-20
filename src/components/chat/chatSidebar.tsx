@@ -19,7 +19,7 @@ export default function ChatSidebar({ chat, selected, setSelected }: { chat: ICh
     return (
         <div className=" w-fit h-full flex flex-col border-r relative overflow-y-auto " >
             <div className=" w-[400px] flex flex-col" >
-                <div className=" w-full h-fit  sticky top-0 " >
+                <div className=" w-full h-fit sticky top-0 " >
                     {!show && (
                         <div className=" w-full h-[72px] flex justify-between px-6 border-b items-center bg-white" >
                             <p className=" text-xl font-medium " >Messages</p>

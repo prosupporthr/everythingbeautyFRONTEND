@@ -136,7 +136,7 @@ export default function SaleServicePage() {
                 </div>
                 <p className=" hidden lg:flex text-sm font-medium capitalize " >Home • Services • {data?.name}</p>
                 <div className=" hidden lg:flex w-full gap-3 " >
-                    <StarRating />
+                    <StarRating rating={Number(data?.rating)} />
                     <p className=" font-medium " >{data?.location} • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >{status ? "Open Now" : "Closed"}</span> • <span className=" text-brand " >Get directions</span></p>
                 </div>
                 <div className=" w-full h-[350px] relative rounded-b-2xl lg:rounded-2xl bg-gray-300 " >
@@ -225,7 +225,7 @@ export default function SaleServicePage() {
                                     <MapView hidesearch={true} marker={marker} latlng={marker} setMarker={setMarker} outclick={true} height="460px" />
                                 </div>
                             )}
-                            <ReviewSection />
+                            <ReviewSection businessId={data?._id} />
                         </div>
                     </div>
                     {user?._id !== data?.creator?._id && (
@@ -273,7 +273,7 @@ export default function SaleServicePage() {
                             <MapView hidesearch={true} marker={marker} setMarker={setMarker} outclick={true} height="460px" />
                         </div>
                     )}
-                    <ReviewSection />
+                    <ReviewSection businessId={data?._id} />
                 </div>
             </div>
         </LoadingLayout>

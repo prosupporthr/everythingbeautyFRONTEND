@@ -7,16 +7,14 @@ import {
     CustomSelect,
     CustomUserLocation,
     DateOfBirthPicker,
-} from "@/components/custom";
-import CustomDateTimePicker from "@/components/custom/customDatePicker";
+} from "@/components/custom"; 
 import { DeleteModal } from "@/components/modals";
 import { ImagePicker, LoadingLayout } from "@/components/shared";
 import { IAddressDetail } from "@/helper/model/auth";
 import { IUserDetail } from "@/helper/model/user";
 import useEditUser from "@/hooks/useEditUser";
 import { useFetchData } from "@/hooks/useFetchData";
-import { userAtom } from "@/store/user";
-import { Spinner } from "@heroui/spinner";
+import { userAtom } from "@/store/user"; 
 import { Switch } from "@heroui/switch";
 import { FormikProvider } from "formik";
 import { useAtom } from "jotai";
