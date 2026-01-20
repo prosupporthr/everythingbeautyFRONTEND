@@ -2,6 +2,7 @@
 import { Input, Textarea } from "@heroui/input"
 import React from "react"
 import { useFormikContext, getIn, FormikValues } from "formik"
+import { allowOnlyAlphaNumeric } from "@/helper/utils/inputfilter"
 
 interface IProps {
   name: string
@@ -50,21 +51,27 @@ export default function CustomInput({
   if (!notform) {
     formik = useFormikContext<FormikValues>()
   }
- 
+
   const value = notform ? localValue : getIn(formik.values, name)
   const error = notform ? undefined : getIn(formik.errors, name)
   const isTouched = notform ? false : getIn(formik.touched, name)
 
   const changeHandler = (val: string) => {
+
+    const sanitizedValue =
+      type === "number"
+        ? val : textarea ? val 
+        : allowOnlyAlphaNumeric(val)
+
     if (notform) {
-      setLocalValue?.(val)
+      setLocalValue?.(sanitizedValue)
       return
     }
 
     if (type === "number") {
-      formik.setFieldValue(name, Number(val))
+      formik.setFieldValue(name, Number(sanitizedValue))
     } else {
-      formik.setFieldValue(name, val)
+      formik.setFieldValue(name, sanitizedValue)
     }
   }
 
@@ -78,7 +85,7 @@ export default function CustomInput({
       {textarea ? (
         <Textarea
           disabled={disabled}
-          placeholder={placeholder} 
+          placeholder={placeholder}
           labelPlacement={placement}
           classNames={{
             inputWrapper:
@@ -99,15 +106,15 @@ export default function CustomInput({
               startContent={
                 startContent
               }
-              endContent= {
+              endContent={
                 endContent
               }
               classNames={{
                 inputWrapper:
                   rounded ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm " :
-                  " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
+                    " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
                 input: "text-gray-900 h-full w-full text-sm  outline-none ",
-              }} 
+              }}
               value={value}
               onValueChange={changeHandler}
             />
@@ -119,7 +126,7 @@ export default function CustomInput({
               placeholder={placeholder}
               labelPlacement={placement}
               type="text"
-              value={(value === 0+"" || !value) ? "" : value}
+              value={(value === 0 + "" || !value) ? "" : value}
               disabled={disabled}
               classNames={{
                 inputWrapper:
