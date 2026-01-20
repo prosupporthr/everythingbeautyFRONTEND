@@ -9,12 +9,28 @@ import { ILogin, IAuth } from "@/helper/model/auth"
 import { emailSchema } from "@/helper/services/validation"
 import { handleError } from "@/helper/services/errorHandler"
 import { URLS } from "@/helper/services/urls"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 const useAuth = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const queryClient = useQueryClient()
+    const [initialTime, setInitialTime] = useState(0);
+    const [startTimer, setStartTimer] = useState(false);
+
+
+    useEffect(() => {
+        if (initialTime > 0) {
+            setTimeout(() => {
+                setInitialTime(initialTime - 1);
+            }, 1000);
+        }
+
+        if (initialTime === 0 && startTimer) {
+            console.log("done");
+            setStartTimer(false);
+        }
+    }, [initialTime, startTimer]);
 
     const router = useRouter()
     /** 🔹 Login */
@@ -72,6 +88,22 @@ const useAuth = () => {
         },
     })
 
+    /** 🔹 Verify OTP */
+    const resendOTPMutation = useMutation({
+        mutationFn: (data: { email: string }) =>
+            unsecureHttpService.post(URLS.RESENDOTP, data),
+        onError: handleError,
+        onSuccess: (res) => { 
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }) 
+            setStartTimer(true)
+            setInitialTime(59)
+        },
+    })
+
     /** 🔹 Formik Instances */
     const formik = useFormik<ILogin>({
         initialValues: { email: "" },
@@ -89,13 +121,13 @@ const useAuth = () => {
     const isLoading =
         loginMutation.isPending ||
         signupMutation.isPending ||
-        verifyMutation.isPending
+        verifyMutation.isPending  
 
     /** 🔹 Loading State */
     const isSuccess =
         loginMutation.isSuccess ||
         signupMutation.isSuccess ||
-        verifyMutation.isSuccess
+        verifyMutation.isSuccess  
 
     return {
         formik,
@@ -104,7 +136,9 @@ const useAuth = () => {
         isSuccess,
         verifyMutation,
         isOpen,
-        setIsOpen
+        setIsOpen,
+        initialTime,
+        resendOTPMutation
     }
 }
 

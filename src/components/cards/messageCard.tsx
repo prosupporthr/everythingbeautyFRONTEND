@@ -1,25 +1,31 @@
 "use client"
 import { IChatMessage } from "@/helper/model/chat";
-import { timeFormat } from "@/helper/utils/dateFormat";
+import { dateFormat, timeFormat } from "@/helper/utils/dateFormat";
 import { textLimit } from "@/helper/utils/textlimit";
 import { Avatar } from "@heroui/react";
 
-export default function MessageCard (
-    { showdate, item} : { showdate?: boolean, item: IChatMessage }
+export default function MessageCard(
+    { showdate, item, self }: { showdate?: boolean, item: IChatMessage, self?: boolean }
 ) {
-    return(
+    return (
         <div className=" w-full flex flex-col gap-4 " >
             {showdate && (
-                <p className=" text-center " >Today</p>
+                <p className=" text-center " >{dateFormat(item?.createdAt)}</p>
             )}
-            <div className=" w-[70%] flex gap-2 " >
-                <div className=" w-fit h-fit rounded-full bg-gray-300 " >
-                    <Avatar src={item?.sender?.profilePicture} name={item?.sender?.firstName} size="sm" />
-                </div>
-                <div className=" flex flex-col gap-1 " >
-                    <p className=" text-lg font-medium capitalize " >{textLimit(item?.sender?.firstName+" "+item?.sender?.lastName, 20)}</p>
-                    <p className=" text-secondary text-xs mt-1 " >{timeFormat(item?.createdAt)}</p>
-                    <p className=" text-sm " >{item.message}</p>
+            <div className={` max-w-[70%]  min-w-[20%] ${self ? " bg-brand rounded-tr-none ml-auto text-white " : " bg-gray-300 rounded-tl-none mr-auto "} flex gap-2 rounded-2xl p-4 `} >
+                {!self && (
+                    <div className=" w-fit h-fit rounded-full bg-gray-300 " >
+                        <Avatar src={item?.sender?.profilePicture} name={item?.sender?.firstName} size="sm" />
+                    </div>
+                )}
+                <div className=" flex flex-col gap-1 w-full" >
+                    {!self && (
+                        <p className=" text-lg font-semibold capitalize " >{textLimit(item?.sender?.firstName + " " + item?.sender?.lastName, 20)}</p>
+                    )}
+                    <p className=" text-sm font-medium  " >{item.message}</p>
+                    <div className=" w-full flex justify-end " >
+                        <p className=" text-xs mt-1 " >{timeFormat(item?.createdAt)}</p>
+                    </div>
                 </div>
             </div>
         </div>

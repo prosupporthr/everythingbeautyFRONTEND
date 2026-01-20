@@ -29,7 +29,7 @@ export default function BookmarkBtn({ item, type }: { item?: IServiceDetail | IP
                         {item?.hasBookmarked ? (
                             <IoMdHeart size={"16px"} color="red" />
                         ) : (
-                            <IoMdHeartEmpty size={"16px"} color="gray" />
+                            <IoMdHeartEmpty size={"16px"} />
                         )}
                     </>
                 )}

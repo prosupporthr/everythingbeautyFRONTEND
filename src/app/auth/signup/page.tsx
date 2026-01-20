@@ -16,15 +16,15 @@ export default function SignupPage() {
                     <p className=" text-2xl font-medium " >Sigup to Everything Beauty</p>
                     <p className=" text-secondary text-sm w-[300px] text-center ">Find top stylists. Book with ease. Create your account to get started.</p>
                 </div>
-                <CustomInput label="Email/Username" name="email" placeholder="Email Address" />
+                <CustomInput label="Email" name="email" placeholder="Email Address" />
                 <CustomButton isLoading={isLoading} type="submit" fullWidth height="56px" >Continue</CustomButton>
                 <p>Already have an account? <span onClick={()=> router.push("/auth")} className=" font-semibold text-brand cursor-pointer " >Login</span></p>
-                <p className=" text-secondary " >OR</p>
+                {/* <p className=" text-secondary " >OR</p>
                 <div className=" flex flex-col gap-4 w-full " >
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Google</CustomButton>
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Facebook</CustomButton>
                     <CustomButton fullWidth variant="outline" height="56px" >Continue with Apple</CustomButton>
-                </div>
+                </div> */}
             </form>
         </FormikProvider>
     )

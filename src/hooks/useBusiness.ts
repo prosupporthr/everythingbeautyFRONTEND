@@ -72,6 +72,8 @@ const useBusiness = (
                 description: res?.data?.message,
                 color: "success",
             })
+
+            queryClient.invalidateQueries({ queryKey: ["service"] })
             router.push(`/business/${id}/dashboard?tab=services`)
         },
     })
@@ -151,6 +153,8 @@ const useBusiness = (
                 description: res?.data?.message,
                 color: "success",
             })
+
+            queryClient.invalidateQueries({ queryKey: ["product"] })
             router.push(`/business/${id}/dashboard?tab=store`)
         },
     })
@@ -230,7 +234,7 @@ const useBusiness = (
             "businessId": slug ? "" : id,
             "name": "",
             "description": "",
-            "hourlyRate": 0,
+            "hourlyRate": "",
             "allowReview": false, 
         },
         validationSchema: serviceSchema,
@@ -257,7 +261,7 @@ const useBusiness = (
             "businessId": slug ? "" : id,
             "name": "",
             "description": "",
-            "price": 0,
+            "price": "",
             "allowReview": false,
             quantity: ""
         },

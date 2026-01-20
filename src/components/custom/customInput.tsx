@@ -18,7 +18,10 @@ interface IProps {
   disabled?: boolean,
   rounded?: string
   startContent?: React.ReactNode
-  endContent?: React.ReactNode
+  endContent?: React.ReactNode,
+  setLocalValue?: (by: string) => void,
+  localValue?: string,
+  notform?: boolean
 }
 
 export default function CustomInput({
@@ -31,21 +34,37 @@ export default function CustomInput({
   disabled,
   textarea,
   rounded,
+  localValue,
+  setLocalValue,
   startContent,
-  endContent
+  endContent,
+  notform
 }: IProps) {
-  const { values, errors, touched, setFieldValue } =
-    useFormikContext<FormikValues>()
+  // const { values, errors, touched, setFieldValue } =
+  //   useFormikContext<FormikValues>()
 
-  const value = getIn(values, name) as string
-  const error = getIn(errors, name) as string | undefined
-  const isTouched = getIn(touched, name) as boolean | undefined
+
+
+  // ---- Handle Formik Mode ----
+  let formik: any = {}
+  if (!notform) {
+    formik = useFormikContext<FormikValues>()
+  }
+ 
+  const value = notform ? localValue : getIn(formik.values, name)
+  const error = notform ? undefined : getIn(formik.errors, name)
+  const isTouched = notform ? false : getIn(formik.touched, name)
 
   const changeHandler = (val: string) => {
+    if (notform) {
+      setLocalValue?.(val)
+      return
+    }
+
     if (type === "number") {
-      setFieldValue(name, Number(val))
+      formik.setFieldValue(name, Number(val))
     } else {
-      setFieldValue(name, val)
+      formik.setFieldValue(name, val)
     }
   }
 

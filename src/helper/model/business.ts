@@ -56,7 +56,7 @@ export interface IServices {
     "businessId": string,
     "name": string,
     "description": string,
-    "hourlyRate": number,
+    "hourlyRate": number | string,
     "allowReview": boolean,
     "pictures"?: string[]
 }
@@ -99,7 +99,7 @@ export interface IProduct {
     "businessId": string,
     "name": string,
     "description": string,
-    "price": number,
+    "price": number | string,
     "allowReview": boolean,
     "pictures"?: string[],
     colors?: { label: string, color: string }[]

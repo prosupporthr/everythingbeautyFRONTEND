@@ -106,7 +106,7 @@ export default function OrderPage() {
                                 )}
                                 <div className=" flex gap-4 items-center " >
                                     <p className=" text-secondary w-[100px] " >Price:</p>
-                                    <p className=" font-bold text-left " >{formatNumber(Number(product?.price))}</p>
+                                    <p className=" font-bold text-left " >{formatNumber((Number(product?.price) * Number(qty)))}</p>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +118,7 @@ export default function OrderPage() {
                             <div className=" w-full flex justify-between items-center " >
                                 <div className=" flex items-center gap-1 " >
                                     <IoIosCheckmarkCircle size={"25px"} color="#25C26E" />
-                                    <p className=" text-sm font-bold text-secondary " >{formatNumber(Number(product?.price) + 1)}</p>
+                                    <p className=" text-sm font-bold text-secondary " >{formatNumber((Number(product?.price) * Number(qty)) + 1)}</p>
                                 </div>
                                 <p className=" text-xs text-secondary " >Paid on {dateFormatMonthAndYear(new Date().toISOString() as string)}</p>
                             </div>
@@ -154,7 +154,7 @@ export default function OrderPage() {
                             <div className=" flex flex-col w-full gap-3 pb-3 border-b " >
                                 <div className=" w-full flex justify-between items-center text-sm " >
                                     <p >Amount</p>
-                                    <p>{formatNumber(Number(product?.price))}</p>
+                                    <p>{formatNumber((Number(product?.price) * Number(qty)))}</p>
                                 </div>
                                 <p className=" font-bold mt-3 " >Pricing</p>
                                 <div className=" w-full flex justify-between items-center text-sm text-secondary " >
@@ -164,7 +164,7 @@ export default function OrderPage() {
                             </div>
                             <div className=" w-full flex justify-between items-center text-sm " >
                                 <p className=" font-medium " >Total</p>
-                                <p className=" text-xl font-bold " >{formatNumber(Number(product?.price) + 1)}</p>
+                                <p className=" text-xl font-bold " >{formatNumber((Number(product?.price) * Number(qty)) + 1)}</p>
                             </div>
                         </div>
                     </div>
