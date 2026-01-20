@@ -58,7 +58,7 @@ export default function BusinessServiceCard(
                     <p className=" text-lg font-bold capitalize " >{item?.name}</p>
                     {/* <p className=" font-bold text-sm " >2.1 KM</p> */}
                 </div>
-                <StarRating />
+                <StarRating rating={item?.rating} />
                 <p className=" font-medium " >{item?.location}</p>
             </div>
             <div className=" w-full flex-col flex gap-2 " > 

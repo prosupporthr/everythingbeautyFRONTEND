@@ -1,9 +1,9 @@
 "use client"
-import { IBusinessDetails } from "@/helper/model/business";
-import { HiStar } from "react-icons/hi2";
+import { IBusinessDetails } from "@/helper/model/business"; 
 import { CustomImage } from "../custom";
 import { textLimit } from "@/helper/utils/textlimit";
 import { useRouter } from "next/navigation";
+import { StarRating } from "../shared";
 
 export default function BusinessCard(
     { item }: { item: IBusinessDetails}
@@ -23,10 +23,7 @@ export default function BusinessCard(
                     <p className=" font-bold capitalize " >{item?.name}</p>
                     <p className=" text-secondary text-sm " >{textLimit(item?.location, 20)}</p>
                 </div>
-                <div className=" flex items-center gap-1 " >
-                    <HiStar size={"16px"} color="#EFD414" />
-                    <p className=" text-[15px] font-bold " >{item?.rating}</p>
-                </div>
+                <StarRating rating={Number(item?.rating)} />
             </div>
         </button>
     )

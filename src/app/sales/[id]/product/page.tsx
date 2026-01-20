@@ -110,7 +110,7 @@ export default function SaleProductPage() {
                     You won't be charged yet
                 </div>
                 <div className=" w-full flex justify-between items-center " >
-                    <p className=" text-xl font-medium " >Total</p> 
+                    <p className=" text-xl font-medium " >Total</p>
                     <p className=" text-xl font-bold " >
                         {formatNumber(Number(data?.price) * Number(qty))}
                     </p>
@@ -118,8 +118,6 @@ export default function SaleProductPage() {
             </div>
         )
     }
-
-    console.log(data)
 
     return (
         <LoadingLayout loading={isLoading} >
@@ -173,7 +171,7 @@ export default function SaleProductPage() {
                                 <BookmarkBtn item={data as IProductDetail} type="product" />
                             </div>
                             <div className=" w-full flex gap-3 " >
-                                <StarRating />
+                                <StarRating rating={Number(data?.business?.rating)} />
                                 <p className=" font-medium text-sm " >{data?.business?.rating} Ratings • <span className={` ${status ? " text-success-500 " : "text-red-500"}  `} >0 Reviews</span> • <span className=" text-brand " >0 sold</span></p>
                             </div>
                             <p className=" font-semibold text-3xl " >{formatNumber(data?.price ?? 0)}</p>

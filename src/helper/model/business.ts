@@ -36,7 +36,7 @@ export interface IBusinessDetails {
     "isDeleted": boolean,
     "userId": string,
     "name": string,
-    "location": string, 
+    "location": string,
     "long": string,
     "lat": string,
     "days": number[],
@@ -160,6 +160,27 @@ export interface IRating {
     },
     "orders": string[],
     "bookings": string[]
+}
+
+export interface IRatingDetails {
+    "_id": string,
+    "isDeleted": boolean,
+    "userId": string,
+    "businessId": string,
+    "description": string,
+    "rating": number,
+    "createdAt": string,
+    "updatedAt": string,
+    "user": IUserDetail
+    "business": {
+        "_id": string,
+        "name": string,
+        "location": string,
+        "pictures": string[],
+        "rating": number,
+        "approved": boolean,
+        "enabled": boolean
+    },
 }
 
 export interface IRatingForm {
