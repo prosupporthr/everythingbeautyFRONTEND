@@ -36,8 +36,7 @@ export const serviceSchema = Yup.object().shape({
     name: Yup.string().required("Business name is required"),
     description: Yup.string().required("Description is required"),
     hourlyRate: Yup.number()
-        .nullable()
-        .min(0, "Hourly rate must be positive")
+        .min(1, "Hourly rate must be greater than zero")
         .required("Hourly rate is required"),
     allowReview: Yup.boolean(),
 });
@@ -46,11 +45,12 @@ export const productSchema = Yup.object().shape({
     businessId: Yup.string().required("Business ID is required"),
     name: Yup.string().required("Business name is required"),
     description: Yup.string().required("Description is required"),
-    quantity: Yup.string().required("Quantity is required"),
+    quantity: Yup.number()
+        .min(1, "Quantity must be greater than zero")
+        .required("Quantity is required"), 
     price: Yup.number()
-        .nullable()
-        .min(0, "Hourly rate must be positive")
-        .required("Hourly rate is required"),
+        .min(1, "Hourly rate must be greater than zero")
+        .required("Price is required"),
     allowReview: Yup.boolean(),
 });
 

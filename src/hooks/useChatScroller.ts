@@ -46,7 +46,11 @@ export function useChatScroller(chatId: string, limit = 20) {
 
   /* ------------------ Pagination Merge ------------------ */
   useEffect(() => {
-    if (!data?.data) return;
+    if (!data?.data) return; 
+
+    if(page === 1) {
+      setMessages([])
+    }
 
     setMessages((prev) => {
       const merged =
@@ -108,5 +112,6 @@ export function useChatScroller(chatId: string, limit = 20) {
     scrollRef,
     ref, // sentinel for infinite scroll
     refetch,
+    setPage
   };
 }

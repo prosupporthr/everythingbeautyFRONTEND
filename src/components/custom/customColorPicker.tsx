@@ -21,6 +21,8 @@ export default function ColorSelector() {
     const [pickedColor, setPickedColor] = useState("");
     const [customColor, setCustomColor] = useState({ label: "", value: "" });
 
+    console.log(values);
+
     /** Predefined colors */
     const colorOptions = [
         { value: "#FFFFFF", label: "White" },
@@ -71,7 +73,7 @@ export default function ColorSelector() {
     /** Remove a color */
     const removeColor = (label: string) => {
         const filtered = colors.filter((c: any) => c.label !== label);
-        setFieldValue("color", filtered);
+        setFieldValue("colors", filtered);
     };
 
     console.log(colors);
