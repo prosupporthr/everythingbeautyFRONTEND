@@ -32,10 +32,8 @@ export default function Navbar() {
     typeof window !== "undefined"
       ? sessionStorage.getItem("show")
       : null; 
-    
-    
-
-    const { data, isLoading } = useUserStore(); 
+     
+    const { data, isLoading, refetch } = useUserStore(); 
     
 
     const [user, setUser] = useAtom(userAtom)
@@ -59,8 +57,10 @@ export default function Navbar() {
         if (item === "dashboard") {
             router.push(data?._id ? `/business/${data?.business?._id}/dashboard` : "/business")
         } else if (item === "logout") { 
-            localStorage.clear()
+            localStorage.clear() 
+            refetch()
             router.push("/")
+            setUser(null)
             queryClient.invalidateQueries({queryKey: ["user"]})
         }
         setShow(false)
@@ -69,7 +69,8 @@ export default function Navbar() {
     const HandleRouter = (item: string) => {
         router.push(item)
         setShow(false)
-    } 
+    }  
+    
 
     useEffect(()=> {
         if(review[0]?.business?._id && data?._id && !showreview){
@@ -88,11 +89,10 @@ export default function Navbar() {
                     <CustomImage nopopup src={"/images/logo.png"} alt="logo" width={92} height={43} />
                 </button>
                 {!isLoading && (
-
                     <div className=" flex gap-3 items-center " >
                         {user?.business === null && (
-                            <div className=" w-[110px] " >
-                                <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Join as Stylist</CustomButton>
+                            <div className=" w-[120px] " >
+                                <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Create Business</CustomButton>
                             </div>
                         )}
 

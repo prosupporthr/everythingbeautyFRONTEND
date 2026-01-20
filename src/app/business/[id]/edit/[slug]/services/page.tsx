@@ -20,7 +20,7 @@ export default function BusinessService() {
 
 
     const { data, isLoading: loading } = useFetchData<IServiceDetail>({
-        endpoint: `/service/${id}`, name: ["service"]
+        endpoint: `/service/${id}`, name: ["service", id as string]
     })
 
     console.log(data);

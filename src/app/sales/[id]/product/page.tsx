@@ -110,8 +110,10 @@ export default function SaleProductPage() {
                     You won't be charged yet
                 </div>
                 <div className=" w-full flex justify-between items-center " >
-                    <p className=" text-xl font-medium " >Total</p>
-                    <p className=" text-xl font-bold " >{formatNumber(data?.price ?? 0)}</p>
+                    <p className=" text-xl font-medium " >Total</p> 
+                    <p className=" text-xl font-bold " >
+                        {formatNumber(Number(data?.price) * Number(qty))}
+                    </p>
                 </div>
             </div>
         )

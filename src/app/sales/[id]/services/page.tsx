@@ -129,9 +129,9 @@ export default function SaleServicePage() {
                         <button className=" w-10 h-10 lg:rounded-full flex justify-center items-center border " >
                             <RiShareLine size={"24px"} />
                         </button>
-                        <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
+                        {/* <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
                             <IoMdHeartEmpty size={"24px"} />
-                        </button>
+                        </button> */}
                     </div>
                 </div>
                 <p className=" hidden lg:flex text-sm font-medium capitalize " >Home • Services • {data?.name}</p>
@@ -143,7 +143,7 @@ export default function SaleServicePage() {
                     <button onClick={() => router.back()} className=" w-13 h-13 rounded-lg lg:hidden bg-white flex absolute top-4 left-6  border items-center justify-center z-10  " >
                         <IoArrowBackOutline size={"24px"} />
                     </button>
-                    <div className=" w-full lg:flex hidden h-[350px] " >
+                    <div className=" w-full lg:flex rounded-2xl border hidden h-[350px] " >
                         <CustomImage alt={data?.name as string} style={{
                             borderRadius: "16px"
                         }} fillContainer src={data?.pictures[0] as string} />

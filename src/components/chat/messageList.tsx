@@ -12,7 +12,7 @@ const MessageList = forwardRef<HTMLDivElement, { chats: IChatMessage[] }>(
                     if (index === chats?.length-1) {
                         return (
                             <div className=" bg-red-400 " ref={ref} key={item?._id} >
-                                <MessageCard  item={item} />
+                                <MessageCard item={item} />
                             </div>
                         )
                     } else {

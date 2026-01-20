@@ -11,6 +11,7 @@ import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
 import { Spinner } from "@heroui/spinner";
 import { BookmarkBtn } from "../shared";
+import { textLimit } from "@/helper/utils/textlimit";
 
 export default function BusinessServiceCard(
     { item, option = true, setSelected, selected, bookmark }: { item: IServiceDetail, option?: boolean, setSelected?: (by: string) => void, selected?: string, bookmark?: boolean }
@@ -40,14 +41,16 @@ export default function BusinessServiceCard(
     }
 
     return (
-        <div onClick={handleClick} className={` cursor-pointer flex flex-col border ${option ? " w-full " : selected === item?._id ? " bg-brand text-white lg:w-full w-[200px] " : "  lg:w-full w-[200px] "} rounded-[10px] text-left `} >
-            <div className={` w-full flex gap-3 ${option ? "border-b h-[102px] px-6 " : " p-3 "} items-center  `} >
+        <div onClick={handleClick} className={` cursor-pointer flex flex-col border ${option ? " w-full " : selected === item?._id ? " bg-brand text-white lg:w-full w-[200px] " : "  lg:w-full w-[200px] "} rounded-[10px] text-left h-full justify-center `} >
+            <div className={` w-full flex gap-3 ${option ? "border-b h-[102px] px-6 " : " p-3 "} items-center gap-2  `} >
+                <div className=" w-fit " >
                 <div className=" w-[63px] h-[54px] rounded-lg bg-gray-200 " >
                     <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
                 </div>
+                </div>
                 <div className=" flex-col flex " >
-                    <p className={` capitalize font-semibold `} >{item?.name}</p>
-                    <p className=" text-sm " >${item?.hourlyRate}</p>
+                    <p className={` lg:w-[100px] capitalize font-semibold wrap-break-word text-sm `} >{textLimit(item?.name, 15)}</p>
+                    <p className=" text-xs " >${item?.hourlyRate}</p>
                 </div>
                 {bookmark && (
                     <BookmarkBtn item={item as IServiceDetail} type="service" />

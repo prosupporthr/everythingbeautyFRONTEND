@@ -84,13 +84,30 @@ const useMessage = () => {
         },
     })
 
-    const isLoading = createChatMutation?.isPending || sendChatMutation?.isPending || loading
+    /** 🔹 Business */
+    const deleteChatMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.CHATDELETE(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            })
+            queryClient.invalidateQueries({ queryKey: ["chatlist"] })
+            router.push(`/message`)
+        },
+    })
+
+    const isLoading = createChatMutation?.isPending || sendChatMutation?.isPending || loading || deleteChatMutation?.isPending
 
     return {
         formik,
         createChatMutation,
         sendChatMutation,
-        isLoading
+        isLoading,
+        deleteChatMutation
     }
 }
 
