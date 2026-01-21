@@ -16,7 +16,7 @@ export default function SignupPage() {
                     <p className=" text-2xl font-medium " >Sigup to Everything Beauty</p>
                     <p className=" text-secondary text-sm w-[300px] text-center ">Find top stylists. Book with ease. Create your account to get started.</p>
                 </div>
-                <CustomInput label="Email" name="email" placeholder="Email Address" />
+                <CustomInput label="Email" name="email" type="email" placeholder="Email Address" />
                 <CustomButton isLoading={isLoading} type="submit" fullWidth height="56px" >Continue</CustomButton>
                 <p>Already have an account? <span onClick={()=> router.push("/auth")} className=" font-semibold text-brand cursor-pointer " >Login</span></p>
                 {/* <p className=" text-secondary " >OR</p>

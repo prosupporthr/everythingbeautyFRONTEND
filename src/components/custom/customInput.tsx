@@ -58,6 +58,10 @@ export default function CustomInput({
 
   const changeHandler = (val: string) => {
 
+    console.log(val);
+    console.log(type);
+    
+
     const sanitizedValue =
       type === "number" 
         ? val : type === "email" ? val : textarea ? val 
