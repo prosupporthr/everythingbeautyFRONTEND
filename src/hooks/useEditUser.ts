@@ -2,18 +2,17 @@ import { handleError } from "@/helper/services/errorHandler"
 import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useFormik } from "formik"
-import { useRouter } from "next/navigation"
+import { useFormik } from "formik" 
 import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
 import { useState } from "react"
 import { IAddress, IUser } from "@/helper/model/auth" 
+import { profileSchema, userSchema } from "@/helper/services/validation"
 
 
 const useEditUser = () => {
 
-    const [open, setOpen] = useState(false)
-    const router = useRouter()
+    const [open, setOpen] = useState(false) 
     const userId =  typeof window !== "undefined"
       ? localStorage.getItem("userid") as string
       : ""; 
@@ -105,6 +104,7 @@ const useEditUser = () => {
             "officeAddress": "",
             "country": ""
         },
+        validationSchema: profileSchema,
         onSubmit: (data) => {
             if (imageFile) {
                 const formdata = new FormData()

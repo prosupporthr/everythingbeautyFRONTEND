@@ -19,11 +19,18 @@ export default function DOBPicker({ name, label }: DOBPickerProps) {
     const today = new Date();
     const maxYear = today.getFullYear() - 18;
     const minYear = 1900;
-
+    
     const years = useMemo(
-        () => Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i),
+        () =>
+          Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
+            const year = maxYear - i;
+            return {
+              label: year.toString(),
+              value: year,
+            };
+          }),
         [maxYear, minYear]
-    );
+      );
 
     const months = [
         { value: 1, label: "January" },
@@ -59,8 +66,6 @@ export default function DOBPicker({ name, label }: DOBPickerProps) {
         month?: string | number,
         day?: string | number
     ) => {
-
-
 
         if (year) {
             setYear(year as string)
@@ -132,11 +137,11 @@ export default function DOBPicker({ name, label }: DOBPickerProps) {
                 >
                     {years.map((y) => (
                         <SelectItem
-                            key={y}
-                            id={String(y)}
-                            textValue={String(y)}
+                            key={y?.value}
+                            id={String(y?.value)}
+                            textValue={String(y?.label)}
                         >
-                            {y}
+                            {y?.label}
                         </SelectItem>
                     ))}
                 </Select>
