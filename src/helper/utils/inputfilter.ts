@@ -5,5 +5,6 @@ export const allowOnlyAlphaNumeric = (value: string) => {
 
 
 export const allowOnlyAlphaNumericNoSpace = (value: string) => {
-    return value.replace(/^[a-zA-Z0-9]*$/, "")
-}
+    return value.replace(/[^a-zA-Z0-9]/g, "");
+};
+  

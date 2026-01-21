@@ -32,6 +32,32 @@ export const userSchema = Yup.object({
         .required("Required"),
 })
 
+
+export const profileSchema = Yup.object({
+    firstName: Yup.string()
+      .trim()
+      .required("First name is required"),
+  
+    lastName: Yup.string()
+      .trim()
+      .required("Last name is required"),
+  
+    phoneNumber: Yup.string()
+      .trim()
+      .matches(
+        /^[0-9+\-() ]+$/,
+        "Phone number is not valid"
+      )
+      .required("Phone number is required"),
+  
+    dateOfBirth: Yup.string()
+      .required("Date of birth is required"),
+  
+    gender: Yup.string()
+      .oneOf(["male", "female", "other"], "Invalid gender")
+      .required("Gender is required"), 
+  });
+
 export const businessSchema = Yup.object({
     userId: Yup.string()
         .trim()
