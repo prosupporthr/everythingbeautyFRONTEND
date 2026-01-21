@@ -113,9 +113,6 @@ export default function EditProfile() {
         setIsOpen(true)
     }
 
-    console.log(formik.values?.dateOfBirth);
-    
-
     return (
         <FormikProvider value={formik}>
             <div className="w-full min-h-[50vh] bg-[#F9F9F9] p-8">

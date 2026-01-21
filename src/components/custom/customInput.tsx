@@ -2,7 +2,7 @@
 import { Input, Textarea } from "@heroui/input"
 import React from "react"
 import { useFormikContext, getIn, FormikValues } from "formik"
-import { allowOnlyAlphaNumeric } from "@/helper/utils/inputfilter"
+import { allowOnlyAlphaNumeric, allowOnlyAlphaNumericNoSpace } from "@/helper/utils/inputfilter"
 
 interface IProps {
   name: string
@@ -63,8 +63,10 @@ export default function CustomInput({
     
 
     const sanitizedValue =
-      type === "number" 
-        ? val : type === "email" ? val : textarea ? val 
+      type === "number" ? val : 
+      type === "email" ? val : 
+      name === "firstName" || name === "lastName" ? allowOnlyAlphaNumericNoSpace(val) :
+      textarea ? val 
         : allowOnlyAlphaNumeric(val)
 
     if (notform) {
