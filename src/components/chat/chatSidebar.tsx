@@ -1,9 +1,9 @@
-import { RiSearch2Line, RiFilter2Line, RiCloseLine } from "react-icons/ri";
+import { RiSearch2Line, RiCloseLine } from "react-icons/ri";
 import { UserChatCard } from "../cards";
 import { IChatList } from "@/helper/model/chat";
 import { useRouter } from "next/navigation";
 import { CustomInput } from "../custom";
-import { useState } from "react";
+import { useState } from "react"; 
 
 export default function ChatSidebar({ chat, selected, setSelected }: { chat: IChatList[], selected: IChatList, setSelected: (by: IChatList) => void }) {
 
@@ -26,10 +26,7 @@ export default function ChatSidebar({ chat, selected, setSelected }: { chat: ICh
                             <div className=" flex gap-3 items-center " >
                                 <button onClick={()=> setShow(true)} >
                                     <RiSearch2Line size={"21px"} />
-                                </button>
-                                {/* <button>
-                                <RiFilter2Line size={"21px"} />
-                            </button> */}
+                                </button> 
                             </div>
                         </div>
                     )}

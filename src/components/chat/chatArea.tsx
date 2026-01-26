@@ -33,62 +33,64 @@ export default function ChatArea({ chat, id, user }: { chat: IChatList, id: stri
     }, [chat?._id])
 
     return (
-        <LoadingLayout loading={isLoading} >
-            <div className="w-full flex flex-1">
-                {!id && <EmptyState />}
+        <div className=" w-full  flex flex-1 " >
+            <LoadingLayout loading={isLoading} >
+                <div className="w-full">
+                    {!id && <EmptyState />}
 
-                {id && (
-                    <LoadingLayout loading={isLoading && messages.length === 0}>
-                        <div className="h-full flex flex-1 flex-col relative">
-                            <UserHeader selected={chat} />
+                    {id && (
+                        <LoadingLayout loading={isLoading && messages.length === 0}>
+                            <div className="h-full flex flex-1 flex-col relative">
+                                <UserHeader selected={chat} />
 
-                            {!messages.length ? (
-                                <EmptyState />
-                            ) : (
-                                <div ref={scrollRef} className="w-full flex-1 flex flex-col-reverse gap-4 p-6 overflow-auto">
-                                    {/* <MessageList ref={top} chats={[...messages].sort(
+                                {!messages.length ? (
+                                    <EmptyState />
+                                ) : (
+                                    <div ref={scrollRef} className="w-full flex-1 flex flex-col-reverse gap-4 p-6 overflow-auto">
+                                        {/* <MessageList ref={top} chats={[...messages].sort(
                                     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                                 )} /> */}
 
-                                    {[...messages].sort(
-                                        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                                    )?.map((item, index, arr) => {
+                                        {[...messages].sort(
+                                            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                                        )?.map((item, index, arr) => {
 
-                                        const currentDate = new Date(item.createdAt).toDateString();
-                                        const nextDate =
-                                            index < arr.length - 1
-                                                ? new Date(arr[index + 1].createdAt).toDateString()
-                                                : null;
+                                            const currentDate = new Date(item.createdAt).toDateString();
+                                            const nextDate =
+                                                index < arr.length - 1
+                                                    ? new Date(arr[index + 1].createdAt).toDateString()
+                                                    : null;
 
-                                        // show date ONLY on the last message of that day
-                                        const showDate = index === arr.length - 1 || currentDate !== nextDate;
+                                            // show date ONLY on the last message of that day
+                                            const showDate = index === arr.length - 1 || currentDate !== nextDate;
 
-                                        if (index === messages?.length - 1) {
-                                            return (
-                                                <div ref={ref} key={item?._id} >
-                                                    <MessageCard showdate={showDate} self={item.sender?._id === user?._id} item={item} />
-                                                </div>
-                                            )
-                                        } else {
-                                            return (
-                                                <MessageCard showdate={showDate} self={item.sender?._id === user?._id} key={item?._id} item={item} />
-                                            )
-                                        }
-                                    })}
-                                    {isRefetching && (
-                                        <div className=" w-full flex justify-center items-center " >
-                                            <Spinner size="sm" />
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                            if (index === messages?.length - 1) {
+                                                return (
+                                                    <div ref={ref} key={item?._id} >
+                                                        <MessageCard showdate={showDate} self={item.sender?._id === user?._id} item={item} />
+                                                    </div>
+                                                )
+                                            } else {
+                                                return (
+                                                    <MessageCard showdate={showDate} self={item.sender?._id === user?._id} key={item?._id} item={item} />
+                                                )
+                                            }
+                                        })}
+                                        {isRefetching && (
+                                            <div className=" w-full flex justify-center items-center " >
+                                                <Spinner size="sm" />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
-                            <MessageForm selected={chat} />
-                        </div>
-                    </LoadingLayout>
-                )}
-            </div>
-        </LoadingLayout>
+                                <MessageForm selected={chat} />
+                            </div>
+                        </LoadingLayout>
+                    )}
+                </div>
+            </LoadingLayout>
+        </div>
     );
 }
 
