@@ -9,7 +9,7 @@ import { useChatScroller } from "@/hooks/useChatScroller";
 import { IUserDetail } from "@/helper/model/user";
 import { useEffect } from "react";
 
-export default function ChatArea({ chat, id, user }: { chat: IChatList, id: string, user: IUserDetail }) {
+export default function ChatArea({ chat, id, user, loading }: { chat: IChatList, id: string, user: IUserDetail, loading: boolean }) {
 
     const {
         messages,
@@ -30,16 +30,16 @@ export default function ChatArea({ chat, id, user }: { chat: IChatList, id: stri
                 behavior: "smooth",
             });
         }
-    }, [chat?._id])
+    }, [id])
 
     return (
-        <div className=" w-full  flex flex-1 " >
-            <LoadingLayout loading={isLoading} >
-                <div className="w-full">
+        <div className=" w-full h-full flex flex-1 " >
+            <LoadingLayout loading={isLoading || loading} >
+                <div className="w-full h-full ">
                     {!id && <EmptyState />}
 
                     {id && (
-                        <LoadingLayout loading={isLoading && messages.length === 0}>
+                        <LoadingLayout loading={isLoading && messages.length === 0 || loading}>
                             <div className="h-full flex flex-1 flex-col relative">
                                 <UserHeader selected={chat} />
 
@@ -96,7 +96,7 @@ export default function ChatArea({ chat, id, user }: { chat: IChatList, id: stri
 
 const EmptyState = () => {
     return (
-        <div className="w-full flex-1 flex flex-col gap-1 justify-center items-center">
+        <div className="w-full h-full flex-1 flex flex-col gap-1 justify-center items-center">
             <div className="w-20 h-20 rounded-full shadow bg-white flex justify-center items-center">
                 <RiWechatLine size="24px" />
             </div>
