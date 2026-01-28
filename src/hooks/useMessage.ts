@@ -79,8 +79,9 @@ const useMessage = () => {
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            })
-            router.push(`/message`)
+            }) 
+
+            router.push(`/message?id=${res?.data?.data?._id}&first=true`)
         },
     })
 

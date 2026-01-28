@@ -1,19 +1,20 @@
-import { RiSearch2Line, RiFilter2Line, RiCloseLine } from "react-icons/ri";
+import { RiSearch2Line, RiCloseLine } from "react-icons/ri";
 import { UserChatCard } from "../cards";
 import { IChatList } from "@/helper/model/chat";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CustomInput } from "../custom";
-import { useState } from "react";
+import { useState } from "react"; 
 
-export default function ChatSidebar({ chat, selected, setSelected }: { chat: IChatList[], selected: IChatList, setSelected: (by: IChatList) => void }) {
+export default function ChatSidebar({ chat, selected }: { chat: IChatList[], selected: IChatList }) {
 
     const router = useRouter()
     const [search, setSearch] = useState("")
     const [show, setShow] = useState(false)
+    const query = useSearchParams();
+    const first = query?.get('first');
 
     const clickHandler = (item: IChatList) => {
-        router.push(`/message?id=${item?._id}`)
-        setSelected(item)
+        router.push(`/message?id=${item?._id}`) 
     }
 
     return (
@@ -26,10 +27,7 @@ export default function ChatSidebar({ chat, selected, setSelected }: { chat: ICh
                             <div className=" flex gap-3 items-center " >
                                 <button onClick={()=> setShow(true)} >
                                     <RiSearch2Line size={"21px"} />
-                                </button>
-                                {/* <button>
-                                <RiFilter2Line size={"21px"} />
-                            </button> */}
+                                </button> 
                             </div>
                         </div>
                     )}
@@ -43,7 +41,10 @@ export default function ChatSidebar({ chat, selected, setSelected }: { chat: ICh
                     )}
                 </div>
                 <div className=" w-full flex-1 flex p-6 flex-col gap-2 " >
-                    {chat?.map((item, index) => {
+                    {(selected && first) && (
+                        <UserChatCard item={selected} selected={selected} />
+                    )}
+                    {chat?.filter((item) => first ? item?._id !== selected?._id : item )?.map((item, index) => {
                         return (
                             <button key={index} onClick={() => clickHandler(item)} >
                                 <UserChatCard item={item} selected={selected} />

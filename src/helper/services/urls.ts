@@ -14,6 +14,7 @@ export const URLS = {
     REVIEWBYBUSINESSID: (item: string) => `/review/business/${item}`,
     ADDRESSBYID: (item: string) => `/address/${item}`,
     CHATLIST: (item: string) => `/messaging/chats/user/${item}`,
+    CHATLISTBYID: (item: string) => `/messaging/chats/${item}`,
     CHATDELETE: (item: string) => `/messaging/chats/${item}`,
     CHATMESSAGES: (item: string) => `/messaging/chats/${item}/messages`,
     BOOKING: "/booking",
