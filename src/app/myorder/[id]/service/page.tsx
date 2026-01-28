@@ -23,9 +23,7 @@ export default function BookedServicesPage() {
 
     const { data, isLoading } = useFetchData<IBookingDetail>({
         endpoint: `/booking/${id}`, name: ["business", id]
-    })
-
-    console.log(data);
+    }) 
 
 
     return (
@@ -95,7 +93,7 @@ export default function BookedServicesPage() {
                                     </div>
 
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b " >
-                                        <UserCard item={data?.user as IUserDetail} showDetail />
+                                        <UserCard item={data?.service?.business?.creator as IUserDetail} showDetail />
                                     </div>
                                 </div>
                                 <div className=" lg:max-w-[500px] w-full flex flex-col gap-3 " >

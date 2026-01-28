@@ -11,7 +11,7 @@ export default function SignupPage() {
 
     return (
         <FormikProvider value={formik} >
-            <form onSubmit={formik.handleSubmit} className=" w-full max-w-[435px] flex flex-col items-center gap-6 " >
+            <form onSubmit={formik.handleSubmit} className=" w-full lg:w-[350px] flex flex-col items-center gap-6 " >
                 <div className=" w-fit flex-col flex gap-0.5 " >
                     <p className=" text-2xl font-medium " >Sigup to Everything Beauty</p>
                     <p className=" text-secondary text-sm w-[300px] text-center ">Find top stylists. Book with ease. Create your account to get started.</p>

@@ -2,7 +2,7 @@
 import { Input, Textarea } from "@heroui/input"
 import React from "react"
 import { useFormikContext, getIn, FormikValues } from "formik"
-import { allowOnlyAlphaNumeric, allowOnlyAlphaNumericNoSpace } from "@/helper/utils/inputfilter"
+import { allowOnlyAlphaNumericNoSpace } from "@/helper/utils/inputfilter"
 
 interface IProps {
   name: string
@@ -41,33 +41,24 @@ export default function CustomInput({
   endContent,
   notform
 }: IProps) {
-  // const { values, errors, touched, setFieldValue } =
-  //   useFormikContext<FormikValues>()
-
-
-
+  
   // ---- Handle Formik Mode ----
-  let formik: any = {}
-  if (!notform) {
-    formik = useFormikContext<FormikValues>()
-  }
+  const formik = !notform
+  ? useFormikContext<FormikValues>()
+  : null
 
-  const value = notform ? localValue : getIn(formik.values, name)
-  const error = notform ? undefined : getIn(formik.errors, name)
-  const isTouched = notform ? false : getIn(formik.touched, name)
+  const value = notform ? localValue : getIn(formik?.values, name)
+  const error = notform ? undefined : getIn(formik?.errors, name)
+  const isTouched = notform ? false : getIn(formik?.touched, name)
 
-  const changeHandler = (val: string) => {
-
-    console.log(val);
-    console.log(type);
-    
-
+  const changeHandler = (val: string) => { 
+     
     const sanitizedValue =
       type === "number" ? val : 
       type === "email" ? val : 
       name === "firstName" || name === "lastName" ? allowOnlyAlphaNumericNoSpace(val) :
       textarea ? val 
-        : allowOnlyAlphaNumeric(val)
+        : val
 
     if (notform) {
       setLocalValue?.(sanitizedValue)
@@ -75,9 +66,9 @@ export default function CustomInput({
     }
 
     if (type === "number") {
-      formik.setFieldValue(name, Number(sanitizedValue))
+      formik?.setFieldValue(name, Number(sanitizedValue))
     } else {
-      formik.setFieldValue(name, sanitizedValue)
+      formik?.setFieldValue(name, sanitizedValue)
     }
   }
 

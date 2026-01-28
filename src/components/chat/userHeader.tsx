@@ -8,12 +8,15 @@ import { CustomButton } from "../custom";
 import { useState } from "react";
 import { ModalLayout } from "../shared";
 import useMessage from "@/hooks/useMessage";
+import { userAtom } from "@/store/user";
+import { useAtom } from "jotai";
 
 
 export default function UserHeader(
     { selected }: { selected: IChatList }
 ) {
 
+    const [user] = useAtom(userAtom)
     const [show, setShow] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
 
@@ -26,19 +29,35 @@ export default function UserHeader(
 
     return (
         <div className=" w-full h-[72px] sticky top-0 flex justify-between px-6 border-b items-center bg-white " >
-            <div className=" flex items-center gap-2 " >
-                <div className=" w-10 h-10 rounded-full bg-gray-300 " >
-                    <Avatar src={selected?.recipient?.profilePicture} name={selected?.recipient?.firstName} />
+            {user?._id !== selected?.recipient?._id ? (
+                <div className=" flex items-center gap-2 " >
+                    <div className=" w-10 h-10 rounded-full bg-gray-300 " >
+                        <Avatar src={selected?.recipient?.profilePicture} name={selected?.recipient?.firstName} />
+                    </div>
+                    <div className=" flex-col flex " >
+                        <p className=" text-xl font-medium capitalize " >
+                            {selected?.recipient?.firstName + " " + selected?.recipient?.lastName}
+                        </p>
+                        <p className=" text-xs text-secondary " >
+                            Last seen {moment(selected?.updatedAt + "").fromNow()}
+                        </p>
+                    </div>
                 </div>
-                <div className=" flex-col flex " >
-                    <p className=" text-xl font-medium capitalize " >
-                        {selected?.recipient?.firstName + " " + selected?.recipient?.lastName}
-                    </p>
-                    <p className=" text-xs text-secondary " >
-                        Last seen {moment(selected?.updatedAt + "").fromNow()}
-                    </p>
+            ): (
+                <div className=" flex items-center gap-2 " >
+                    <div className=" w-10 h-10 rounded-full bg-gray-300 " >
+                        <Avatar src={selected?.sender?.profilePicture} name={selected?.sender?.firstName} />
+                    </div>
+                    <div className=" flex-col flex " >
+                        <p className=" text-xl font-medium capitalize " >
+                            {selected?.sender?.firstName + " " + selected?.sender?.lastName}
+                        </p>
+                        <p className=" text-xs text-secondary " >
+                            Last seen {moment(selected?.updatedAt + "").fromNow()}
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <Popover isOpen={show} onOpenChange={setShow} showArrow backdrop={"opaque"} offset={10} placement="bottom">
                 <PopoverTrigger>
@@ -64,8 +83,8 @@ export default function UserHeader(
                         <p className=" text-sm leading-tight max-w-[80%] " >This will permanently delete the chat. Are you sure you want to continue?</p>
                     </div>
                     <div className=" w-full flex flex-col mt-3 gap-2 " >
-                        <CustomButton isLoading={isLoading} onClick={()=> deleteChatMutation.mutate(selected?._id)} variant="customDanger" height="40px" >Delete Chat</CustomButton>
-                        <CustomButton onClick={()=> setIsOpen(false)} variant="outline" height="40px" >Cancel</CustomButton>
+                        <CustomButton isLoading={isLoading} onClick={() => deleteChatMutation.mutate(selected?._id)} variant="customDanger" height="40px" >Delete Chat</CustomButton>
+                        <CustomButton onClick={() => setIsOpen(false)} variant="outline" height="40px" >Cancel</CustomButton>
                     </div>
                 </div>
             </ModalLayout>
