@@ -10,9 +10,9 @@ export default function MessageCard(
     return (
         <div className=" w-full flex flex-col gap-4 " >
             {showdate && (
-                <p className=" text-center " >{dateFormat(item?.createdAt)}</p>
+                <p className=" text-center lg:text-base text-sm " >{dateFormat(item?.createdAt)}</p>
             )}
-            <div className={` max-w-[70%]  min-w-[20%] ${self ? " bg-brand rounded-tr-none ml-auto text-white " : " bg-gray-300 rounded-tl-none mr-auto "} flex gap-2 rounded-2xl p-4 `} >
+            <div className={` max-w-[70%] min-w-[40%] lg:min-w-[20%] ${self ? " bg-brand rounded-tr-none ml-auto text-white " : " bg-gray-300 rounded-tl-none mr-auto "} flex gap-2 rounded-2xl p-3 lg:p-4 `} >
                 {!self && (
                     <div className=" w-fit h-fit rounded-full bg-gray-300 " >
                         <Avatar src={item?.sender?.profilePicture} name={item?.sender?.firstName} size="sm" />

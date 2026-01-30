@@ -2,18 +2,17 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { IoArrowBackOutline } from "react-icons/io5";
 import { RiCalendar2Line } from "react-icons/ri";
-import { IoIosCheckmarkCircle } from "react-icons/io";
-import { Textarea } from "@heroui/input";
-import { CustomButton, CustomImage } from "@/components/custom";
-import { IBusinessDetails, IProductDetail, IServiceDetail } from "@/helper/model/business";
+import { IoIosCheckmarkCircle } from "react-icons/io"; 
+import { CustomImage } from "@/components/custom";
+import { IBusinessDetails, IProductDetail } from "@/helper/model/business";
 import { useFetchData } from "@/hooks/useFetchData";
-import { dateFormatMonthAndYear, dateTimeFormat } from "@/helper/utils/dateFormat";
+import { dateFormatMonthAndYear } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { LoadingLayout } from "@/components/shared";
-import useBooking from "@/hooks/useBooking";
+import { LoadingLayout, PaymentBtn } from "@/components/shared"; 
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { URLS } from "@/helper/services/urls";
+import { IUserDetail } from "@/helper/model/user";
 
 export default function OrderPage() {
 
@@ -27,7 +26,7 @@ export default function OrderPage() {
     const color = query?.get('color') as string;
     const [user] = useAtom(userAtom)
 
-    const { orderMutation, isLoading: loadingBooking } = useBooking()
+    // const { orderMutation, isLoading: loadingBooking } = useBooking()
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
         endpoint: `/business/${id}`, name: ["business"]
@@ -35,19 +34,7 @@ export default function OrderPage() {
 
     const { data: product, isLoading: loading } = useFetchData<IProductDetail>({
         endpoint: URLS.PRODUCTBYID(slug), name: ["product"]
-    })
-
-    const handleClick = () => {
-        orderMutation.mutate({
-            userId: user?._id as string,
-            businessId: id,
-            productId: slug,
-            quantity: Number(qty),
-            totalPrice: product?.price ?? 0,
-            paymentStatus: "pending",
-            status: "PROCESSING"
-        })
-    }
+    }) 
 
     return (
         <LoadingLayout loading={loading || isLoading} >
@@ -128,9 +115,10 @@ export default function OrderPage() {
                             <p className=" text-sm " >Cancellation policy</p>
                             <p className=" text-xs text-secondary " >Free cancellation up until 4 Apr . Cancel before check in on 10 Apr for a 50% refund. No refunds </p>
                         </div>
-                        <div className=" w-full lg:w-[300px] " >
+                        {/* <div className=" w-full lg:w-[300px] " >
                             <CustomButton fullWidth onClick={handleClick} isLoading={loadingBooking} >Pay</CustomButton>
-                        </div>
+                        </div> */}
+                        <PaymentBtn type={"product"} id={slug} amount={product?.price as number} user={user as IUserDetail} businessID={id} qty={Number(qty)} />
                     </div>
                     <div className=" w-full lg:w-fit " >
                         <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 " >

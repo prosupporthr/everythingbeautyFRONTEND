@@ -33,7 +33,7 @@ export default function ChatArea({ chat, id, user, loading }: { chat: IChatList,
     }, [id])
 
     return (
-        <div className=" w-full h-full flex flex-1 " >
+        <div className={` ${id ? " flex " : " lg:flex hidden " } w-full h-full flex flex-1 `} >
             <LoadingLayout loading={isLoading || loading} >
                 <div className="w-full h-full ">
                     {!id && <EmptyState />}
