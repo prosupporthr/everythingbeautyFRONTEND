@@ -53,9 +53,7 @@ export default function CustomInput({
 
   const changeHandler = (val: string) => { 
      
-    const sanitizedValue =
-      type === "number" ? val : 
-      type === "email" ? val : 
+    const sanitizedValue = 
       name === "firstName" || name === "lastName" ? allowOnlyAlphaNumericNoSpace(val) :
       textarea ? val 
         : val

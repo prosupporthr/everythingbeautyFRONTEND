@@ -1,6 +1,7 @@
+import { MessageQuestion, ProfileDelete, SecuritySafe } from "iconsax-reactjs";
 import { BiMessageDetail } from "react-icons/bi";
 import { BsPersonCircle, BsShop } from "react-icons/bs";
-import { IoHeartOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 
 export const menulist = [
@@ -17,7 +18,12 @@ export const menulist = [
     {
         title: "Settings",
         icon: IoSettingsOutline,
-        link: ""
+        link: "/settings"
+    },
+    {
+        title: "Wallet",
+        icon: IoWalletOutline,
+        link: "/wallet"
     },
     {
         title: "Favourite",
@@ -75,5 +81,41 @@ export const dayOfTheWeek = [
     {
         value: 6,
         label: "Sat"
+    }
+]
+
+export const settingsList = [ 
+    {
+        label: "Security",
+        details: "Protection against intruders",
+        icon: SecuritySafe,
+        iconcolor: "#34C759",
+        link: "/settings/security"
+    },
+    {
+        label: "Get Help",
+        details: "Get help from support team",
+        icon: MessageQuestion,
+        iconcolor: "#000000",
+        link: "/settings/help"
+    },
+    {
+        label: "Delete Account",
+        details: "Permantly Remove your account",
+        icon: ProfileDelete,
+        iconcolor: "#FF383C"
+    }
+]
+
+
+
+export const securityList = [ 
+    {
+        label: "Change Pin",
+        details: "Protection against intruders", 
+    },
+    {
+        label: "Get Help",
+        details: "Get help from support team", 
     }
 ]

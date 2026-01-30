@@ -4,15 +4,15 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { RiCalendar2Line } from "react-icons/ri";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Textarea } from "@heroui/input";
-import { CustomButton, CustomImage } from "@/components/custom";
+import { CustomImage } from "@/components/custom";
 import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
 import { useFetchData } from "@/hooks/useFetchData";
 import { dateFormatMonthAndYear, dateTimeFormat } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { LoadingLayout } from "@/components/shared";
-import useBooking from "@/hooks/useBooking";
+import { LoadingLayout, PaymentBtn } from "@/components/shared"; 
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
+import { IUserDetail } from "@/helper/model/user";
 
 export default function BookingPage() {
 
@@ -25,7 +25,7 @@ export default function BookingPage() {
     const date = query?.get('date') as string;
     const [user] = useAtom(userAtom)
 
-    const { bookingMutation, isLoading: loadingBooking } = useBooking()
+    // const { bookingMutation, isLoading: loadingBooking } = useBooking()
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
         endpoint: `/business/${id}`, name: ["business"]
@@ -35,15 +35,15 @@ export default function BookingPage() {
         endpoint: `/service/${slug}`, name: ["service"]
     })
 
-    const handleClick = () => {
-        bookingMutation.mutate({
-            serviceId: slug,
-            businessId: id,
-            userId: user?._id as string,
-            totalPrice: services?.hourlyRate as number,
-            bookingDate: date
-        })
-    }
+    // const handleClick = () => {
+    //     bookingMutation.mutate({
+    //         serviceId: slug,
+    //         businessId: id,
+    //         userId: user?._id as string,
+    //         totalPrice: services?.hourlyRate as number,
+    //         bookingDate: date
+    //     })
+    // }
 
     return (
         <LoadingLayout loading={loading || isLoading} >
@@ -122,9 +122,10 @@ export default function BookingPage() {
                             <p className=" text-sm " >Cancellation policy</p>
                             <p className=" text-xs text-secondary " >Free cancellation up until 4 Apr . Cancel before check in on 10 Apr for a 50% refund. No refunds </p>
                         </div>
-                        <div className=" w-full lg:w-[300px] " >
+                        {/* <div className=" w-full lg:w-[300px] " >
                             <CustomButton fullWidth onClick={handleClick} isLoading={loadingBooking} >Pay</CustomButton>
-                        </div>
+                        </div> */}
+                        <PaymentBtn type={"booking"} id={slug} amount={services?.hourlyRate as number} user={user as IUserDetail} businessID={id} bookingDate={date} />
                     </div>
                     <div className=" w-full lg:w-fit " >
                         <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 " >

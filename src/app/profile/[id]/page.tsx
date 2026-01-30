@@ -19,6 +19,7 @@ export default function ProfilePage() {
     const router = useRouter()
 
     const id = param.id as string;
+    
     // const { data, isLoading } = useUserStore();
     const { data, isLoading } = useFetchData<IUserDetail>({
         endpoint: `/user/${id}`, name: ["user", id]
