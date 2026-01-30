@@ -39,7 +39,6 @@ export default function Navbar() {
     const [user, setUser] = useAtom(userAtom)
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating()
 
-
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(data?._id as string), name: ["review"],
         enable: data?._id ? true : false
@@ -73,7 +72,7 @@ export default function Navbar() {
     
 
     useEffect(()=> {
-        if(review[0]?.business?._id && data?._id && !showreview){
+        if(review[0]?.business?._id && data?._id && !showreview && pathname === "/"){
             formik.setFieldValue("businessId", review[0]?.business?._id)
             formik.setFieldValue("userId", data?._id)
 

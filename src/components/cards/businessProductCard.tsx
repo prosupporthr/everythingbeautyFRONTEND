@@ -8,7 +8,7 @@ import { CustomImage } from "../custom";
 import { DeleteModal } from "../modals";
 import { formatNumber } from "@/helper/utils/numberFormat";
 
-export default function BusinessServiceCard(
+export default function BusinessProductCard(
     { item, isProfile = true }: { item: IProductDetail, isProfile?: boolean }
 ) {
 
@@ -59,7 +59,7 @@ export default function BusinessServiceCard(
                     <p className=" text-lg capitalize " >{item?.name}</p>
                     <p>${item?.price}</p>
                 </div>
-                <p className=" text-secondary text-sm " >{formatNumber(Number(item?.quantity), "")} Remaining</p>
+                <p className=" text-secondary text-sm " >{(Number(item?.quantity) > 0) ? formatNumber(Number(item?.quantity), "") : "Sold Out"} Remaining</p>
             </div>
             <DeleteModal isOpen={isOpen} onClose={setIsOpen} type={"Store"} id={item?._id} name={item?.name} />
         </div>

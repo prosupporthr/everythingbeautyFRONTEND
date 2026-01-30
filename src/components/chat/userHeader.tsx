@@ -10,6 +10,10 @@ import { ModalLayout } from "../shared";
 import useMessage from "@/hooks/useMessage";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
+import { useRouter, useSearchParams } from "next/navigation";
+import { BiArrowBack } from "react-icons/bi";
+import { textLimit } from "@/helper/utils/textlimit";
+import { IoChevronBack } from "react-icons/io5";
 
 
 export default function UserHeader(
@@ -18,7 +22,9 @@ export default function UserHeader(
 
     const [user] = useAtom(userAtom)
     const [show, setShow] = useState(false)
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false) 
+
+    const router = useRouter()
 
     const { deleteChatMutation, isLoading } = useMessage()
 
@@ -28,15 +34,18 @@ export default function UserHeader(
     }
 
     return (
-        <div className=" w-full h-[72px] sticky top-0 flex justify-between px-6 border-b items-center bg-white " >
+        <div className=" w-full h-[72px] sticky top-0 flex justify-between px-4 lg:px-6 border-b items-center bg-white " >
             {user?._id !== selected?.recipient?._id ? (
                 <div className=" flex items-center gap-2 " >
-                    <div className=" w-10 h-10 rounded-full bg-gray-300 " >
+                    <button className=" lg:hidden " onClick={()=> router.back()} >
+                        <IoChevronBack size={"20px"} />
+                    </button>
+                    <div className=" w-fit h-fit rounded-full bg-gray-300 " >
                         <Avatar src={selected?.recipient?.profilePicture} name={selected?.recipient?.firstName} />
                     </div>
                     <div className=" flex-col flex " >
-                        <p className=" text-xl font-medium capitalize " >
-                            {selected?.recipient?.firstName + " " + selected?.recipient?.lastName}
+                        <p className=" lg:text-xl font-medium capitalize " >
+                            {textLimit(selected?.recipient?.firstName + " " + selected?.recipient?.lastName, 20)}
                         </p>
                         <p className=" text-xs text-secondary " >
                             Last seen {moment(selected?.updatedAt + "").fromNow()}

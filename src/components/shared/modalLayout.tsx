@@ -31,6 +31,7 @@ export default function CustomModal({
       isOpen={isOpen}
       placement="center"
       size={size}
+      backdrop="blur"
       onClose={onClose}
       hideCloseButton={!showCloseIcon} // ✅ toggle close icon
     >

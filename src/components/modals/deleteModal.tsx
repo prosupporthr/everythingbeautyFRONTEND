@@ -13,7 +13,7 @@ export default function DeleteModal({
 }: {
   isOpen: boolean;
   onClose: (by: boolean) => void;
-  type: "Store" | "Service" | "Address" | "Bookmark";
+  type: "Store" | "Service" | "Address" | "Bookmark" | "user";
   id: string;
   name: string;
 }) {

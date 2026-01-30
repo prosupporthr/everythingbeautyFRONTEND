@@ -108,6 +108,7 @@ export default function SaleProductPage() {
                     {qty}
                     <button
                         onClick={() => setQty(qty + 1)}
+                        disabled={qty === Number(data?.quantity) ? true : false}
                         className=" w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center "
                     >
                         <RiAddFill />
@@ -118,7 +119,7 @@ export default function SaleProductPage() {
                         onClick={handleClick}
                         isDisabled={qty > 0 ? false : true}
                     >
-                        Check out
+                        {(Number(data?.quantity) > 0) ? "Check out" : "Sold out"}
                     </CustomButton>
                 )}
                 {data?.colors[0]?.label && (
@@ -126,7 +127,7 @@ export default function SaleProductPage() {
                         onClick={handleClick}
                         isDisabled={qty > 0 && color.label ? false : true}
                     >
-                        Check out
+                        {(Number(data?.quantity) > 0) ? "Check out" : "Sold out"}
                     </CustomButton>
                 )}
                 <div className=" w-full flex justify-center border-b pb-3 font-medium ">
@@ -263,7 +264,7 @@ export default function SaleProductPage() {
                                     </span>{" "}
                                     •{" "} */}
                                     Ratings •{" "}
-                                    <span className=" text-brand ">{data?.quantity} Avaliable</span>
+                                    <span className=" text-brand ">{(Number(data?.quantity) > 0)? data?.quantity+" Avaliable" : "Sold out"} </span>
                                 </p>
                             </div>
                             <p className=" font-semibold text-3xl ">
