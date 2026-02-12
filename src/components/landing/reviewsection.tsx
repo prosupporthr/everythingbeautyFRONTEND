@@ -15,10 +15,7 @@ export default function ReviewSection(
 
     const { data = [], isLoading } = useFetchData<IRatingDetails[]>({
         endpoint: URLS.REVIEWBYBUSINESSID(businessId as string), name: ["reviewbusiness"], enable: businessId ? true : false
-    })
-
-    console.log(data);
-    
+    }) 
  
     return (
         <div className=" w-full flex flex-col gap-3 " >

@@ -6,6 +6,8 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+
+
     return (
         <div className=" w-full flex-1 relative flex flex-col py-6 px-6 lg:px-8 items-center  " >
             <div className=" max-w-[1329px] w-full h-full flex flex-col gap-4 " >

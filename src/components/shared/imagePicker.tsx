@@ -1,5 +1,5 @@
 "use client";
-import { convertAndCompressToPng } from "@/helper/services/convertImage";
+import { convertAndCompressToJpg } from "@/helper/services/convertImage";
 import { addToast, Avatar, Spinner } from "@heroui/react";
 import { useEffect, useRef, useState } from "react";
 import { RiCameraAiLine, RiCloseLine, RiImage2Line } from "react-icons/ri";
@@ -45,7 +45,7 @@ export default function ImagePicker({
         }
 
         try {
-            const convertedFile = await convertAndCompressToPng(
+            const convertedFile = await convertAndCompressToJpg(
                 file,
                 800,
                 0.9,

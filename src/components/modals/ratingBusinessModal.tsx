@@ -1,11 +1,12 @@
-import { IRating, IRatingForm } from "@/helper/model/business";
-import { ModalLayout, StarRating } from "../shared";
+"use client"
+import { IBusinessDetails, IRatingForm } from "@/helper/model/business";
+import { ModalLayout } from "../shared";
 import { FormikProps, FormikProvider } from "formik";
 import { CustomButton, CustomImage, CustomInput, CustomStarRating } from "../custom";
 
 
 export default function RatingBusinessModal(
-    { open, setOpen, data, formik, loading, tab }: { tab: boolean, open: boolean, setOpen: (by: boolean) => void, data: IRating, formik: FormikProps<IRatingForm>, loading: boolean }
+    { open, setOpen, data, formik, loading, tab }: { tab: boolean, open: boolean, setOpen: (by: boolean) => void, data: IBusinessDetails, formik: FormikProps<IRatingForm>, loading: boolean }
 ) {
 
     return (
@@ -15,12 +16,12 @@ export default function RatingBusinessModal(
                     <form onSubmit={formik.handleSubmit} className=" w-full flex-col flex gap-4 items-center " >
                         <div className=" w-full h-[200px] rounded-2xl bg-gray-400 " >
 
-                        <CustomImage alt={(data?.business?.name) as string} style={{
+                        <CustomImage alt={(data?.name) as string} style={{
                                 borderRadius: "16px"
-                            }} fillContainer src={(data?.business?.pictures[0]) as string} />
+                            }} fillContainer src={(data?.pictures[0]) as string} />
                         </div>
                         <div className=" w-full flex flex-col items-center " >
-                            <p className=" font-bold text-lg " >{data?.business?.name}</p>
+                            <p className=" font-bold text-lg " >{data?.name}</p>
                             <p className=" text-sm " >Business</p>
                         </div>
                         <p className=" font-bold text-lg ">⭐ Rate Your Experience</p>

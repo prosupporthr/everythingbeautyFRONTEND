@@ -11,6 +11,7 @@ import {
 import type { StripeElementsOptions } from "@stripe/stripe-js";
 import { CustomButton } from "../custom";
 import { addToast } from "@heroui/toast"; 
+import { usePathname } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Stripe                                   */
@@ -48,6 +49,8 @@ function PaymentForm({ intent, id, linkID, type }: PaymentFormProps) {
     const elements = useElements();
     const [isLoading, setIsLoading] = useState(false);
 
+    const pathname = usePathname()
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -71,7 +74,7 @@ function PaymentForm({ intent, id, linkID, type }: PaymentFormProps) {
                 elements,
                 clientSecret: intent,
                 confirmParams: {
-                    return_url: `${window.location.origin}/payment-success?id=${id}&linkID=${linkID}&type=${type}`,
+                    return_url: `${window.location.origin}/payment-success?id=${id}&linkID=${linkID}&type=${pathname === "/business" ? "firstpayment" : type}`,
                 },
             });
 
