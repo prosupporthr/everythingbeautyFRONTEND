@@ -63,6 +63,7 @@
     "format-number": "^3.0.0",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.24",
+    "heic2any": "^0.0.4",
     "iconsax-reactjs": "^0.0.8",
     "intl-messageformat": "10.7.16",
     "jotai": "^2.15.1",

@@ -1,41 +1,39 @@
-"use client"
-// import heic2any from "heic2any";
 
-export const convertAndCompressToPng = async (
+
+export const convertAndCompressToJpg = async (
   file: File,
-  maxSizeKB = 800, 
-  quality = 0.9,
-  onProgress: (meg: string) => void // 👈 progress callback
+  maxSizeKB = 800,
+  quality = 0.85, // JPEG quality (0–1)
+  onProgress?: (msg: string) => void
 ): Promise<File> => {
-  const workingFile = file;
+  let workingFile = file;
+
+  const heic2any = (await import("heic2any")).default;
 
   onProgress?.("Checking file type...");
 
-  console.log(quality);
-  
+  // 🔹 Step 1: Convert HEIC/HEIF → JPEG blob first (browser can't decode HEIC)
+  if (
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    file.name.toLowerCase().endsWith(".heic") ||
+    file.name.toLowerCase().endsWith(".heif")
+  ) {
+    onProgress?.("Converting HEIC → JPEG...");
+    const convertedBlob = (await heic2any({
+      blob: file,
+      toType: "image/jpeg",
+      quality,
+    })) as Blob;
 
-  // 🔹 Step 1: Convert HEIC → JPEG first
-  // if (
-  //   file.type === "image/heic" ||
-  //   file.type === "image/heif" ||
-  //   file.name.toLowerCase().endsWith(".heic") ||
-  //   file.name.toLowerCase().endsWith(".heif")
-  // ) {
-  //   onProgress?.("Converting HEIC → JPEG...");
-  //   const convertedBlob = (await heic2any({
-  //     blob: file,
-  //     toType: "image/jpeg", // browsers decode JPEG fine
-  //     quality,
-  //   })) as Blob;
+    workingFile = new File(
+      [convertedBlob],
+      file.name.replace(/\.\w+$/, ".jpg"),
+      { type: "image/jpeg" }
+    );
+  }
 
-  //   workingFile = new File(
-  //     [convertedBlob],
-  //     file.name.replace(/\.\w+$/, ".jpg"),
-  //     { type: "image/jpeg" }
-  //   );
-  // }
-
-  onProgress?.("Compressing image...");
+  onProgress?.("Processing image...");
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -43,51 +41,57 @@ export const convertAndCompressToPng = async (
     reader.onload = (e) => {
       const img = new Image();
       img.onload = async () => {
-        const { width, height } = img;
+        let { width, height } = img;
 
-        let scale = 1;
-        let pngFile: File | null = null;
+        // 🔹 Step 2: Resize large images
+        if (width > 1920 || height > 1080) {
+          const ratio = Math.min(1920 / width, 1080 / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject("Canvas not supported");
+
+        // 🔹 Fill white background for transparent images (PNG/WebP)
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let jpgFile: File | null = null;
+        let currentQuality = quality;
 
         while (true) {
-          const targetWidth = Math.round(width * scale);
-          const targetHeight = Math.round(height * scale);
-
-          const canvas = document.createElement("canvas");
-          canvas.width = targetWidth;
-          canvas.height = targetHeight;
-
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return reject("Canvas not supported");
-
-          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-          // ✅ Always PNG output
           const blob: Blob | null = await new Promise((res) =>
-            canvas.toBlob((b) => res(b), "image/png")
+            canvas.toBlob((b) => res(b), "image/jpeg", currentQuality)
           );
 
-          if (!blob) return reject("Failed to create PNG");
+          if (!blob) return reject("Failed to create JPEG");
 
-          pngFile = new File(
+          jpgFile = new File(
             [blob],
-            workingFile.name.replace(/\.\w+$/, ".png"),
-            { type: "image/png" }
+            file.name.replace(/\.\w+$/, ".jpg"),
+            { type: "image/jpeg" }
           );
 
-          const sizeKB = pngFile.size / 1024;
+          const sizeKB = jpgFile.size / 1024;
           onProgress?.(`Compressing... ${Math.round(sizeKB)} KB`);
 
-          // Stop if size is ok OR if scale too small
-          if (sizeKB <= maxSizeKB || scale <= 0.3) {
+          // 🔹 Stop when size is okay or quality too low
+          if (sizeKB <= maxSizeKB || currentQuality <= 0.3) {
             onProgress?.("");
             break;
           }
 
-          // Only way to shrink PNG is resizing (quality param doesn’t apply)
-          scale *= 0.9;
+          currentQuality -= 0.05;
         }
 
-        resolve(pngFile!);
+        resolve(jpgFile!);
       };
 
       if (e.target?.result) {
@@ -99,3 +103,106 @@ export const convertAndCompressToPng = async (
     reader.readAsDataURL(workingFile);
   });
 };
+
+
+// import heic2any from "heic2any";
+
+// export const convertAndCompressToPng = async (
+//   file: File,
+//   maxSizeKB = 800, 
+//   quality = 0.85, // JPEG quality (0–1)
+//   onProgress?: (msg: string) => void
+// ): Promise<File> => {
+//   let workingFile = file;
+
+//   onProgress?.("Checking file type...");
+
+//   // 🔹 Step 1: Convert HEIC → JPEG first
+//   if (
+//     file.type === "image/heic" ||
+//     file.type === "image/heif" ||
+//     file.name.toLowerCase().endsWith(".heic") ||
+//     file.name.toLowerCase().endsWith(".heif")
+//   ) {
+//     onProgress?.("Converting HEIC → JPEG...");
+//     const convertedBlob = (await heic2any({
+//       blob: file,
+//       toType: "image/jpeg",
+//       quality,
+//     })) as Blob;
+
+//     workingFile = new File(
+//       [convertedBlob],
+//       file.name.replace(/\.\w+$/, ".jpg"),
+//       { type: "image/jpeg" }
+//     );
+//   }
+
+//   onProgress?.("Compressing image...");
+
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+
+//     reader.onload = (e) => {
+//       const img = new Image();
+//       img.onload = async () => {
+//         let { width, height } = img;
+
+//         // Scale down if too large
+//         if (width > 1920 || height > 1080) {
+//           const ratio = Math.min(1920 / width, 1080 / height);
+//           width = width * ratio;
+//           height = height * ratio;
+//         }
+
+//         const canvas = document.createElement("canvas");
+//         canvas.width = width;
+//         canvas.height = height;
+
+//         const ctx = canvas.getContext("2d");
+//         if (!ctx) return reject("Canvas not supported");
+
+//         ctx.drawImage(img, 0, 0, width, height);
+
+//         let jpegFile: File | null = null;
+//         let currentQuality = quality;
+
+//         while (true) {
+//           // ✅ Use JPEG output
+//           const blob: Blob | null = await new Promise((res) =>
+//             canvas.toBlob((b) => res(b), "image/jpeg", currentQuality)
+//           );
+
+//           if (!blob) return reject("Failed to create JPEG");
+
+//           jpegFile = new File(
+//             [blob],
+//             workingFile.name.replace(/\.\w+$/, ".jpg"),
+//             { type: "image/jpeg" }
+//           );
+
+//           const sizeKB = jpegFile.size / 1024;
+//           onProgress?.(`Compressing... ${Math.round(sizeKB)} KB`);
+
+//           // Stop if size is within limit or quality too low
+//           if (sizeKB <= maxSizeKB || currentQuality <= 0.3) {
+//             onProgress?.("");
+//             break;
+//           }
+
+//           // Lower quality gradually
+//           currentQuality -= 0.05;
+//         }
+
+//         resolve(jpegFile!);
+//       };
+
+//       if (e.target?.result) {
+//         img.src = e.target.result as string;
+//       }
+//     };
+
+//     reader.onerror = () => reject("Error reading file");
+//     reader.readAsDataURL(workingFile);
+//   });
+// };

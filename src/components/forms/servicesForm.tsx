@@ -29,6 +29,11 @@ export default function ServicesForm(
                         <CustomInput name="name" label="Tell us what services you offering" />
                         <CustomInput textarea label="Describe your service to make it stand out" name="description" />
                         <CustomInput label="Price per Hour" name="hourlyRate" type="number" />
+                        <CustomInput name="initialDepositPercentage" label="Set Initial Deposit" hasBackIcon iconback={
+                            <div className=" font-bold text-sm " >
+                                %
+                            </div>
+                        } />
                         <div className=" w-full flex items-center justify-between " >
                             <p className=" font-medium " >Allowed Customers Review</p>
                             <Switch checked={formik.values.allowReview} color="success" onChange={(e) => formik.setFieldValue("allowReview", e.target.checked)} />

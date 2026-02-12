@@ -1,3 +1,4 @@
+"use client"
 import { handleError } from "@/helper/services/errorHandler"
 import httpService from "@/helper/services/httpService"
 import { addToast } from "@heroui/toast"
@@ -7,7 +8,7 @@ import { useUploadMutation } from "./useUpload"
 import { URLS } from "@/helper/services/urls"
 import { useState } from "react"
 import { IAddress, IUser } from "@/helper/model/auth" 
-import { profileSchema, userSchema } from "@/helper/services/validation"
+import { profileSchema } from "@/helper/services/validation"
 
 
 const useEditUser = () => {

@@ -19,7 +19,7 @@ export default function WalletPage() {
             <CustomInput type="number" label="Enter Amount" name="" notform localValue={value} setLocalValue={setValue} />
             {/* <CustomButton isDisabled={!value || Number(value) === 0 ? true : false} >Fund Wallet</CustomButton> */}
 
-            <PaymentBtn title="Fund Wallet" type={"wallet_top_up"} id={walletID} amount={Number(value)} user={user as IUserDetail} />
+            <PaymentBtn title="Fund Wallet" fullWidth type={"wallet_top_up"} id={walletID} amount={Number(value)} user={user as IUserDetail} />
         </div>
     );
 }

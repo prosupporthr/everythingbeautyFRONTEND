@@ -209,7 +209,8 @@ const useBusiness = (
             "openingTime": "",
             "closingTime": "",
             "chargeTiming": "",
-            "pictures": []
+            "pictures": [],
+            licenseNumber: ""
         },
         validationSchema: businessSchema,
         onSubmit: () => {
@@ -236,6 +237,8 @@ const useBusiness = (
             "description": "",
             "hourlyRate": "",
             "allowReview": false, 
+            initialDepositPercentage: "",
+            acceptsInitialDeposit: true
         },
         validationSchema: serviceSchema,
         onSubmit: (data) => {

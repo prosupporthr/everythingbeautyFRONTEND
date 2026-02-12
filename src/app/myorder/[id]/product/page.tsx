@@ -3,13 +3,15 @@
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useParams, useRouter } from "next/navigation";
 import { RiCalendar2Line } from "react-icons/ri";
-import { CustomImage } from "@/components/custom";
+import { CustomButton, CustomImage } from "@/components/custom";
 import { useFetchData } from "@/hooks/useFetchData";
-import { IOrderDetail } from "@/helper/model/business";
+import { IBusinessDetails, IOrderDetail } from "@/helper/model/business";
 import { LoadingLayout, UserCard } from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
+import { RatingBusinessModal } from "@/components/modals";
+import useRating from "@/hooks/useRating";
 
 export default function OrderedProductPage() {
     const router = useRouter();
@@ -22,7 +24,7 @@ export default function OrderedProductPage() {
         name: ["business", id],
     });
 
-    console.log(data);
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -156,6 +158,17 @@ export default function OrderedProductPage() {
                                             showDetail
                                         />
                                     </div>
+                                    
+                                    {data?.status === "APPROVED" && (
+                                        <div className=" lg:max-w-[300px] w-full ">
+                                            <CustomButton
+                                                onClick={() => setIsOpen(true)}
+                                                fullWidth
+                                            >
+                                                Rate Business
+                                            </CustomButton>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className=" max-w-[500px] w-full flex flex-col gap-3 ">
                                     <div className=" flex gap-2 items-center text-[#0CC23A]  ">
@@ -188,6 +201,15 @@ export default function OrderedProductPage() {
                     </div>
                 </div>
             </LoadingLayout>
+
+            <RatingBusinessModal
+                tab={tab}
+                open={isOpen}
+                setOpen={setIsOpen}
+                data={data?.business as IBusinessDetails}
+                formik={formik}
+                loading={loading}
+            />
         </div>
     );
 }

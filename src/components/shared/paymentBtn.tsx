@@ -17,7 +17,8 @@ interface IProps {
     qty?: number; 
     businessID?: string;
     bookingDate?: string;
-    title?: string
+    title?: string;
+    fullWidth?: true
 }
 
 export default function PaymentBtn({
@@ -28,7 +29,8 @@ export default function PaymentBtn({
     qty,
     businessID,
     bookingDate,
-    title
+    title,
+    fullWidth
 }: IProps) {
     const { orderMutation, isLoading, bookingMutation, intent, isOpen, setIsOpen, orderID, paymentID, transactionMutation } = useBooking({
         type,
@@ -55,7 +57,7 @@ export default function PaymentBtn({
                 totalPrice: amount ?? 0,
                 bookingDate: bookingDate as string
             });
-        } else if (type === "wallet_top_up") {
+        } else if (type === "wallet_top_up" || type === "monthly_subscription") {
             transactionMutation.mutate({
                 userId: user?._id,
                 amount: amount ?? 0,
@@ -69,7 +71,7 @@ export default function PaymentBtn({
     }; 
 
     return (
-        <div className=" w-full lg:w-[300px] ">
+        <div className={` w-full ${fullWidth ? "" : "lg:w-[300px]"} `}>
             <CustomButton
                 fullWidth
                 onClick={handleClick}
