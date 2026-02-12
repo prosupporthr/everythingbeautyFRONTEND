@@ -34,6 +34,8 @@ export default function BusinessService() {
                 hourlyRate: data.hourlyRate || 0,
                 allowReview: data.allowReview ?? false,
                 businessId: data.businessId || "",
+                acceptsInitialDeposit: data?.acceptsInitialDeposit,
+                initialDepositPercentage: data?.initialDepositPercentage
             });
         }
     }, [data]);

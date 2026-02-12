@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { HiMiniCheckBadge } from "react-icons/hi2";
 import { Spinner } from "@heroui/react";
 import { CustomButton } from "@/components/custom";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
 
 export default function PaymentSuccess() {
     const router = useRouter();
@@ -16,6 +18,7 @@ export default function PaymentSuccess() {
     const id = searchParams.get("id");
     const linkID = searchParams.get("linkID");
     const type = searchParams.get("type");
+    const [user] = useAtom(userAtom);
 
     const { verifyTransactionMutation } = useTransaction();
 
@@ -28,6 +31,10 @@ export default function PaymentSuccess() {
             router.replace(`/myorder/${linkID}/service`);
         } else if (type === "wallet_top_up") {
             router.replace(`/wallet`);
+        } else if (type === "monthly_subscription") {
+            router.replace(`/business/${user?.business?._id}/dashboard`);
+        } else if (type === "firstpayment") {
+            router.replace(`/business/create`);
         }
     };
 
@@ -58,7 +65,9 @@ export default function PaymentSuccess() {
                             />
                             <div className=" flex flex-col ">
                                 <h2 className="text-xl font-semibold">
-                                    Payment successful
+                                    {type === "wallet_top_up"
+                                        ? "Funding successful"
+                                        : "Payment successful"}
                                 </h2>
                                 <p className="text-sm text-gray-500 max-w-xs">
                                     Your payment has been confirmed

@@ -17,7 +17,6 @@ export default function BusinessProduct() {
     const param = useParams();
     const id = param.slug as string;
 
-
     const { data, isLoading: loading } = useFetchData<IProductDetail>({
         endpoint: `/product/${id}`, name: ["product", id as string]
     })

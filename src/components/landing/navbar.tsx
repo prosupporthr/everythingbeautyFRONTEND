@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { CustomImage, CustomButton } from "../custom";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -13,100 +13,145 @@ import { useUserStore } from "@/hooks/user";
 import { userAtom } from "@/store/user";
 import { useQueryClient } from "@tanstack/react-query";
 import useRating from "@/hooks/useRating";
-import { RatingBusinessModal } from "../modals";
+import { Notification, RatingBusinessModal } from "../modals";
 import { useFetchData } from "@/hooks/useFetchData";
-import { IRating } from "@/helper/model/business";
+import { IBusiness, IBusinessDetails, IRating } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
+import { RiNotification2Fill } from "react-icons/ri";
 
 export default function Navbar() {
-
-    const router = useRouter()
-    const pathname = usePathname()
+    const router = useRouter();
+    const pathname = usePathname();
     const param = useParams();
     const id = param.id;
-    const [show, setShow] = useState(false)
-    const queryClient = useQueryClient()
+    const [show, setShow] = useState(false);
+    const queryClient = useQueryClient();
 
-    const showreview =  
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("show")
-      : null; 
-     
-    const { data, isLoading, refetch } = useUserStore(); 
-    
+    const [showNotification, setShowNotification] = useState(false);
 
-    const [user, setUser] = useAtom(userAtom)
-    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating()
+    const showreview =
+        typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
+
+    const { data, isLoading, refetch } = useUserStore();
+
+    const [user, setUser] = useAtom(userAtom);
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     const { data: review = [] } = useFetchData<IRating[]>({
-        endpoint: URLS.REVIEWBYUSERID(data?._id as string), name: ["review"],
-        enable: data?._id ? true : false
-    })
+        endpoint: URLS.REVIEWBYUSERID(data?._id as string),
+        name: ["review"],
+        enable: data?._id ? true : false,
+    });
 
     useEffect(() => {
         if (data?._id) {
-            setUser(data)
-        } else if(data === null) {
-            router.push("/")
+            setUser(data);
+        } else if (data === null) {
+            router.push("/");
         }
-    }, [data])
+    }, [data]);
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
-            router.push(data?._id ? `/business/${data?.business?._id}/dashboard` : "/business")
-        } else if (item === "logout") { 
-            localStorage.clear() 
-            refetch()
-            router.push("/")
-            setUser(null)
-            queryClient.invalidateQueries({queryKey: ["user"]})
+            router.push(
+                data?._id
+                    ? `/business/${data?.business?._id}/dashboard`
+                    : "/business",
+            );
+        } else if (item === "logout") {
+            localStorage.clear();
+            refetch();
+            router.push("/");
+            setUser(null);
+            queryClient.invalidateQueries({ queryKey: ["user"] });
         }
-        setShow(false)
-    }
+        setShow(false);
+    };
 
     const HandleRouter = (item: string) => {
-        router.push(item)
-        setShow(false)
-    }  
-    
+        router.push(item);
+        setShow(false);
+    };
 
-    useEffect(()=> {
-        if(review[0]?.business?._id && data?._id && !showreview && pathname === "/"){
-            formik.setFieldValue("businessId", review[0]?.business?._id)
-            formik.setFieldValue("userId", data?._id)
+    useEffect(() => {
+        if (
+            review[0]?.business?._id &&
+            data?._id &&
+            !showreview &&
+            pathname === "/"
+        ) {
+            formik.setFieldValue("businessId", review[0]?.business?._id);
+            formik.setFieldValue("userId", data?._id);
 
-            setIsOpen(true)
-            sessionStorage.setItem("show", "true")
+            setIsOpen(true);
+            sessionStorage.setItem("show", "true");
         }
-    }, [review]) 
-    
+    }, [review]);
+
     return (
-        <div className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `} >
-            <div className={` w-full ${(pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`)) ? "hidden" : (pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`)) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `} >
-                <button onClick={() => router.push("/")} >
-                    <CustomImage nopopup src={"/images/logo.png"} alt="logo" width={92} height={43} />
+        <div
+            className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `}
+        >
+            <div
+                className={` w-full ${pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) ? "hidden" : pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `}
+            >
+                <button onClick={() => router.push("/")}>
+                    <CustomImage
+                        nopopup
+                        src={"/images/logo.png"}
+                        alt="logo"
+                        width={92}
+                        height={43}
+                    />
                 </button>
                 {!isLoading && (
-                    <div className=" flex gap-3 items-center " >
+                    <div className=" flex gap-3 items-center ">
                         {user?.business === null && (
-                            <div className=" w-[120px] " >
-                                <CustomButton onClick={() => router.push("/business")} fullWidth variant="outlinebrand" fontSize="12px" height="45px" className=" text-primary lg:flex hidden " >Create Business</CustomButton>
+                            <div className=" w-[120px] ">
+                                <CustomButton
+                                    onClick={() => router.push("/business")}
+                                    fullWidth
+                                    variant="outlinebrand"
+                                    fontSize="12px"
+                                    height="45px"
+                                    className=" text-primary lg:flex hidden "
+                                >
+                                    Create Business
+                                </CustomButton>
                             </div>
                         )}
 
-                        <Popover isOpen={show} onOpenChange={setShow} showArrow backdrop={"opaque"} offset={10} placement="top">
+                        <button onClick={() => setShowNotification(true)}>
+                            <RiNotification2Fill size={"25px"} />
+                        </button>
+
+                        <Popover
+                            isOpen={show}
+                            onOpenChange={setShow}
+                            showArrow
+                            backdrop={"opaque"}
+                            offset={10}
+                            placement="top"
+                        >
                             <PopoverTrigger>
-                                <div className={` z-50 bg-white h-[45px] text-xs ${user?.firstName ? " px-2 " : " px-5 "} rounded-[14px] lg:rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `} >
+                                <div
+                                    className={` z-50 bg-white h-[45px] text-xs ${user?.firstName ? " px-2 " : " px-5 "} rounded-[14px] lg:rounded-full flex items-center justify-center border border-[#E8E7ED] hover:bg-white text-primary cursor-pointer `}
+                                >
                                     {user?.firstName && (
-                                        <div className=" flex items-center gap-3 " >
-                                            <UserCard size="sm" item={user as IUserDetail} />
+                                        <div className=" flex items-center gap-3 ">
+                                            <UserCard
+                                                size="sm"
+                                                item={user as IUserDetail}
+                                            />
                                             <IoChevronDown size={"17px"} />
                                         </div>
                                     )}
                                     {!user?.firstName && (
-                                        <div className=" flex items-center gap-2 " >
-                                            <p className=" lg:flex hidden " >Menu</p>
+                                        <div className=" flex items-center gap-2 ">
+                                            <p className=" lg:flex hidden ">
+                                                Menu
+                                            </p>
                                             <RxHamburgerMenu size={"20px"} />
                                         </div>
                                     )}
@@ -115,74 +160,160 @@ export default function Navbar() {
 
                             <PopoverContent className="w-[227px]">
                                 {!user?.firstName && (
-                                    <div className=" w-full flex flex-col gap-1 " >
-                                        <div className=" py-3 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <CustomButton onClick={() => HandleRouter("/auth/signup")} height="40px" >Sign up</CustomButton>
-                                            <CustomButton onClick={() => HandleRouter("/auth")} variant="outline" height="40px" >Log in</CustomButton>
+                                    <div className=" w-full flex flex-col gap-1 ">
+                                        <div className=" py-3 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                            <CustomButton
+                                                onClick={() =>
+                                                    HandleRouter("/auth/signup")
+                                                }
+                                                height="40px"
+                                            >
+                                                Sign up
+                                            </CustomButton>
+                                            <CustomButton
+                                                onClick={() =>
+                                                    HandleRouter("/auth")
+                                                }
+                                                variant="outline"
+                                                height="40px"
+                                            >
+                                                Log in
+                                            </CustomButton>
                                         </div>
-                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >FAQs</button>
+                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium ">
+                                                FAQs
+                                            </button>
                                         </div>
-                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <button onClick={() => HandleRouter("/business")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Join as a stylist</button>
+                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                            <button
+                                                onClick={() =>
+                                                    HandleRouter("/business")
+                                                }
+                                                className=" h-[40px] flex w-full justify-center items-center text-sm font-medium "
+                                            >
+                                                Join as a stylist
+                                            </button>
                                         </div>
-                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Market Place</button>
+                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium ">
+                                                Market Place
+                                            </button>
                                         </div>
-                                        <div className=" py-1 flex flex-col gap-2 " >
-                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Help and Support</button>
+                                        <div className=" py-1 flex flex-col gap-2 ">
+                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium ">
+                                                Help and Support
+                                            </button>
                                         </div>
                                     </div>
                                 )}
 
                                 {user?.firstName && (
-                                    <div className=" w-full flex flex-col gap-1 " >
-                                        <div className=" py-2 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                            <button className=" h-[40px] flex w-full justify-center items-center text-xl font-bold capitalize " >{textLimit(data?.firstName + " " + data?.lastName, 20)}</button>
+                                    <div className=" w-full flex flex-col gap-1 ">
+                                        <div className=" py-2 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                            <button className=" h-[40px] flex w-full justify-center items-center text-xl font-bold capitalize ">
+                                                {textLimit(
+                                                    data?.firstName +
+                                                        " " +
+                                                        data?.lastName,
+                                                    20,
+                                                )}
+                                            </button>
                                         </div>
-                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 px-6 " >
+                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 px-6 ">
                                             {menulist.map((item, index) => {
                                                 if (item?.title === "Logout") {
                                                     return (
-                                                        <button onClick={() => handleClick("logout")} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
-                                                            <div className=" w-5 h-5  rounded-md " >
-                                                                <item.icon size={"20px"} />
+                                                        <button
+                                                            onClick={() =>
+                                                                handleClick(
+                                                                    "logout",
+                                                                )
+                                                            }
+                                                            key={index}
+                                                            className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium "
+                                                        >
+                                                            <div className=" w-5 h-5  rounded-md ">
+                                                                <item.icon
+                                                                    size={
+                                                                        "20px"
+                                                                    }
+                                                                />
                                                             </div>
                                                             {item?.title}
                                                         </button>
-                                                    )
+                                                    );
                                                 } else {
                                                     return (
-                                                        <button onClick={() => HandleRouter(item?.title === "My Profile" ? item?.link+"/"+data?._id :item?.link)} key={index} className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
-                                                            <div className=" w-5 h-5  rounded-md " >
-                                                                <item.icon size={"20px"} />
+                                                        <button
+                                                            onClick={() =>
+                                                                HandleRouter(
+                                                                    item?.title ===
+                                                                        "My Profile"
+                                                                        ? item?.link +
+                                                                              "/" +
+                                                                              data?._id
+                                                                        : item?.link,
+                                                                )
+                                                            }
+                                                            key={index}
+                                                            className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium "
+                                                        >
+                                                            <div className=" w-5 h-5  rounded-md ">
+                                                                <item.icon
+                                                                    size={
+                                                                        "20px"
+                                                                    }
+                                                                />
                                                             </div>
                                                             {item?.title}
                                                         </button>
-                                                    )
+                                                    );
                                                 }
                                             })}
-                                            <button className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium " >
+                                            <button className=" h-[40px] flex w-full gap-2 items-center text-sm font-medium ">
                                                 FAQs
                                             </button>
                                         </div>
                                         {user?.business?._id && (
-                                            <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 " >
-                                                <button onClick={() => handleClick("dashboard")} className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >{data?._id ? "Dashboard" : "Join as a stylist"}</button>
+                                            <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                                <button
+                                                    onClick={() =>
+                                                        handleClick("dashboard")
+                                                    }
+                                                    className=" h-[40px] flex w-full justify-center items-center text-sm font-medium "
+                                                >
+                                                    {data?._id
+                                                        ? "Dashboard"
+                                                        : "Join as a stylist"}
+                                                </button>
                                             </div>
                                         )}
-                                        <div className=" py-1 flex flex-col gap-2 " >
-                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium " >Help and Support</button>
+                                        <div className=" py-1 flex flex-col gap-2 ">
+                                            <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium ">
+                                                Help and Support
+                                            </button>
                                         </div>
                                     </div>
                                 )}
-
                             </PopoverContent>
                         </Popover>
                     </div>
                 )}
             </div>
-            <RatingBusinessModal tab={tab} open={isOpen} setOpen={setIsOpen} data={review[0]} formik={formik} loading={loading} />
+            <RatingBusinessModal
+                tab={tab}
+                open={isOpen}
+                setOpen={setIsOpen}
+                data={review[0]?.business}
+                formik={formik}
+                loading={loading}
+            />
+
+            <Notification
+                isOpen={showNotification}
+                onClose={setShowNotification}
+            />
         </div>
-    )
+    );
 }
