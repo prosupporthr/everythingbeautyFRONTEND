@@ -5,7 +5,10 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return <div className=" w-full h-full ">{children}
-    <PaymentExpired />
-    </div>;
+    return (
+        <div className=" w-full h-full ">
+            {children}
+            <PaymentExpired />
+        </div>
+    );
 }

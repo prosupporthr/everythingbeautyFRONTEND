@@ -31,7 +31,7 @@ const useTransaction = () => {
     /** 🔹 Transaction */
     const verifyTransactionMutation = useMutation({
         mutationFn: (data: string) =>
-            httpService.post(URLS.VERIFYTRANSACTION(data)),
+            httpService.get(URLS.VERIFYTRANSACTION(data)),
         onError: handleError,
         onSuccess: (data) => {
             console.log(data);
@@ -53,7 +53,7 @@ const useTransaction = () => {
         mutationFn: (data: string) =>
             httpService.post(URLS.ADDACCOUNT(data), {
                 refreshUrl: "https://example.com/reauth",
-                returnUrl: "https://example.com/success",
+                returnUrl: "https://everythingbeauty-frontend.vercel.app/payment-success?type=wallet",
             }),
         onError: handleError,
         onSuccess: (data) => {

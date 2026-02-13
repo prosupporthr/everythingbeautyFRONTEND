@@ -62,7 +62,7 @@ export default function PaymentBtn({
                 userId: user?._id,
                 amount: amount ?? 0,
                 source: "stripe",
-                type: "wallet_top_up",
+                type: type,
                 flow: "inbound",
                 typeId: id,
                 currency: "usd"

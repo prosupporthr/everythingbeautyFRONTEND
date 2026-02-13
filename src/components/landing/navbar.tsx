@@ -15,7 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useRating from "@/hooks/useRating";
 import { Notification, RatingBusinessModal } from "../modals";
 import { useFetchData } from "@/hooks/useFetchData";
-import { IBusiness, IBusinessDetails, IRating } from "@/helper/model/business";
+import { IRating } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
 import { RiNotification2Fill } from "react-icons/ri";
@@ -121,10 +121,12 @@ export default function Navbar() {
                                 </CustomButton>
                             </div>
                         )}
-
-                        <button onClick={() => setShowNotification(true)}>
-                            <RiNotification2Fill size={"25px"} />
-                        </button>
+                        
+                        {user?.firstName && (
+                            <button onClick={() => setShowNotification(true)}>
+                                <RiNotification2Fill size={"25px"} />
+                            </button>
+                        )}
 
                         <Popover
                             isOpen={show}

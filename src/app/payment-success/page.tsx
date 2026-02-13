@@ -8,12 +8,13 @@ import { HiMiniCheckBadge } from "react-icons/hi2";
 import { Spinner } from "@heroui/react";
 import { CustomButton } from "@/components/custom";
 import { useAtom } from "jotai";
-import { userAtom } from "@/store/user";
+import { userAtom } from "@/store/user"; 
 
 export default function PaymentSuccess() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [loading, setIsLoading] = useState(true);
+    const isOpen = true
 
     const id = searchParams.get("id");
     const linkID = searchParams.get("linkID");
@@ -35,6 +36,8 @@ export default function PaymentSuccess() {
             router.replace(`/business/${user?.business?._id}/dashboard`);
         } else if (type === "firstpayment") {
             router.replace(`/business/create`);
+        } else if (type === "wallet") {
+            router.replace("/wallet/withdraw")
         }
     };
 
@@ -46,7 +49,7 @@ export default function PaymentSuccess() {
 
     return (
         <div className="w-full h-[50vh]">
-            <ModalLayout size="sm" isOpen onClose={handleContinue}>
+            <ModalLayout size="sm" isOpen={isOpen} onClose={handleContinue}>
                 <div className="w-full flex flex-col items-center gap-4 pb-4 text-center">
                     {(verifyTransactionMutation.isPending || loading) && (
                         <>
