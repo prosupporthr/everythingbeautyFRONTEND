@@ -18,7 +18,7 @@ export default function BusinessSidebar() {
         // { label: "Calendar", value: "calendar" },
         { label: "Services", value: "services" },
         { label: "My Store", value: "store" },
-        { label: "Settings", value: "settings" },
+        // { label: "Settings", value: "settings" },
         { label: "Profile", value: "profile" },
     ];
 

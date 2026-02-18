@@ -10,6 +10,8 @@ export const URLS = {
     ADDRESS: "/address",
     SENDCHAT: "/messaging/messages",
     REVIEW: "/review",
+    WITHDRAW: `/transactions/withdraw`,
+    CANCELLATION: `/transactions/subscription/cancel`,
     CONNECTACCOUNT: (item: string) =>  `/transactions/connect/${item}`,
     ADDACCOUNT: (item: string) =>  `/transactions/connect/onboard/${item}`,
     WALLETBYUSERID: (item: string) =>  `/transactions/wallet/${item}`,

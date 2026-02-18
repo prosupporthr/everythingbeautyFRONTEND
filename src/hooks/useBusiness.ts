@@ -10,6 +10,7 @@ import { URLS } from "@/helper/services/urls"
 import { useState } from "react" 
 import { businessSchema, productSchema, serviceSchema } from "@/helper/services/validation"
 import { IBookingmark, IBusiness, IProduct, IServices } from "@/helper/model/business"
+import { useUserStore } from "./user"
 
 interface IProps {
     services?: boolean,
@@ -24,6 +25,8 @@ const useBusiness = (
     const router = useRouter()
     const userId = localStorage.getItem("userid") as string
     const [imageFile, setImageFile] = useState<File | string | null>("");
+
+    const { refetch } = useUserStore();
 
     const param = useParams();
     const id = param.id as string;
@@ -42,6 +45,7 @@ const useBusiness = (
                 description: res?.data?.message,
                 color: "success",
             })
+            refetch()
             router.push(`/`)
         },
     })
