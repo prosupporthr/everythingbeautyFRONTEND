@@ -21,6 +21,8 @@ export default function Notification({
         enable: user?._id ? true : false,
     });
 
+    console.log(data);
+
     return (
         <ModalLayout
             isOpen={isOpen}
@@ -28,22 +30,19 @@ export default function Notification({
             onClose={() => onClose(false)}
         >
             <div className=" w-full h-full relative ">
-                <div className=" w-full h-[80px] top-0 sticky px-6 border-b border-bordercolor flex items-center ">
+                <div className=" w-full h-[80px] top-0 sticky px-4 lg:px-6 bg-white z-10 border-b border-bordercolor flex items-center ">
                     <p className=" text-2xl font-bold ">Notification</p>
                 </div>
-                <div className=" w-full h-full flex justify-center py-10 ">
+                <div className=" w-full h-fit flex flex-col gap-4 items-center py-10 ">
                     <LoadingLayout loading={isLoading} lenght={data?.length}>
                         {data?.map((item) => {
                             return (
                                 <div
                                     key={item?._id}
-                                    className=" max-w-[740px] h-fit relative flex gap-4 p-6 rounded-2xl w-full border-bordercolor border-b "
+                                    className=" max-w-[740px] h-fit relative flex gap-4 py-4 p-4 lg:p-6 rounded-2xl w-full shadow "
                                 >
-                                    <div className=" w-fit ">
-                                        <div className=" w-[42px] h-[42px] rounded-full bg-amber-300 " />
-                                    </div>
                                     <div className=" flex flex-col ">
-                                        <p className=" text-lg font-semibold ">
+                                        <p className=" lg:not-only:text-lg font-semibold ">
                                             {item?.title}
                                         </p>
                                         <p className=" text-sm text-[#444444] -mt-1 ">

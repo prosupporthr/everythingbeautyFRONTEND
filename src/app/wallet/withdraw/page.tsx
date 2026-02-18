@@ -23,7 +23,7 @@ export default function WithdrawPage() {
             >
                 Withdraw
             </CustomButton>
-            <GetAccountNumber isOpen={isOpen} setIsOpen={setIsOpen} amount={Number(value)} />
+            <GetAccountNumber isOpen={isOpen} setIsOpen={setIsOpen} amount={Number(value)} setAmount={setValue} />
         </div>
     );
 }

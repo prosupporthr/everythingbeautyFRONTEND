@@ -91,7 +91,7 @@ export default function Navbar() {
 
     return (
         <div
-            className={` w-full h-fit ${pathname === "/" ? " fixed " : " !sticky "} z-30 top-0 inset-x-0 `}
+            className={` w-full h-fit ${pathname === "/" ? " !sticky " : " !sticky "} z-30 top-0 inset-x-0 `}
         >
             <div
                 className={` w-full ${pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) ? "hidden" : pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `}

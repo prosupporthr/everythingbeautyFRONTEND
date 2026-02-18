@@ -36,7 +36,7 @@ export default function PaymentSuccess() {
             router.replace(`/business/${user?.business?._id}/dashboard`);
         } else if (type === "firstpayment") {
             router.replace(`/business/create`);
-        } else if (type === "wallet") {
+        } else if (type === "withdraw") {
             router.replace("/wallet/withdraw")
         }
     };

@@ -211,3 +211,10 @@ export interface IBank {
     "status": string,
     "isDefault": false
 }
+
+export interface IWithdraw {
+    "userId": string,
+    "amount": number,
+    "bankAccountId": string,
+    "currency": string
+  }
