@@ -17,7 +17,7 @@ export default function StarRating(
             {!other && (
                 <div className=" flex items-center gap-1 " >
                     <HiStar size={"16px"} color="#EFD414" />
-                    <p className=" text-[15px] font-bold " >{rating?.toFixed(1)}</p>
+                    <p className=" text-[12px] font-bold " >{rating?.toFixed(1)}</p>
                 </div>
             )}
             {other && (

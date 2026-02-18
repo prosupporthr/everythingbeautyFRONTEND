@@ -85,13 +85,13 @@ export const dayOfTheWeek = [
 ]
 
 export const settingsList = [ 
-    {
-        label: "Security",
-        details: "Protection against intruders",
-        icon: SecuritySafe,
-        iconcolor: "#34C759",
-        link: "/settings/security"
-    },
+    // {
+    //     label: "Security",
+    //     details: "Protection against intruders",
+    //     icon: SecuritySafe,
+    //     iconcolor: "#34C759",
+    //     link: "/settings/security"
+    // },
     {
         label: "Get Help",
         details: "Get help from support team",

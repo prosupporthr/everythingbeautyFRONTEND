@@ -6,6 +6,7 @@ import { lazy, Suspense } from "react";
 const BusinessServices = lazy(() => import("@/components/business").then(module => ({ default: module.BusinessServices })));
 const BusinessProduct = lazy(() => import("@/components/business").then(module => ({ default: module.BusinessProduct })));
 const BusinessOverview = lazy(() => import("@/components/business").then(module => ({ default: module.BusinessOverview })));
+const DashboardProfile = lazy(() => import("@/components/business").then(module => ({ default: module.DashboardProfile })));
 
 export default function BusinessDashboardPage() {
 
@@ -23,6 +24,9 @@ export default function BusinessDashboardPage() {
                 )}
                 {tab === "store" && (
                     <BusinessProduct />
+                )}
+                {tab === "profile" && (
+                    <DashboardProfile />
                 )}
             </div>
         </Suspense>

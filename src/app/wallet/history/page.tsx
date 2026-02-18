@@ -15,6 +15,9 @@ export default function WalletPage() {
     const { data = [], isLoading } = useFetchData<ITransaction[]>({
         endpoint: URLS.TRANSACTIONBYUSERID(user?._id as string),
         name: ["transaction", user?._id as string],
+        params: {
+            limit: 100
+        }
     });
 
     console.log(data);

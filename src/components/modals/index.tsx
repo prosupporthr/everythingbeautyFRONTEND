@@ -5,6 +5,7 @@ export { default as DeleteModal } from "./deleteModal"
 export { default as RatingBusinessModal } from "./ratingBusinessModal"
 
 export { default as PaymentExpired } from "./paymentExpired"
+export { default as CancelSubscriptionBtn } from "./cancelSubscription"
 
 export { default as Notification } from "./notification"
 

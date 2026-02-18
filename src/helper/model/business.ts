@@ -202,3 +202,19 @@ export interface ITransaction {
     updatedAt: string;
     __v: 0;
 }
+
+export interface IBank {
+    "id": string,
+    "bankName": string,
+    "last4": string,
+    "currency": string,
+    "status": string,
+    "isDefault": false
+}
+
+export interface IWithdraw {
+    "userId": string,
+    "amount": number,
+    "bankAccountId": string,
+    "currency": string
+  }
