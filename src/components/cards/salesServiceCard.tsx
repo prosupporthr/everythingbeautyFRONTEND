@@ -4,9 +4,10 @@ import { IBusinessDetails } from "@/helper/model/business";
 import { StarRating } from "../shared";
 import { CustomImage } from "../custom";
 import { useRouter } from "next/navigation";
+import { textLimit } from "@/helper/utils/textlimit";
 
 export default function BusinessServiceCard(
-    { item, setLocation } : { item: IBusinessDetails, setLocation?: (location: google.maps.LatLngLiteral | null) => void, location?: google.maps.LatLngLiteral | null }
+    { item, setLocation, setOpen} : { item: IBusinessDetails, setLocation?: (location: google.maps.LatLngLiteral | null) => void, location?: google.maps.LatLngLiteral | null, setOpen: (by: boolean) => void }
 ) {
 
     const router = useRouter()
@@ -30,25 +31,23 @@ export default function BusinessServiceCard(
         )
     }
 
-    const handleClick = () => {
+    const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
+
+        // e.stopPropagation()
+        
         if (setLocation) {
             setLocation({
                 lat: typeof item?.lat === "string" ? parseFloat(item.lat) : item?.lat ?? 0,
                 lng: typeof item?.long === "string" ? parseFloat(item.long) : item?.long ?? 0
             });
+            setOpen(true)
         }
     }
 
     return (
-        <div
-            onMouseEnter={handleClick}
-            onMouseLeave={() => {
-                if (setLocation) {
-                    setLocation(null)
-                }
-            }}
+        <div 
             onClick={() => router.push(`/sales/${item?._id}/services`)}
-            className={`transform transition-transform duration-300 hover:border-brand hover:border hover:bg-white hover:scale-110 w-full flex flex-col gap-2 rounded-[10px] shadow p-4`}
+            className={` w-full flex flex-col gap-2 rounded-[10px] shadow p-4`}
         >
             <div className="w-full h-[200px] relative rounded-lg rounded-bl-lg bg-gray-200">
                 <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
@@ -59,7 +58,7 @@ export default function BusinessServiceCard(
                     {/* <p className=" font-bold text-sm " >2.1 KM</p> */}
                 </div>
                 <StarRating rating={item?.rating} />
-                <p className=" font-medium " >{item?.location}</p>
+                <p onClick={(e) => handleClick(e)} className=" font-medium text-brand cursor-pointer " >{textLimit(item?.location, 20)}</p>
             </div>
             <div className=" w-full flex-col flex gap-2 " > 
             <ServiceCard />
