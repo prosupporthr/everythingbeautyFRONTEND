@@ -42,7 +42,7 @@ export default function ProfilePage() {
     const [selectedTab, setSelectedTab] = useState("services");
 
     return (
-        <div className=" w-full min-h-[50vh] bg-[#F9F9F9] p-8 ">
+        <div className=" w-full min-h-[50vh] bg-[#F9F9F9] p-4 lg:p-8 ">
             <LoadingLayout loading={isLoading}>
                 <div className=" w-full flex flex-col py-10 gap-10 h-full rounded-2xl bg-white ">
                     <div className=" w-full flex flex-col px-4 lg:px-8 ">

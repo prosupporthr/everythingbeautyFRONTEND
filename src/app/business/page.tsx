@@ -1,6 +1,4 @@
-"use client";
-import { CustomButton } from "@/components/custom";
-import { PaymentExpired } from "@/components/modals";
+"use client"; 
 import { PaymentBtn } from "@/components/shared";
 import { IUserDetail } from "@/helper/model/user";
 import { userAtom } from "@/store/user";
@@ -10,7 +8,8 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { LuCalendarFold } from "react-icons/lu";
 
 export default function BusinessPage() {
-    // const router = useRouter()
+
+    const router = useRouter();
     const [user] = useAtom(userAtom);
 
     return (
@@ -18,7 +17,9 @@ export default function BusinessPage() {
             <div className=" w-full flex flex-col items-center px-8 ">
                 <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 ">
                     <div className=" w-full flex gap-5 h-[78px] border-b border-gray-100 items-center text-primary ">
-                        <IoArrowBackOutline size={"22px"} />
+                        <button onClick={() => router.back()}>
+                            <IoArrowBackOutline size={"22px"} />
+                        </button>
                         <p className=" text-2xl font-medium ">
                             Create a business portfolio
                         </p>
@@ -89,7 +90,7 @@ export default function BusinessPage() {
                                 fullWidth
                                 type={"monthly_subscription"}
                                 id={user?._id as string}
-                                amount={99}
+                                amount={9.99}
                                 user={user as IUserDetail}
                             />
                         </div>

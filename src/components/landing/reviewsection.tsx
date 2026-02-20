@@ -20,7 +20,7 @@ export default function ReviewSection(
     return (
         <div className=" w-full flex flex-col gap-3 " >
             <p className=" text-xl lg:text-3xl font-bold " >Reviews</p>
-            <LoadingLayout loading={isLoading} lenght={data?.length} >
+            <LoadingLayout loading={isLoading} length={data?.length} >
                 <div className=" w-full overflow-x-auto " >
                     <div className=" w-auto flex gap-4 " >
                         {data?.map((item, index) => {

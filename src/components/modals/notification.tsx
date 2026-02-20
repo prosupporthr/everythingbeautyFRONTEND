@@ -34,7 +34,7 @@ export default function Notification({
                     <p className=" text-2xl font-bold ">Notification</p>
                 </div>
                 <div className=" w-full h-fit flex flex-col gap-4 items-center py-10 ">
-                    <LoadingLayout loading={isLoading} lenght={data?.length}>
+                    <LoadingLayout loading={isLoading} length={data?.length}>
                         {data?.map((item) => {
                             return (
                                 <div

@@ -23,7 +23,7 @@ export default function ProductList(
                 <p className=" text-lg lg:text-2xl font-semibold " >{title}</p>
                 <button onClick={()=> router.push("/productlist")} className=" text-brand font-bold " >See all</button>
             </div>
-            <LoadingLayout loading={isLoading} lenght={data?.length} >
+            <LoadingLayout loading={isLoading} length={data?.length} >
                 <div className=" w-full grid lg:grid-cols-4 gap-4 " >
                     {data?.map((item) => {
                         return (

@@ -2,7 +2,7 @@
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { CustomImage, CustomButton } from "../custom";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { menulist } from "@/helper/services/databank";
@@ -27,13 +27,15 @@ export default function Navbar() {
     const id = param.id;
     const [show, setShow] = useState(false);
     const queryClient = useQueryClient();
+    const query = useSearchParams();
+    const userId = query?.get("id");
 
     const [showNotification, setShowNotification] = useState(false);
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
 
-    const { data, isLoading, refetch } = useUserStore();
+    const { data, isLoading, refetch } = useUserStore(userId ?? "");
 
     const [user, setUser] = useAtom(userAtom);
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
@@ -47,7 +49,7 @@ export default function Navbar() {
     useEffect(() => {
         if (data?._id) {
             setUser(data);
-        } else if (data === null && !pathname.includes("sale")) {
+        } else if (data === null && (!pathname.includes("sale") || !pathname.includes("profile"))) {
             router.push("/");
         }
     }, [data]);

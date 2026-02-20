@@ -1,5 +1,6 @@
 import { IProductDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
+import { textLimit } from "@/helper/utils/textlimit";
 import { NextRequest, NextResponse } from "next/server";
 
 interface BackendResponse {
@@ -50,22 +51,25 @@ export async function GET(
                 .replace(/"/g, "&quot;");
 
         const title = escape(item.name);
+        const about = escape(textLimit(item.description, 20));
         const imageUrl = item.pictures[0];
 
         const html = `
       <!DOCTYPE html>
       <html lang="en">
         <head>
-          <meta property="og:type" content="website" />
-          <meta property="og:title" content="${title}" /> 
-          <meta property="og:image" content="${imageUrl}" />
-          <meta property="og:url" content="/sales/product/${id}" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="${title}" /> 
+            <meta property="og:description" content="${about}" />
+            <meta property="og:image" content="${imageUrl}" />
+            <meta property="og:url" content="/sales/product/${id}" />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="${title}" /> 
-          <meta name="twitter:image" content="${imageUrl}" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content="${title}" /> 
+            <meta name="twitter:description" content="${about}" />
+            <meta name="twitter:image" content="${imageUrl}" />
 
-          <meta http-equiv="refresh" content="0; url='/sales/product/${id}'">
+            <meta http-equiv="refresh" content="0; url='/sales/product/${id}'">
         </head>
         <body>Redirecting…</body>
       </html>

@@ -9,15 +9,14 @@ import { ILogin, IAuth } from "@/helper/model/auth"
 import { emailSchema } from "@/helper/services/validation"
 import { handleError } from "@/helper/services/errorHandler"
 import { URLS } from "@/helper/services/urls"
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react" 
 
 const useAuth = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const queryClient = useQueryClient()
     const [initialTime, setInitialTime] = useState(0);
-    const [startTimer, setStartTimer] = useState(false);
-
+    const [startTimer, setStartTimer] = useState(false);  
 
     useEffect(() => {
         if (initialTime > 0) {
@@ -30,7 +29,7 @@ const useAuth = () => {
             console.log("done");
             setStartTimer(false);
         }
-    }, [initialTime, startTimer]);
+    }, [initialTime, startTimer]); 
 
     const router = useRouter()
     /** 🔹 Login */
@@ -73,6 +72,7 @@ const useAuth = () => {
 
             localStorage.setItem("accesstoken", token)
             localStorage.setItem("userid", user?._id)
+
             addToast({
                 title: "Success",
                 description: res?.data?.message,
@@ -80,8 +80,8 @@ const useAuth = () => {
             })
             if (user?.firstName) {
                 setIsOpen(true)
-                router.push("/")
                 queryClient.invalidateQueries({ queryKey: ["user"] })
+                router.push(`/?id=${user?._id}`)
             } else {
                 router.push("/auth/onboarding")
             }
