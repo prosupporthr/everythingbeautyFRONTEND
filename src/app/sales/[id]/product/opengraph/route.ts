@@ -62,14 +62,14 @@ export async function GET(
             <meta property="og:title" content="${title}" /> 
             <meta property="og:description" content="${about}" />
             <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:url" content="/sales/product/${id}" />
+            <meta property="og:url" content="/sales/${id}/product" />
 
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="${title}" /> 
             <meta name="twitter:description" content="${about}" />
             <meta name="twitter:image" content="${imageUrl}" />
 
-            <meta http-equiv="refresh" content="0; url='/sales/product/${id}'">
+            <meta http-equiv="refresh" content="0; url='/sales/${id}/product'">
         </head>
         <body>Redirecting…</body>
       </html>

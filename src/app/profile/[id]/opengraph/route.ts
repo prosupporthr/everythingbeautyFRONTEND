@@ -50,8 +50,8 @@ export async function GET(
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;");
 
-        const title = escape(item.firstName + " " + item?.lastName);
-        const about = escape(textLimit(item.about, 20));
+        const title = escape(item?.firstName + " " + item?.lastName);
+        const about = textLimit(item?.about, 20);
         const imageUrl = item.profilePicture;
 
         const html = `
