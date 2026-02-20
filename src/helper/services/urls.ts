@@ -30,6 +30,7 @@ export const URLS = {
     VERIFYTRANSACTION: (item: string) => `/transactions/verify-transaction/${item}`, 
     SERVICEBYID: (item: string) => `/service/${item}`,
     PRODUCT: "/product",
+    PRODUCTFILTER: "/product/filter",
     BUSINESSBYID: (item: string) => `/business/${item}`,
     PRODUCTBYID: (item: string) => `/product/${item}`,
     USERUPDATE: (item: string) => `/user/${item}`,
