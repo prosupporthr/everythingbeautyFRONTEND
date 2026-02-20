@@ -47,7 +47,7 @@ export default function Navbar() {
     useEffect(() => {
         if (data?._id) {
             setUser(data);
-        } else if (data === null) {
+        } else if (data === null && !pathname.includes("sale")) {
             router.push("/");
         }
     }, [data]);

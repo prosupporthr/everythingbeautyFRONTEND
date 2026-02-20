@@ -29,6 +29,7 @@ export const URLS = {
     TRANSACTION: "/transactions/create",
     VERIFYTRANSACTION: (item: string) => `/transactions/verify-transaction/${item}`, 
     SERVICEBYID: (item: string) => `/service/${item}`,
+    SERVICEBUSINESSBYID: (item: string) => `/service/business/${item}`,
     PRODUCT: "/product",
     PRODUCTFILTER: "/product/filter",
     BUSINESSBYID: (item: string) => `/business/${item}`,
