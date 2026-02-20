@@ -1,33 +1,36 @@
 "use client";
 import { SalesServiceCard } from "@/components/cards";
-import { CustomInput } from "@/components/custom";
-import { MapView } from "@/components/map_component";
-import { LoadingLayout, ModalLayout } from "@/components/shared";
-import { IBusinessDetails } from "@/helper/model/business";
-import { IPagination } from "@/helper/model/pagination";
+import { CustomInput } from "@/components/custom"; 
+import { LoadingLayout } from "@/components/shared";
+import { IBusinessDetails } from "@/helper/model/business"; 
 import { URLS } from "@/helper/services/urls";
-import { useFetchData } from "@/hooks/useFetchData";
-import { useState } from "react";
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller"; 
+import { useEffect, useState } from "react";
 import { RiCloseLine, RiSearch2Line } from "react-icons/ri";
 
 export default function BusinessListPage() {
-    const [show, setShow] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [show, setShow] = useState(false); 
     const [search, setSearch] = useState("");
 
     const [marker, setMarker] = useState(
         {} as google.maps.LatLngLiteral | null,
-    );
-    const { data, isLoading } = useFetchData<IPagination<IBusinessDetails>>({
+    ); 
+
+    const {
+        items = [],
+        ref,
+        isLoading,
+        isFetchingMore,
+    } = useInfiniteScroller<IBusinessDetails>({
+        queryKeyBase: "productfilter",
         endpoint: URLS.BUSINESSFILTER,
-        name: ["business"],
-        pagination: true,
-        // params: {
-        //     q: search,
-        // },
+        limit: 10,
+        params: { q: search },
     });
 
-    console.log(open);
+    useEffect(() => {
+        if (!show) setSearch("");
+    }, [show]); 
 
     return (
         <div className=" w-full flex gap-6 pt-1  ">
@@ -71,16 +74,15 @@ export default function BusinessListPage() {
                         </button>
                     </div>
                 </div>
-                <LoadingLayout loading={isLoading} lenght={data?.data?.length}>
+                <LoadingLayout loading={isLoading} ref={ref} refetching={isFetchingMore} length={items?.length}>
                     <div className=" w-full grid grid-cols-3 gap-6 lg:px-6 ">
-                        {data?.data?.map((item) => {
+                        {items?.map((item) => {
                             return (
                                 <SalesServiceCard
                                     location={marker}
                                     setLocation={setMarker}
                                     item={item}
-                                    key={item?._id}
-                                    setOpen={setOpen}
+                                    key={item?._id} 
                                 />
                             );
                         })}

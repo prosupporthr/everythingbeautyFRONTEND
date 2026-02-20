@@ -34,6 +34,7 @@ export const URLS = {
     PRODUCTFILTER: "/product/filter",
     BUSINESSBYID: (item: string) => `/business/${item}`,
     PRODUCTBYID: (item: string) => `/product/${item}`,
+    PRODUCTBUSINESSBYID: (item: string) => `/product/business/${item}`,
     USERUPDATE: (item: string) => `/user/${item}`,
     BOOKMARK: `/bookmarks/toggle`,
     BOOKMARKBYID: (item: string) => `/bookmarks/${item}`

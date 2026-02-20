@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { textLimit } from "@/helper/utils/textlimit";
 
 export default function BusinessServiceCard(
-    { item, setLocation, setOpen} : { item: IBusinessDetails, setLocation?: (location: google.maps.LatLngLiteral | null) => void, location?: google.maps.LatLngLiteral | null, setOpen: (by: boolean) => void }
+    { item, setLocation} : { item: IBusinessDetails, setLocation?: (location: google.maps.LatLngLiteral | null) => void, location?: google.maps.LatLngLiteral | null }
 ) {
 
     const router = useRouter()
@@ -31,18 +31,16 @@ export default function BusinessServiceCard(
         )
     }
 
-    const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
+    // const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => { 
 
-        // e.stopPropagation()
-        
-        if (setLocation) {
-            setLocation({
-                lat: typeof item?.lat === "string" ? parseFloat(item.lat) : item?.lat ?? 0,
-                lng: typeof item?.long === "string" ? parseFloat(item.long) : item?.long ?? 0
-            });
-            setOpen(true)
-        }
-    }
+    //     if (setLocation) {
+    //         setLocation({
+    //             lat: typeof item?.lat === "string" ? parseFloat(item.lat) : item?.lat ?? 0,
+    //             lng: typeof item?.long === "string" ? parseFloat(item.long) : item?.long ?? 0
+    //         });
+    //         setOpen(true)
+    //     }
+    // }
 
     return (
         <div 
@@ -58,7 +56,9 @@ export default function BusinessServiceCard(
                     {/* <p className=" font-bold text-sm " >2.1 KM</p> */}
                 </div>
                 <StarRating rating={item?.rating} />
-                <p onClick={(e) => handleClick(e)} className=" font-medium text-brand cursor-pointer " >{textLimit(item?.location, 20)}</p>
+                <p 
+                    // onClick={(e) => handleClick(e)} 
+                    className=" font-medium text-brand cursor-pointer " >{textLimit(item?.location, 20)}</p>
             </div>
             <div className=" w-full flex-col flex gap-2 " > 
             <ServiceCard />

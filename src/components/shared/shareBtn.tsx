@@ -1,5 +1,5 @@
 import { addToast } from "@heroui/toast";
-import { HiOutlineShare } from "react-icons/hi2";
+import { HiOutlineShare } from "react-icons/hi";
 
 export default function ShareBtn({
     type,

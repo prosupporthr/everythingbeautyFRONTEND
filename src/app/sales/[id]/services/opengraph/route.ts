@@ -49,7 +49,7 @@ export async function GET(
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;");
 
-        const title = escape(item.name);
+        const title = escape(item.name); 
         const imageUrl = item.pictures[0];
 
         const html = `

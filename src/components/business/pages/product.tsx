@@ -1,41 +1,54 @@
-"use client"
+"use client";
 import { BusinessProductCard } from "@/components/cards";
 import { LoadingLayout } from "@/components/shared";
 import { IProductDetail } from "@/helper/model/business";
+import { URLS } from "@/helper/services/urls";
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
-import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useParams } from "next/navigation"; 
 
-
-export default function Product( 
-    { isProfile, businessId } : { isProfile?: boolean, businessId?: string }
-) {
-
+export default function Product({
+    isProfile,
+    businessId,
+}: {
+    isProfile?: boolean;
+    businessId?: string;
+}) {
     const param = useParams();
-    const id = param.id; 
+    const id = param.id as string;
 
-    const [ productData, setProductData ] = useState<IProductDetail[]>([])
+    const effectiveBusinessId = businessId ?? id ?? "";
 
-    const { data, isLoading } = useFetchData<IProductDetail[]>({
-        endpoint: `/product/business/${businessId ?? id}`, name: ["product"],
-        enable: !isProfile ? true : businessId ? true : false
-    }) 
-
-    useEffect(() => {
-        if(data) {
-            setProductData(data)
-        }
-    }, [data, isLoading]) 
+    const {
+        items = [],
+        ref,
+        isLoading,
+        isFetchingMore,
+    } = useInfiniteScroller<IProductDetail>({
+        queryKeyBase: "productfilter",
+        endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
+        limit: 10,
+        enable: !isProfile ? true : businessId ? true : false,
+    });
 
     return (
-        <LoadingLayout loading={isLoading} lenght={productData?.length} >
-            <div className=" w-full grid lg:grid-cols-4 gap-4 " >
-                {productData?.map((item) => {
+        <LoadingLayout
+            loading={isLoading}
+            refetching={isFetchingMore}
+            length={items?.length}
+            ref={ref}
+        >
+            <div className=" w-full grid lg:grid-cols-4 gap-4 ">
+                {items?.map((item) => {
                     return (
-                        <BusinessProductCard  isProfile={isProfile} item={item} key={item?._id} />
-                    )
+                        <BusinessProductCard
+                            isProfile={isProfile}
+                            item={item}
+                            key={item?._id}
+                        />
+                    );
                 })}
             </div>
         </LoadingLayout>
-    )
+    );
 }
