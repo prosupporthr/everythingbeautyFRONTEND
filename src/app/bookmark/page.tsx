@@ -59,7 +59,7 @@ export default function Bookmark() {
                     <p className=" text-sm " >See all orders  on Everything Beauty</p>
                 </div>
             </div>
-            <LoadingLayout loading={isLoading} lenght={data?.length} >
+            <LoadingLayout loading={isLoading} length={data?.length} >
                 <div className=" w-full grid grid-cols-1 lg:grid-cols-3 gap-4 " >
                     {data?.map((item) => {
                         return (

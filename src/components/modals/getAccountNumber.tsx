@@ -51,7 +51,7 @@ export default function GetAccountNumber({
                 onClose={() => setIsOpen(false)}
             >
                 <div className=" w-full flex flex-col gap-6 pb-3 ">
-                    <LoadingLayout loading={isLoading} lenght={data?.length}>
+                    <LoadingLayout loading={isLoading} length={data?.length}>
                         <div className=" w-full flex max-h-[60vh] flex-col gap-3 ">
                             {data?.map((item) => {
                                 return (
