@@ -23,7 +23,7 @@ export default function ScheduleList() {
     })
 
     return (
-        <LoadingLayout loading={isLoading} lenght={data?.length} >
+        <LoadingLayout loading={isLoading} length={data?.length} >
             <div className={` w-full overflow-x-auto `}  >
                 <div className=" w-fit flex gap-1 items-center " >
                     {data?.map((item, index) => {

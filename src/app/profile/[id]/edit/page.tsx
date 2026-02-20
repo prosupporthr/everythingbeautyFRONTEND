@@ -167,7 +167,7 @@ export default function EditProfile() {
 
                                 <LoadingLayout
                                     loading={loadingAddress}
-                                    lenght={addresses.length}
+                                    length={addresses.length}
                                 >
                                     <div className="flex flex-col gap-3">
                                         {addresses.map((item) => (

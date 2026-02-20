@@ -1,68 +1,52 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import httpService from "@/helper/services/httpService"; 
+import httpService from "@/helper/services/httpService";
 import { AxiosError } from "axios";
-import { IUserDetail } from "@/helper/model/user"; 
+import { IUserDetail } from "@/helper/model/user";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
 
-/** 🔹 Fetch user data using the userid from cookies */
-async function fetchUser(): Promise<IUserDetail | null> {
+/** 🔹 Fetch user data */
+async function fetchUser(userId: string): Promise<IUserDetail> {
+    try {
+        const res = await httpService.get<{ data: IUserDetail }>(
+            `/user/${userId}`,
+        );
 
-  const id =
-  typeof window !== "undefined"
-    ? localStorage.getItem("userid")
-    : null; 
+        return res.data.data;
+    } catch (error) {
+        const err = error as AxiosError<{ message?: string }>;
 
-  if (!id) return null;
+        // Optional redirect logic
+        if (typeof window !== "undefined") {
+            localStorage.clear();
+            window.location.href = "/";
+        }
 
-  try {
-    const res = await httpService.get<{ data: IUserDetail }>(`/user/${id}`); 
-
-    console.log(res);
-    
-
-    return res.data.data;
-  } catch (error) {
-
-
-    console.log("error");
-
-    const err = error as AxiosError<{ message?: string }>;
-
-    console.log("error");
-    
-    console.log(error);
-    
-    // 🧹 Clear tokens and redirect on failure
-    // Cookies.remove("userid");
-    // Cookies.remove("accesstoken");
-    localStorage.clear()
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
+        throw new Error(err.response?.data?.message || err.message);
     }
-
-    throw new Error(err.response?.data?.message || err.message);
-  }
 }
 
 /**
- * ✅ useUser — TanStack Query hook replacement for userAtom
- * - Fetches user info with caching and automatic re-fetch
- * - Handles error + redirect logic
+ * ✅ useUserStore
+ * - Accepts userId directly
+ * - Falls back to localStorage if not provided
  */
-export function useUserStore() {
-  const id =
-  typeof window !== "undefined"
-    ? localStorage.getItem("userid")
-    : null; 
+export function useUserStore(userId?: string) {
+    const [user] = useAtom(userAtom);
 
-  const [user] = useAtom(userAtom)
-  return useQuery({
-    queryKey: ["user", id],
-    queryFn: fetchUser,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes 
-    enabled: user?.id ? false : true
-  });
+    const id =
+        userId ??
+        (typeof window !== "undefined" ? localStorage.getItem("userid") : null);
+
+    return useQuery({
+        queryKey: ["user", id],
+        queryFn: () => {
+            if (!id) throw new Error("No user id found");
+            return fetchUser(id);
+        },
+        enabled: !!id && !user?.id,
+        staleTime: 1000 * 60 * 5,
+    });
 }

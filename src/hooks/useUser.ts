@@ -27,13 +27,13 @@ const useUser = () => {
             httpService.patch(URLS.USERUPDATE(userId), data),
         onError: handleError,
         onSuccess: (res) => {
+            queryClient.invalidateQueries({queryKey: ["user"]})
             addToast({
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
             })
             router.push(`/`)
-            queryClient.invalidateQueries({queryKey: ["user"]})
         },
     })
 
