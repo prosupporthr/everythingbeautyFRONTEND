@@ -51,7 +51,7 @@ export async function GET(
                 .replace(/"/g, "&quot;");
 
         const title = escape(item?.firstName + " " + item?.lastName);
-        const about = textLimit(item?.about, 20);
+        const about = textLimit(item?.about ?? "", 20);
         const imageUrl = item.profilePicture;
 
         const html = `
@@ -60,13 +60,13 @@ export async function GET(
         <head>
             <meta property="og:type" content="website" />
             <meta property="og:title" content="${title}" /> 
-            <meta property="og:description" content="${about}" />
+            <meta property="og:description" content="${about ?? ""}" />
             <meta property="og:image" content="${imageUrl}" />
             <meta property="og:url" content="/profile/${id}" />
 
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="${title}" /> 
-            <meta name="twitter:description" content="${about}" />
+            <meta name="twitter:description" content="${about ?? ""}" />
             <meta name="twitter:image" content="${imageUrl}" />
 
           <meta http-equiv="refresh" content="0; url='/profile/${id}'">
