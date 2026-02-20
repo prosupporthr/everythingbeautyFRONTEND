@@ -5,11 +5,13 @@ export default function ShareBtn({
     type,
     id,
 }: {
-    type: "product" | "services";
+    type: "product" | "services" | "user";
     id: string;
 }) {
     const copyItem = () => {
         navigator.clipboard.writeText(
+            type === "user" ?
+            `https://everythingbeauty-frontend.vercel.app/profile/${id}/opengraph`:
             `https://everythingbeauty-frontend.vercel.app/sales/${id}/${type}/opengraph`,
         );
         addToast({

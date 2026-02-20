@@ -6,7 +6,7 @@ import {
     CustomTimePicker,
 } from "@/components/custom";
 import CustomDateTimePicker from "@/components/custom/customDatePicker";
-import { LoadingLayout, MessageBtn, StarRating } from "@/components/shared";
+import { LoadingLayout, MessageBtn, ShareBtn, StarRating } from "@/components/shared";
 import { useEffect, useState } from "react";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { RiShareLine } from "react-icons/ri";
@@ -27,6 +27,7 @@ import { useAtom } from "jotai";
 import { MapView } from "@/components/map_component";
 import { ProductList } from "@/components/product";
 import ReviewSection from "@/components/landing/reviewsection";
+import { URLS } from "@/helper/services/urls";
 
 export default function SaleServicePage() {
     const param = useParams();
@@ -35,7 +36,7 @@ export default function SaleServicePage() {
     const router = useRouter();
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
-        endpoint: `/business/${id}`,
+        endpoint: URLS.BUSINESSBYID(id),
         name: ["business"],
     });
 
@@ -50,7 +51,7 @@ export default function SaleServicePage() {
     const { data: services = [], isLoading: loading } = useFetchData<
         IServiceDetail[]
     >({
-        endpoint: `/service/business/${id}`,
+        endpoint: URLS.SERVICEBUSINESSBYID(id),
         name: ["service"],
     });
 
@@ -147,12 +148,7 @@ export default function SaleServicePage() {
                         </p>
                     </div>
                     <div className=" flex gap-4 items-center ">
-                        <button className=" w-10 h-10 lg:rounded-full flex justify-center items-center border ">
-                            <RiShareLine size={"24px"} />
-                        </button>
-                        {/* <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
-                            <IoMdHeartEmpty size={"24px"} />
-                        </button> */}
+                        <ShareBtn type="services" id={id} /> 
                     </div>
                 </div>
                 <p className=" hidden lg:flex text-sm font-medium capitalize ">
