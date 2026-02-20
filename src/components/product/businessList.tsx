@@ -10,9 +10,12 @@ export default function BusinessList(
 ) {
 
     const router = useRouter()
-    const { data, isLoading } = useFetchData<IBusinessDetails[]>({
+    const { data = [], isLoading } = useFetchData<IBusinessDetails[]>({
         endpoint: `/business/filter`, name: ["business"]
     }) 
+
+    console.log(data);
+    
 
     return (
         <div className=" w-full flex flex-col gap-6 " >

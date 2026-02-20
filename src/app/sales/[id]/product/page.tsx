@@ -4,6 +4,7 @@ import {
     BookmarkBtn,
     LoadingLayout,
     MessageBtn,
+    ShareBtn,
     StarRating,
 } from "@/components/shared";
 import { useEffect, useState } from "react";
@@ -119,7 +120,7 @@ export default function SaleProductPage() {
                         onClick={handleClick}
                         isDisabled={qty > 0 ? false : true}
                     >
-                        {(Number(data?.quantity) > 0) ? "Check out" : "Sold out"}
+                        {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
                     </CustomButton>
                 )}
                 {data?.colors[0]?.label && (
@@ -127,7 +128,7 @@ export default function SaleProductPage() {
                         onClick={handleClick}
                         isDisabled={qty > 0 && color.label ? false : true}
                     >
-                        {(Number(data?.quantity) > 0) ? "Check out" : "Sold out"}
+                        {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
                     </CustomButton>
                 )}
                 <div className=" w-full flex justify-center border-b pb-3 font-medium ">
@@ -244,12 +245,18 @@ export default function SaleProductPage() {
                                 <p className=" text-xl font-semibold capitalize max-w-[70%] ">
                                     {data?.name}
                                 </p>
-                                {!self && (
-                                    <BookmarkBtn
-                                        item={data as IProductDetail}
+                                <div className=" flex gap-4 ">
+                                    {!self && (
+                                        <BookmarkBtn
+                                            item={data as IProductDetail}
+                                            type="product"
+                                        />
+                                    )}
+                                    <ShareBtn
+                                        id={data?._id as string}
                                         type="product"
                                     />
-                                )}
+                                </div>
                             </div>
                             <div className=" w-full flex gap-1 items-center ">
                                 <StarRating
@@ -264,7 +271,11 @@ export default function SaleProductPage() {
                                     </span>{" "}
                                     •{" "} */}
                                     Ratings •{" "}
-                                    <span className=" text-brand ">{(Number(data?.quantity) > 0)? data?.quantity+" Avaliable" : "Sold out"} </span>
+                                    <span className=" text-brand ">
+                                        {Number(data?.quantity) > 0
+                                            ? data?.quantity + " Avaliable"
+                                            : "Sold out"}{" "}
+                                    </span>
                                 </p>
                             </div>
                             <p className=" font-semibold text-3xl ">

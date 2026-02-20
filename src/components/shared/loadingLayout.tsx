@@ -7,26 +7,37 @@ import { CgFileDocument } from "react-icons/cg";
 interface LoaderProps {
     loading: boolean;
     children: ReactNode;
-    lenght?: number
+    lenght?: number;
+    refetching?: boolean;
 }
 
-export default function LoadingLayout({ loading, children, lenght = 1 }: LoaderProps) {
+export default function LoadingLayout({
+    loading,
+    children,
+    lenght = 1,
+    refetching,
+}: LoaderProps) {
     return (
         <>
             {/* Wrapped content */}
-            {(!loading && lenght > 0) && (
-                <>
+            {!loading && lenght > 0 && (
+                <div>
                     {children}
-                </>
-            )}
-
-            {(!loading && lenght === 0) && (
-                <div className=" w-full flex flex-col justify-center items-center py-7 " >
-                    <CgFileDocument size={"30px"} />
-                    <p className=" text-sm font-semibold " >No activity</p>
+                    {refetching && (
+                        <div className=" w-full flex items-center justify-center ">
+                            <Spinner size="sm" color="primary" />
+                        </div>
+                    )}
                 </div>
             )}
- 
+
+            {!loading && lenght === 0 && (
+                <div className=" w-full flex flex-col justify-center items-center py-7 ">
+                    <CgFileDocument size={"30px"} />
+                    <p className=" text-sm font-semibold ">No activity</p>
+                </div>
+            )}
+
             {/* Overlay when loading */}
             {loading && (
                 <div className=" py-8 flex items-center w-full justify-center bg-white/70 backdrop-blur-sm z-10">
