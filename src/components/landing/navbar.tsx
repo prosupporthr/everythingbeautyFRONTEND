@@ -125,7 +125,7 @@ export default function Navbar() {
                         )}
                         
                         {user?.firstName && (
-                            <button onClick={() => setShowNotification(true)}>
+                            <button className=" relative  " onClick={() => setShowNotification(true)}>
                                 <RiNotification2Fill size={"25px"} />
                             </button>
                         )}

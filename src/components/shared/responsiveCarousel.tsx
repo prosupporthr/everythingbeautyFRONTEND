@@ -39,7 +39,7 @@ export default function ResponsiveCarousel({
       while (true) {
         position -= itemWidth;
 
-        await controls.start({
+        await controls?.start({
           x: position,
           transition: { duration: 0.6 },
         });
