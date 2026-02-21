@@ -17,6 +17,7 @@ const useUser = () => {
     const userId =  typeof window !== "undefined"
       ? localStorage.getItem("userid") as string
       : ""; 
+
       
     const [imageFile, setImageFile] = useState<File | string | null>("");
     const queryClient = useQueryClient()
@@ -33,7 +34,10 @@ const useUser = () => {
                 description: res?.data?.message,
                 color: "success",
             })
-            router.push(`/`)
+
+            console.log(res);
+            
+            router.push(`/?id=${res?.data?.data?._id}`)
         },
     })
 
