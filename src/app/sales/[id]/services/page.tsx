@@ -6,7 +6,12 @@ import {
     CustomTimePicker,
 } from "@/components/custom";
 import CustomDateTimePicker from "@/components/custom/customDatePicker";
-import { LoadingLayout, MessageBtn, ShareBtn, StarRating } from "@/components/shared";
+import {
+    LoadingLayout,
+    MessageBtn,
+    ShareBtn,
+    StarRating,
+} from "@/components/shared";
 import { useEffect, useState } from "react";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { RiShareLine } from "react-icons/ri";
@@ -139,7 +144,7 @@ export default function SaleServicePage() {
                     <div className=" flex gap-3 items-center ">
                         <button
                             onClick={() => router.back()}
-                            className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary "
+                            className=" w-8 h-8 lg:w-12 lg:h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary "
                         >
                             <IoArrowBackOutline size={"22px"} />
                         </button>
@@ -148,7 +153,7 @@ export default function SaleServicePage() {
                         </p>
                     </div>
                     <div className=" flex gap-4 items-center ">
-                        <ShareBtn type="services" id={id} /> 
+                        <ShareBtn type="services" id={id} />
                     </div>
                 </div>
                 <p className=" hidden lg:flex text-sm font-medium capitalize ">
@@ -169,9 +174,9 @@ export default function SaleServicePage() {
                 <div className=" w-full h-[350px] relative rounded-b-2xl lg:rounded-2xl bg-gray-300 ">
                     <button
                         onClick={() => router.back()}
-                        className=" w-13 h-13 rounded-lg lg:hidden bg-white flex absolute top-4 left-6  border items-center justify-center z-10  "
+                        className=" w-10 h-10 rounded-lg lg:hidden bg-white flex absolute top-4 left-6  border items-center justify-center z-10  "
                     >
-                        <IoArrowBackOutline size={"24px"} />
+                        <IoArrowBackOutline size={"20px"} />
                     </button>
                     <div className=" w-full lg:flex rounded-2xl border hidden h-[350px] ">
                         <CustomImage
@@ -204,9 +209,7 @@ export default function SaleServicePage() {
                                 </p>
                             </div>
                             <div className=" flex gap-4 items-center ">
-                                <button className=" w-10 h-10 rounded-full flex justify-center items-center border ">
-                                    <RiShareLine size={"24px"} />
-                                </button>
+                                <ShareBtn type="services" id={id} />
                                 {/* <button className=" w-10 h-10 rounded-full flex justify-center items-center border " >
                                     <IoMdHeartEmpty size={"24px"} />
                                 </button> */}
@@ -220,7 +223,7 @@ export default function SaleServicePage() {
                                 return (
                                     <div className=" w-fit " key={index}>
                                         <BusinessServiceCard
-                                            bookmark={!self ? true : false }
+                                            bookmark={!self ? true : false}
                                             selected={selectedOption?.service}
                                             setSelected={(item) =>
                                                 handleChange(item)
