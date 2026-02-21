@@ -19,10 +19,8 @@ export default function Notification({
         endpoint: `/notifications/user/${user?._id}`,
         name: ["notification", user?._id as string],
         enable: user?._id ? true : false,
-    });
-
-    console.log(data);
-
+    }); 
+    
     return (
         <ModalLayout
             isOpen={isOpen}
