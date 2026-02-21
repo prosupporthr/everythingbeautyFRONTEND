@@ -28,9 +28,9 @@ export default function BusinessProductCard(
     }
 
     return (
-        <div className=" w-full flex flex-col rounded-[10px] " >
+        <div className=" w-full flex flex-col rounded-[10px] border " >
             <div className=" w-full h-[180px] relative rounded-lg rounded-bl-lg bg-gray-200 " >
-                <CustomImage style={{ borderRadius: "8px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
+                <CustomImage style={{ borderTopRightRadius: "10px", borderTopLeftRadius: "10px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
                 {isProfile && (
                     <Popover showArrow isOpen={show} onOpenChange={setShow} backdrop={"opaque"} offset={10} placement="top">
 
@@ -56,8 +56,8 @@ export default function BusinessProductCard(
             </div>
             <div className=" w-full flex flex-col gap-1 px-2 py-2 " >
                 <div className=" w-full flex font-bold items-center justify-between " >
-                    <p className=" text-lg capitalize " >{item?.name}</p>
-                    <p>${item?.price}</p>
+                    <p className=" capitalize " >{item?.name}</p>
+                    <p>{formatNumber(item?.price)}</p>
                 </div>
                 <p className=" text-secondary text-sm " >{(Number(item?.quantity) > 0) ? formatNumber(Number(item?.quantity), "") : "Sold Out"} Remaining</p>
             </div>

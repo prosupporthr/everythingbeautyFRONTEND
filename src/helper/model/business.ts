@@ -50,6 +50,7 @@ export interface IBusinessDetails {
     enabled: boolean;
     createdAt: string;
     updatedAt: string;
+    services: IServiceDetail[]
     creator: IUserDetail;
 }
 
