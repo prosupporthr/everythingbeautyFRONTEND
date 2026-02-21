@@ -33,8 +33,7 @@ async function fetchUser(userId: string): Promise<IUserDetail> {
  * - Accepts userId directly
  * - Falls back to localStorage if not provided
  */
-export function useUserStore(userId?: string) {
-    const [user] = useAtom(userAtom);
+export function useUserStore(userId?: string) { 
 
     const id =
         userId ??
@@ -46,7 +45,7 @@ export function useUserStore(userId?: string) {
             if (!id) throw new Error("No user id found");
             return fetchUser(id);
         },
-        enabled: !!id && !user?.id,
+        enabled: id ? true : false,
         staleTime: 1000 * 60 * 5,
     });
 }
