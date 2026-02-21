@@ -1,20 +1,20 @@
 "use client";
 import { SalesServiceCard } from "@/components/cards";
-import { CustomInput } from "@/components/custom"; 
+import { CustomInput } from "@/components/custom";
 import { LoadingLayout } from "@/components/shared";
-import { IBusinessDetails } from "@/helper/model/business"; 
+import { IBusinessDetails } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
-import { useInfiniteScroller } from "@/hooks/useCustomGetScroller"; 
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useEffect, useState } from "react";
 import { RiCloseLine, RiSearch2Line } from "react-icons/ri";
 
 export default function BusinessListPage() {
-    const [show, setShow] = useState(false); 
+    const [show, setShow] = useState(false);
     const [search, setSearch] = useState("");
 
     const [marker, setMarker] = useState(
         {} as google.maps.LatLngLiteral | null,
-    ); 
+    );
 
     const {
         items = [],
@@ -22,20 +22,23 @@ export default function BusinessListPage() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IBusinessDetails>({
-        queryKeyBase: "productfilter",
+        queryKeyBase: "businessfilter",
         endpoint: URLS.BUSINESSFILTER,
         limit: 10,
         params: { q: search },
     });
 
+    console.log(items);
+    
+
     useEffect(() => {
         if (!show) setSearch("");
-    }, [show]); 
+    }, [show]);
 
     return (
         <div className=" w-full flex gap-6 pt-1  ">
             <div className=" w-full flex flex-col pb-6 gap-6 h-full overflow-y-auto ">
-                <div className=" w-full h-fit bg-white z-50 top-0 px-6 ">
+                <div className=" w-full h-fit bg-white top-0 px-6 ">
                     <div
                         className={` ${!show ? " lg:hidden flex " : " hidden "}  w-full h-[72px] justify-between border-b items-center bg-white `}
                     >
@@ -60,7 +63,7 @@ export default function BusinessListPage() {
                                 startContent={<RiSearch2Line size={"20px"} />}
                                 placeholder="Search for Business..."
                                 type="search"
-                                name=""
+                                name="search"
                                 notform
                                 localValue={search}
                                 setLocalValue={setSearch}
@@ -74,16 +77,26 @@ export default function BusinessListPage() {
                         </button>
                     </div>
                 </div>
-                <LoadingLayout loading={isLoading} ref={ref} refetching={isFetchingMore} length={items?.length}>
-                    <div className=" w-full grid grid-cols-3 gap-6 lg:px-6 ">
+                <LoadingLayout
+                    loading={isLoading}
+                    ref={ref}
+                    refetching={isFetchingMore}
+                    length={items?.length}
+                >
+                    <div className="w-full columns-1 lg:columns-3 gap-6 px-4 lg:px-6 space-y-6">
                         {items?.map((item) => {
                             return (
-                                <SalesServiceCard
-                                    location={marker}
-                                    setLocation={setMarker}
-                                    item={item}
-                                    key={item?._id} 
-                                />
+                                <div
+                                    key={item?._id}
+                                    className="break-inside-avoid"
+                                >
+                                    <SalesServiceCard
+                                        location={marker}
+                                        setLocation={setMarker}
+                                        item={item}
+                                        key={item?._id}
+                                    />
+                                </div>
                             );
                         })}
                     </div>

@@ -6,12 +6,16 @@ import { textLimit } from "@/helper/utils/textlimit";
 import { ResponsiveCarousel, StarRating } from "../shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
+import { useRouter } from "next/navigation";
 
 export default function HeroSection() {
+
     const { data, isLoading } = useFetchData<IBusinessDetails[]>({
         endpoint: `/business/filter`,
         name: ["business"],
     });
+
+    const router = useRouter()
 
     const [user] = useAtom(userAtom);
 
@@ -47,6 +51,7 @@ export default function HeroSection() {
                         fontSize="12px"
                         fontWeight="bold"
                         height="40px"
+                        onClick={()=> router.push(`/sales/${item?._id}/services`)}
                     >
                         Book Now
                     </CustomButton>
