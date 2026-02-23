@@ -5,47 +5,52 @@ import httpService from "@/helper/services/httpService";
 import { AxiosError } from "axios";
 import { IUserDetail } from "@/helper/model/user";
 import { userAtom } from "@/store/user";
-import { useAtom } from "jotai";
+import { useAtom } from "jotai"; 
 
-/** 🔹 Fetch user data */
-async function fetchUser(userId: string): Promise<IUserDetail> {
+/** 🔹 Fetch user data using the userid from cookies */
+async function fetchUser(): Promise<IUserDetail | null> { 
+
     try {
-        const res = await httpService.get<{ data: IUserDetail }>(
-            `/user/${userId}`,
-        );
+        const res = await httpService.get<{ data: IUserDetail }>(`/user/me`);
+
+        console.log(res);
 
         return res.data.data;
     } catch (error) {
+        console.log("error");
+
         const err = error as AxiosError<{ message?: string }>;
 
-        // Optional redirect logic
-        if (typeof window !== "undefined") {
-            localStorage.clear();
-            window.location.href = "/";
-        }
+        console.log("error");
+
+        console.log(error);
+
+        // 🧹 Clear tokens and redirect on failure
+        // Cookies.remove("userid");
+        // Cookies.remove("accesstoken");
+        // localStorage.clear();
+        // if (typeof window !== "undefined") {
+        //     window.location.href = "/";
+        // }
 
         throw new Error(err.response?.data?.message || err.message);
     }
 }
 
 /**
- * ✅ useUserStore
- * - Accepts userId directly
- * - Falls back to localStorage if not provided
+ * ✅ useUser — TanStack Query hook replacement for userAtom
+ * - Fetches user info with caching and automatic re-fetch
+ * - Handles error + redirect logic
  */
-export function useUserStore(userId?: string) { 
-
+export function useUserStore() {
+    const [user] = useAtom(userAtom);
     const id =
-        userId ??
-        (typeof window !== "undefined" ? localStorage.getItem("userid") : null);
+        typeof window !== "undefined" ? localStorage.getItem("userid") : null;
 
     return useQuery({
         queryKey: ["user", id],
-        queryFn: () => {
-            if (!id) throw new Error("No user id found");
-            return fetchUser(id);
-        },
-        enabled: id ? true : false,
-        staleTime: 1000 * 60 * 5,
+        queryFn: fetchUser,
+        // staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+        enabled: user?._id ? false : !id ? false : true,
     });
 }
