@@ -1,37 +1,33 @@
-"use client"
+"use client";
 
-import { ICreateChat, ISendChat } from "@/helper/model/chat"
-import { handleError } from "@/helper/services/errorHandler"
-import httpService from "@/helper/services/httpService"
-import { URLS } from "@/helper/services/urls"
-import { Socket } from "@/helper/utils/socket-io"
-import { addToast } from "@heroui/react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useFormik } from "formik"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-
+import { ICreateChat, ISendChat } from "@/helper/model/chat";
+import { handleError } from "@/helper/services/errorHandler";
+import httpService from "@/helper/services/httpService";
+import { URLS } from "@/helper/services/urls";
+import { Socket } from "@/helper/utils/socket-io";
+import { addToast } from "@heroui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const useMessage = () => {
+    const router = useRouter();
+    const queryClient = useQueryClient();
+    const [loading, setIsLoading] = useState(false);
 
-    const router = useRouter()
-    const queryClient = useQueryClient()
-    const [ loading, setIsLoading ] = useState(false)
-    
     /** 🔹 Formik Instances */
     const formik = useFormik({
         initialValues: {
-            "chatId": "",
-            "senderId": "",
-            "type": "text_only",
-            "message": ""
+            chatId: "",
+            senderId: "",
+            type: "text_only",
+            message: "",
         },
         // validationSchema: businessSchema,
         onSubmit: (data) => {
-
-            setIsLoading(true)
+            setIsLoading(true);
             // sendChatMutation.mutate(data)
-
 
             Socket.emit("chat", {
                 chatId: data.chatId,
@@ -40,22 +36,19 @@ const useMessage = () => {
                 message: data.message,
             });
 
-            formik?.setFieldValue("message", "")
-            queryClient.invalidateQueries({ queryKey: ["chatlist"] }) 
+            formik?.setFieldValue("message", "");
+            queryClient.invalidateQueries({ queryKey: ["chatlist"] });
 
-            setIsLoading(false)
-
+            setIsLoading(false);
         },
-    })
+    });
 
     /** 🔹 Business */
     const sendChatMutation = useMutation({
-        mutationFn: (data: ISendChat) =>
-            httpService.post(URLS.SENDCHAT, data),
+        mutationFn: (data: ISendChat) => httpService.post(URLS.SENDCHAT, data),
         onError: handleError,
-        onSuccess: (data) => {  
-
-            const chat = data?.data?.data 
+        onSuccess: (data) => {
+            const chat = data?.data?.data;
 
             Socket.emit("chat", {
                 chatId: chat.chatId,
@@ -64,10 +57,10 @@ const useMessage = () => {
                 message: chat.message,
             });
 
-            formik?.setFieldValue("message", "")
-            setIsLoading(false)
+            formik?.setFieldValue("message", "");
+            setIsLoading(false);
         },
-    })
+    });
 
     /** 🔹 Business */
     const createChatMutation = useMutation({
@@ -79,37 +72,57 @@ const useMessage = () => {
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }) 
+            });
 
-            router.push(`/message?id=${res?.data?.data?._id}&first=true`)
+            router.push(`/message?id=${res?.data?.data?._id}&first=true`);
         },
-    })
+    });
 
     /** 🔹 Business */
     const deleteChatMutation = useMutation({
-        mutationFn: (data: string) =>
-            httpService.delete(URLS.CHATDELETE(data)),
+        mutationFn: (data: string) => httpService.delete(URLS.CHATDELETE(data)),
         onError: handleError,
         onSuccess: (res) => {
             addToast({
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            })
-            queryClient.invalidateQueries({ queryKey: ["chatlist"] })
-            router.push(`/message`)
+            });
+            queryClient.invalidateQueries({ queryKey: ["chatlist"] });
+            router.push(`/message`);
         },
-    })
+    });
 
-    const isLoading = createChatMutation?.isPending || sendChatMutation?.isPending || loading || deleteChatMutation?.isPending
+    /** 🔹 Business */
+    const updateNotificationStatus = useMutation({
+        mutationFn: (data: { ids: string[]; userType: "user" | "admin" }) =>
+            httpService.post(URLS.NOTIFICATIONSTATUS, data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+            queryClient.invalidateQueries({ queryKey: ["notification"] }); 
+        },
+    });
+
+    const isLoading =
+        createChatMutation?.isPending ||
+        sendChatMutation?.isPending ||
+        loading ||
+        deleteChatMutation?.isPending ||
+        updateNotificationStatus?.isPending;
 
     return {
         formik,
         createChatMutation,
         sendChatMutation,
         isLoading,
-        deleteChatMutation
-    }
-}
+        deleteChatMutation,
+        updateNotificationStatus,
+    };
+};
 
-export default useMessage
+export default useMessage;
