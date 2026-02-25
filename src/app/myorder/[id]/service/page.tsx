@@ -17,12 +17,16 @@ import { FaTruck } from "react-icons/fa6";
 import { dateTimeFormat } from "@/helper/utils/dateFormat";
 import { RatingBusinessModal } from "@/components/modals";
 import useRating from "@/hooks/useRating";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
+import { useEffect } from "react";
 
 export default function BookedServicesPage() {
     const router = useRouter();
     const param = useParams();
 
     const id = param.id as string;
+    const [ user ] = useAtom(userAtom)
 
     const { data, isLoading } = useFetchData<IBookingDetail>({
         endpoint: `/booking/${id}`,
@@ -31,9 +35,21 @@ export default function BookedServicesPage() {
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
+    useEffect(() => {
+        if (data?.businessId) {
+            formik.setFieldValue("businessId", data?.businessId); 
+        }
+
+        if (user?._id) { 
+            formik.setFieldValue("userId", user?._id); 
+        }
+
+    }, [data?.businessId, user?._id]); 
+
+
     return (
         <div className=" w-full min-h-[50vh] ">
-            <LoadingLayout loading={isLoading}>
+            <LoadingLayout loading={isLoading}  >
                 <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
                     <div className=" w-full flex flex-col px-6 lg:px-8 ">
                         <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 ">

@@ -24,6 +24,7 @@ export default function RatingBusinessModal({
     formik: FormikProps<IRatingForm>;
     loading: boolean;
 }) {
+
     return (
         <>
             {data?.name && (

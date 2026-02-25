@@ -118,7 +118,7 @@ export default function OrderPage() {
                         {/* <div className=" w-full lg:w-[300px] " >
                             <CustomButton fullWidth onClick={handleClick} isLoading={loadingBooking} >Pay</CustomButton>
                         </div> */}
-                        <PaymentBtn type={"product"} id={slug} amount={product?.price as number} user={user as IUserDetail} businessID={id} qty={Number(qty)} />
+                        <PaymentBtn type={"product"} id={slug} amount={(Number(product?.price) * Number(qty)) as number} user={user as IUserDetail} businessID={id} qty={Number(qty)} />
                     </div>
                     <div className=" w-full lg:w-fit " >
                         <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 " >

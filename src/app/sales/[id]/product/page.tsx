@@ -24,6 +24,7 @@ import { MapView } from "@/components/map_component";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { TiTick } from "react-icons/ti";
+import { addToast } from "@heroui/toast";
 
 export default function SaleProductPage() {
     const param = useParams();
@@ -87,6 +88,14 @@ export default function SaleProductPage() {
     }, [data, isLoading, setMarker]);
 
     const handleClick = () => {
+        if (data?.colors[0].label && !color?.label) {
+            addToast({
+                title: "Warning",
+                description: "Select A Color",
+                color: "warning",
+            });
+            return
+        }
         router.push(
             `/sales/${data?.businessId}/order/${id}?qty=${qty}&color=${color?.label}`,
         );
@@ -115,14 +124,14 @@ export default function SaleProductPage() {
                         <RiAddFill />
                     </button>
                 </div>
-                {!data?.colors[0]?.label && (
+                {/* {!data?.colors[0]?.label && ( */}
                     <CustomButton
                         onClick={handleClick}
                         isDisabled={qty > 0 ? false : true}
                     >
                         {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
                     </CustomButton>
-                )}
+                {/* )}
                 {data?.colors[0]?.label && (
                     <CustomButton
                         onClick={handleClick}
@@ -130,7 +139,7 @@ export default function SaleProductPage() {
                     >
                         {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
                     </CustomButton>
-                )}
+                )} */}
                 <div className=" w-full flex justify-center border-b pb-3 font-medium ">
                     You won't be charged yet
                 </div>

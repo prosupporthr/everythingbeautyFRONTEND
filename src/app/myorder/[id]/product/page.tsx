@@ -12,12 +12,16 @@ import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
 import { RatingBusinessModal } from "@/components/modals";
 import useRating from "@/hooks/useRating";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
+import { useEffect } from "react";
 
 export default function OrderedProductPage() {
     const router = useRouter();
     const param = useParams();
 
     const id = param.id as string;
+    const [ user ] = useAtom(userAtom)
 
     const { data, isLoading } = useFetchData<IOrderDetail>({
         endpoint: `/order/${id}`,
@@ -25,6 +29,19 @@ export default function OrderedProductPage() {
     });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
+
+
+    useEffect(() => {
+        if (data?.businessId) {
+            formik.setFieldValue("businessId", data?.businessId); 
+        }
+
+        if (user?._id) { 
+            formik.setFieldValue("userId", user?._id); 
+        }
+
+    }, [data?.businessId, user?._id]);  
+    
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -159,7 +176,7 @@ export default function OrderedProductPage() {
                                         />
                                     </div>
                                     
-                                    {data?.status === "APPROVED" && (
+                                    {data?.status === "COMPLETED" && (
                                         <div className=" lg:max-w-[300px] w-full ">
                                             <CustomButton
                                                 onClick={() => setIsOpen(true)}

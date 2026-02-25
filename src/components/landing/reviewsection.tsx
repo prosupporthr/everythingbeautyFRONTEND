@@ -14,7 +14,7 @@ export default function ReviewSection(
 ) {
 
     const { data = [], isLoading } = useFetchData<IRatingDetails[]>({
-        endpoint: URLS.REVIEWBYBUSINESSID(businessId as string), name: ["reviewbusiness"], enable: businessId ? true : false
+        endpoint: !businessId ? URLS.REVIEW : URLS.REVIEWBYBUSINESSID(businessId as string), name: ["reviewbusiness"]
     }) 
  
     return (

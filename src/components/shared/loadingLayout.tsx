@@ -16,7 +16,7 @@ const LoadingLayout = forwardRef<HTMLDivElement, LoaderProps>(
         return (
             <>
                 {!loading && length > 0 && (
-                    <div>
+                    < >
                         {children}
 
                         {/* Only render observer div if ref exists */}
@@ -27,7 +27,7 @@ const LoadingLayout = forwardRef<HTMLDivElement, LoaderProps>(
                                 <Spinner size="sm" color="primary" />
                             </div>
                         )}
-                    </div>
+                    </>
                 )}
 
                 {!loading && length === 0 && (
