@@ -38,13 +38,14 @@ export default function Navbar() {
     const { data, isLoading, refetch } = useUserStore();
 
     const [user, setUser] = useAtom(userAtom);
-    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
         name: ["review"],
         enable: user?._id ? true : false,
     });
+
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
         if (data?._id) {

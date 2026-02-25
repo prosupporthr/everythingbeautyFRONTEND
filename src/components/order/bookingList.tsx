@@ -17,7 +17,7 @@ export default function BookingListPage(
     })
 
     return (
-        <LoadingLayout loading={isLoading} >
+        <LoadingLayout loading={isLoading} length={data?.length} >
             <div className=" w-full grid lg:grid-cols-4 gap-4 " >
                 {data?.map((item) => {
                     return (
