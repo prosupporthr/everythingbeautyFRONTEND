@@ -10,7 +10,7 @@ export interface IBusiness {
     openingTime: string;
     closingTime: string;
     chargeTiming: string;
-    pictures: string[];
+    pictures?: string[];
     licenseNumber: string;
 }
 
@@ -52,6 +52,7 @@ export interface IBusinessDetails {
     updatedAt: string;
     services: IServiceDetail[]
     creator: IUserDetail;
+    licenseNumber: string
 }
 
 export interface IServices {

@@ -20,6 +20,8 @@ export default function BusinessHeader() {
             router.push(`/business/${id}/create/services`)
         } else if (tab === "store") {
             router.push(`/business/${id}/create/product`)
+        } else {
+            router.push(`/business/${id}/edit`)
         }
     }
 
@@ -29,10 +31,10 @@ export default function BusinessHeader() {
                 <p className=" text-2xl font-medium capitalize " >{tab === "store" ? "My Store" : tab ? tab : `Welcome, ${user?.firstName + " " + user?.lastName}`}</p>
             </div>
             <div className=" flex items-center gap-3 lg:mr-20 " >
-                {(tab === "services" || tab === "store") && (
+                {(tab === "services" || tab === "store" || !tab) && (
                     <div className=" w-fit lg:ml-0 ml-auto " >
                         <CustomButton onClick={handleClick} height="40px" className=" w-[150px] " startIcon={<IoMdAdd color="white" size={"18px"} />} >
-                            Add {tab === "services" ? "Services" : "Products"}
+                            {tab === "services" ? "Add Services" : tab === "store" ? "Add Products" : "Edit Business"}
                         </CustomButton>
                     </div>
                 )}
