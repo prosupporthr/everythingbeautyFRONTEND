@@ -88,7 +88,7 @@ export default function SaleProductPage() {
     }, [data, isLoading, setMarker]);
 
     const handleClick = () => {
-        if (data?.colors[0].label && !color?.label) {
+        if (data?.colors[0]?.label && !color?.label) {
             addToast({
                 title: "Warning",
                 description: "Select A Color",

@@ -1,7 +1,6 @@
 "use client"
 import { handleError } from "@/helper/services/errorHandler";
-import httpService from "@/helper/services/httpService";
-import { addToast } from "@heroui/toast";
+import httpService from "@/helper/services/httpService"; 
 import { useMutation } from "@tanstack/react-query";
 import { URLS } from "@/helper/services/urls";
 import { IBooking, IOrder } from "@/helper/model/business"; 
@@ -46,11 +45,11 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         mutationFn: (data: IBooking) => httpService.post(URLS.BOOKING, data),
         onError: handleError,
         onSuccess: (res) => {
-            addToast({
-                title: "Success",
-                description: res?.data?.message,
-                color: "success",
-            });
+            // addToast({
+            //     title: "Success",
+            //     description: res?.data?.message,
+            //     color: "success",
+            // });
             transactionMutation.mutate({
                 userId: userID,
                 amount: amount,
@@ -70,11 +69,11 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         mutationFn: (data: IOrder) => httpService.post(URLS.ORDER, data),
         onError: handleError,
         onSuccess: (res) => {
-            addToast({
-                title: "Success",
-                description: res?.data?.message,
-                color: "success",
-            });
+            // addToast({
+            //     title: "Success",
+            //     description: res?.data?.message,
+            //     color: "success",
+            // });
 
             transactionMutation.mutate({
                 userId: userID,

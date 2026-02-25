@@ -6,7 +6,7 @@ import { RiCalendar2Line } from "react-icons/ri";
 import { CustomButton, CustomImage } from "@/components/custom";
 import { useFetchData } from "@/hooks/useFetchData";
 import { IBusinessDetails, IOrderDetail } from "@/helper/model/business";
-import { LoadingLayout, UserCard } from "@/components/shared";
+import { LoadingLayout, PaymentBtn, UserCard } from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
@@ -21,27 +21,33 @@ export default function OrderedProductPage() {
     const param = useParams();
 
     const id = param.id as string;
-    const [ user ] = useAtom(userAtom)
+    const [user] = useAtom(userAtom);
 
     const { data, isLoading } = useFetchData<IOrderDetail>({
         endpoint: `/order/${id}`,
         name: ["business", id],
     });
 
-    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
+    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>(
+        {
+            endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
+            name: ["has-reviewed", id],
+            enable: user?._id && data?.businessId ? true : false,
+        },
+    );
 
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
         if (data?.businessId) {
-            formik.setFieldValue("businessId", data?.businessId); 
+            formik.setFieldValue("businessId", data?.businessId);
         }
 
-        if (user?._id) { 
-            formik.setFieldValue("userId", user?._id); 
+        if (user?._id) {
+            formik.setFieldValue("userId", user?._id);
         }
-
-    }, [data?.businessId, user?._id]);  
-    
+    }, [data?.businessId, user?._id]);
+    console.log(data);
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -175,15 +181,31 @@ export default function OrderedProductPage() {
                                             showDetail
                                         />
                                     </div>
-                                    
-                                    {data?.status === "COMPLETED" && (
+
+                                    {data?.status === "COMPLETED" &&
+                                        !hasReview && (
+                                            <div className=" lg:max-w-[300px] w-full ">
+                                                <CustomButton
+                                                    onClick={() =>
+                                                        setIsOpen(true)
+                                                    }
+                                                    fullWidth
+                                                >
+                                                    Rate Business
+                                                </CustomButton>
+                                            </div>
+                                        )}
+
+                                    {data?.status === "PROCESSING" && (
                                         <div className=" lg:max-w-[300px] w-full ">
-                                            <CustomButton
-                                                onClick={() => setIsOpen(true)}
-                                                fullWidth
-                                            >
-                                                Rate Business
-                                            </CustomButton>
+                                            <PaymentBtn
+                                                type={"product"}
+                                                title="Make Payment"
+                                                ordered
+                                                id={data?._id}
+                                                amount={data?.totalPrice * data?.quantity}
+                                                user={user as IUserDetail}
+                                            />
                                         </div>
                                     )}
                                 </div>
