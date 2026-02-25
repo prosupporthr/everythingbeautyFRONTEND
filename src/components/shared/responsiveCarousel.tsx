@@ -16,12 +16,12 @@ export default function ResponsiveCarousel({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Duplicate items for seamless looping
-  const slides = [...items, ...items];
+  const slides = items.length > 3 ? [...items, ...items] : [...items];
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // if (items.length <= 3) return
+    if (items.length <= 3) return
 
     const firstItem =
       containerRef.current.querySelector<HTMLDivElement>(

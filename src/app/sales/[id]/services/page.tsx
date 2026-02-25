@@ -11,6 +11,7 @@ import {
     MessageBtn,
     ShareBtn,
     StarRating,
+    Verified,
 } from "@/components/shared";
 import { useEffect, useState } from "react";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -178,7 +179,7 @@ export default function SaleServicePage() {
                     >
                         <IoArrowBackOutline size={"20px"} />
                     </button>
-                    <div className=" w-full lg:flex rounded-2xl border hidden h-[350px] ">
+                    <div className=" w-full lg:flex rounded-2xl border hidden h-[350px] relative ">
                         <CustomImage
                             alt={data?.name as string}
                             style={{
@@ -187,6 +188,7 @@ export default function SaleServicePage() {
                             fillContainer
                             src={data?.pictures[0] as string}
                         />
+                        <Verified item={data as IBusinessDetails} />
                     </div>
                     <div className=" w-full lg:hidden flex h-[350px] ">
                         <CustomImage

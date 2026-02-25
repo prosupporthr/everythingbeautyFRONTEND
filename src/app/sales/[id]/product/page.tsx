@@ -6,6 +6,7 @@ import {
     MessageBtn,
     ShareBtn,
     StarRating,
+    Verified,
 } from "@/components/shared";
 import { useEffect, useState } from "react";
 import { RiAddFill } from "react-icons/ri";
@@ -94,7 +95,7 @@ export default function SaleProductPage() {
                 description: "Select A Color",
                 color: "warning",
             });
-            return
+            return;
         }
         router.push(
             `/sales/${data?.businessId}/order/${id}?qty=${qty}&color=${color?.label}`,
@@ -125,12 +126,12 @@ export default function SaleProductPage() {
                     </button>
                 </div>
                 {/* {!data?.colors[0]?.label && ( */}
-                    <CustomButton
-                        onClick={handleClick}
-                        isDisabled={qty > 0 ? false : true}
-                    >
-                        {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
-                    </CustomButton>
+                <CustomButton
+                    onClick={handleClick}
+                    isDisabled={qty > 0 ? false : true}
+                >
+                    {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
+                </CustomButton>
                 {/* )}
                 {data?.colors[0]?.label && (
                     <CustomButton
@@ -170,7 +171,7 @@ export default function SaleProductPage() {
                 </p>
                 <div className=" w-full flex gap-6 lg:flex-row  flex-col-reverse ">
                     <div className=" w-full flex flex-col gap-4 px-4 ">
-                        <div className=" w-full h-[350px] lg:flex hidden rounded-2xl bg-gray-300 ">
+                        <div className=" w-full h-[350px] lg:flex hidden rounded-2xl bg-gray-300 relative ">
                             <CustomImage
                                 alt={data?.name as string}
                                 style={{
@@ -178,6 +179,9 @@ export default function SaleProductPage() {
                                 }}
                                 fillContainer
                                 src={data?.pictures[0] as string}
+                            />
+                            <Verified
+                                item={data?.business as IBusinessDetails}
                             />
                         </div>
                         <div className=" pb-4 border-b w-full flex flex-col gap-3 ">
