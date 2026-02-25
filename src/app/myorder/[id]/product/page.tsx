@@ -220,7 +220,7 @@ export default function OrderedProductPage() {
                                         <p>
                                             Seller-Fulfilled Shipping - The
                                             seller handles the entire shipping
-                                            process and not Chasescroll.{" "}
+                                            process.{" "}
                                         </p>
                                         <p>
                                             Verify that items are in good

@@ -52,7 +52,8 @@ export interface IBusinessDetails {
     updatedAt: string;
     services: IServiceDetail[]
     creator: IUserDetail;
-    licenseNumber: string
+    licenseNumber: string;
+    licenseStatus: "NOT_LICENSED" | "LICENSED"
 }
 
 export interface IServices {
