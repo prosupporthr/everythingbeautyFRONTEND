@@ -34,18 +34,19 @@ export default function Notification({
     }); 
 
     useEffect(() => {
+        setIsRead(true)
         data?.map((item) => {
-            if(item?.readBy){
+            if(!item?.readBy){
                 setIsRead(false)
                 setUnReadData((prev)=>  uniqBy([...prev, item?._id], ""))
             }   
         })
-    }, [data])
+    }, [data, isOpen])
 
     console.log(unReadData);
     
     useEffect(()=>{
-        if(isOpen && !isRead){
+        if(isOpen && !isRead){ 
             updateNotificationStatus.mutate({
                 ids: unReadData,
                 userType: "user"

@@ -51,7 +51,7 @@ export default function RatingBusinessModal({
                                     />
                                 </div>
                                 <div className=" w-full flex flex-col items-center ">
-                                    <p className=" font-bold text-lg ">
+                                    <p className=" font-bold text-lg capitalize ">
                                         {data?.name}
                                     </p>
                                     <p className=" text-sm ">Business</p>
