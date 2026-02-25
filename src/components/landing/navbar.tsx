@@ -2,12 +2,7 @@
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { CustomImage, CustomButton } from "../custom";
 import { RxHamburgerMenu } from "react-icons/rx";
-import {
-    useParams,
-    usePathname,
-    useRouter,
-    useSearchParams,
-} from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { menulist } from "@/helper/services/databank";
@@ -35,6 +30,7 @@ export default function Navbar() {
     const queryClient = useQueryClient();
 
     const [showNotification, setShowNotification] = useState(false);
+    const [isRead, setIsRead] = useState(true);
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
@@ -42,19 +38,19 @@ export default function Navbar() {
     const { data, isLoading, refetch } = useUserStore();
 
     const [user, setUser] = useAtom(userAtom);
-    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
         name: ["review"],
         enable: user?._id ? true : false,
-    }); 
+    });
+
+    const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
         if (data?._id) {
             setUser(data);
-        } 
-        else if (
+        } else if (
             data === null &&
             (!pathname.includes("sale") || !pathname.includes("profile"))
         ) {
@@ -142,7 +138,12 @@ export default function Navbar() {
                                 className=" relative  "
                                 onClick={() => setShowNotification(true)}
                             >
-                                <RiNotification2Fill size={"25px"} />
+                                <div className={` ${!isRead ? " rotate-15" : ""} `}>
+                                    <RiNotification2Fill size={"25px"} />
+                                </div>
+                                {!isRead && (
+                                    <div className=" absolute top-0 right-0 bg-brand w-3 h-3 rounded-full " />
+                                )}
                             </button>
                         )}
 
@@ -333,6 +334,8 @@ export default function Navbar() {
             <Notification
                 isOpen={showNotification}
                 onClose={setShowNotification}
+                isRead={isRead}
+                setIsRead={setIsRead}
             />
         </div>
     );
