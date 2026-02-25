@@ -10,7 +10,7 @@ import {
     IBusinessDetails,
     IOrderDetail,
 } from "@/helper/model/business";
-import { LoadingLayout, UserCard } from "@/components/shared";
+import { LoadingLayout, PaymentBtn, UserCard } from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
@@ -26,30 +26,35 @@ export default function BookedServicesPage() {
     const param = useParams();
 
     const id = param.id as string;
-    const [ user ] = useAtom(userAtom)
+    const [user] = useAtom(userAtom);
 
     const { data, isLoading } = useFetchData<IBookingDetail>({
         endpoint: `/booking/${id}`,
         name: ["business", id],
     });
 
+    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>({
+        endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
+        name: ["has-reviewed", id],
+        enable: user?._id && data?.businessId ? true : false,
+    });
+
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
         if (data?.businessId) {
-            formik.setFieldValue("businessId", data?.businessId); 
+            formik.setFieldValue("businessId", data?.businessId);
         }
 
-        if (user?._id) { 
-            formik.setFieldValue("userId", user?._id); 
+        if (user?._id) {
+            formik.setFieldValue("userId", user?._id);
         }
-
     }, [data?.businessId, user?._id]); 
-
+    
 
     return (
         <div className=" w-full min-h-[50vh] ">
-            <LoadingLayout loading={isLoading}  >
+            <LoadingLayout loading={isLoading}>
                 <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
                     <div className=" w-full flex flex-col px-6 lg:px-8 ">
                         <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 ">
@@ -184,7 +189,7 @@ export default function BookedServicesPage() {
                                         />
                                     </div>
 
-                                    {data?.status === "APPROVED" && (
+                                    {(data?.status === "APPROVED" && !hasReview) && (
                                         <div className=" lg:max-w-[300px] w-full ">
                                             <CustomButton
                                                 onClick={() => setIsOpen(true)}
@@ -192,6 +197,19 @@ export default function BookedServicesPage() {
                                             >
                                                 Rate Business
                                             </CustomButton>
+                                        </div>
+                                    )}
+
+                                    {data?.status === "AWAITING_APPROVAL" && (
+                                        <div className=" lg:max-w-[300px] w-full ">
+                                            <PaymentBtn
+                                                type={"booking"}
+                                                title="Make Payment"
+                                                ordered
+                                                id={data?._id}
+                                                amount={data?.totalPrice}
+                                                user={user as IUserDetail}
+                                            />
                                         </div>
                                     )}
                                 </div>

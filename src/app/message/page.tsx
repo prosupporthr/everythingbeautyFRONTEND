@@ -32,7 +32,7 @@ export default function MessagePage() {
     });
 
     return (
-        <div className=" w-full flex h-auto flex-1 overflow-hidden ">
+        <div className=" w-full flex h-full flex-1 overflow-hidden ">
             <ChatSidebar
                 search={search}
                 setSearch={setSearch}
