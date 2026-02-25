@@ -3,7 +3,7 @@ import { useFetchData } from "@/hooks/useFetchData";
 import { IBusinessDetails } from "@/helper/model/business";
 import { CustomButton, CustomImage } from "../custom";
 import { textLimit } from "@/helper/utils/textlimit";
-import { ResponsiveCarousel, StarRating } from "../shared";
+import { ResponsiveCarousel, StarRating, Verified } from "../shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export default function HeroSection() {
             key={item._id} // assuming your IBusinessDetails has `id`
             className="bg-white h-[350px] rounded-2xl flex flex-col gap-4 items-center justify-center p-4 shadow-md"
         >
-            <div className=" rounded-2xl w-full h-full bg-gray-200 ">
+            <div className=" rounded-2xl w-full h-full bg-gray-200 relative ">
                 <CustomImage
                     nopopup
                     alt={item?.name}
@@ -35,8 +35,9 @@ export default function HeroSection() {
                     src={item?.pictures[0]}
                     fillContainer
                 />
+                <Verified item={item} />
             </div>
-            <div className=" w-full flex justify-between items-center ">
+            <div className=" w-full flex justify-between items-center "> 
                 <div className=" flex flex-col items-start ">
                     <p className=" font-bold capitalize text-sm ">
                         {item?.name}

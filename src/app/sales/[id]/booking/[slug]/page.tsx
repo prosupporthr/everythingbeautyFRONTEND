@@ -160,12 +160,12 @@ export default function BookingPage() {
                             </div>
                             {/* <p className=" underline text-brand text-xs " >see all</p> */}
                         </div>
-                        <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
+                        {/* <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
                             <p className=" text-sm ">
                                 Leave a message for the vendor
                             </p>
                             <Textarea />
-                        </div>
+                        </div> */}
                         <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
                             <p className=" text-sm ">Cancellation policy</p>
                             <p className=" text-xs text-secondary ">
