@@ -141,6 +141,12 @@ export default function CustomInput({
                   e.preventDefault()
                 }
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault()
+                  formik?.submitForm()
+                }
+              }}
             />
           )}
         </>
