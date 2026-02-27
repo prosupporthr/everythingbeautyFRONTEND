@@ -61,7 +61,7 @@ export default function BusinessCreatePage() {
                                         <CustomTimePicker name="openingTime" label="Opening Time" />
                                         <CustomTimePicker name="closingTime" label="Closing Time" />
                                     </div>
-                                    <CustomInput name="licenseNumber" label="License Number" />
+                                    <CustomInput name="licenseNumber" label="License Number(Optional)" />
                                 </div>
                                 <div className=" w-full max-w-[240px] " >
                                     <CustomButton fullWidth onClick={handleContinue} >Continue</CustomButton>
