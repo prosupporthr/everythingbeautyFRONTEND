@@ -100,12 +100,7 @@ export default function Navbar() {
             setIsOpen(true);
             sessionStorage.setItem("show", "true");
         }
-    }, [review]);
-
-    console.log(user);
-
-    console.log(data);
-    
+    }, [review]); 
     
 
     return (
