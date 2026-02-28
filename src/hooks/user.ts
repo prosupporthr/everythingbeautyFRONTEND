@@ -51,6 +51,6 @@ export function useUserStore() {
         queryKey: ["user", id],
         queryFn: fetchUser,
         // staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-        enabled: user?._id ? false : !id ? false : true,
+        enabled: user?.firstName ? false : !id ? false : true,
     });
 }
