@@ -9,6 +9,8 @@ import { URLS } from "@/helper/services/urls"
 import { useState } from "react" 
 import { IOnboarding } from "@/helper/model/auth"
 import { userSchema } from "@/helper/services/validation"
+import { useAtom } from "jotai"
+import { userAtom } from "@/store/user"
 
 
 const useUser = () => {
@@ -17,6 +19,8 @@ const useUser = () => {
     const userId =  typeof window !== "undefined"
       ? localStorage.getItem("userid") as string
       : ""; 
+
+      const [ _, setUser ] = useAtom(userAtom)
 
       
     const [imageFile, setImageFile] = useState<File | string | null>("");
@@ -28,7 +32,7 @@ const useUser = () => {
             httpService.patch(URLS.USERUPDATE(userId), data),
         onError: handleError,
         onSuccess: (res) => {
-            queryClient.invalidateQueries({queryKey: ["user"]})
+                queryClient.invalidateQueries({ queryKey: ["user"] }) 
             addToast({
                 title: "Success",
                 description: res?.data?.message,
@@ -36,6 +40,7 @@ const useUser = () => {
             })
 
             console.log(res);
+            setUser(res?.data?.data)
             
             router.push(`/?id=${res?.data?.data?._id}`)
         },
