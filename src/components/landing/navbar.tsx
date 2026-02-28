@@ -25,6 +25,8 @@ export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
     const param = useParams();
+    // const query = useSearchParams();
+    // const userId = query?.get("tab") as string | null;
     const id = param.id;
     const [show, setShow] = useState(false);
     const queryClient = useQueryClient();
@@ -56,7 +58,12 @@ export default function Navbar() {
         ) {
             router.push("/");
         }
-    }, [data, isLoading]);
+
+        // if(userId && !data?.firstName){
+        //     refetch()
+        // }
+
+    }, [data, isLoading]); 
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
@@ -95,6 +102,12 @@ export default function Navbar() {
         }
     }, [review]);
 
+    console.log(user);
+
+    console.log(data);
+    
+    
+
     return (
         <div
             className={` w-full h-fit ${pathname === "/" ? " !sticky " : " !sticky "} z-1000 top-0 inset-x-0 `}
@@ -118,7 +131,7 @@ export default function Navbar() {
                 )}
                 {!isLoading && (
                     <div className=" flex gap-3 items-center ">
-                        {user?.business === null && (
+                        {user?.plan === "free" && (
                             <div className=" w-[120px] ">
                                 <CustomButton
                                     onClick={() => router.push("/business")}
@@ -163,7 +176,7 @@ export default function Navbar() {
                                         <div className=" flex items-center gap-3 ">
                                             <UserCard
                                                 size="sm"
-                                                item={data as IUserDetail}
+                                                item={user as IUserDetail}
                                             />
                                             <IoChevronDown size={"17px"} />
                                         </div>
