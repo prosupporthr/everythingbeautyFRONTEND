@@ -371,7 +371,7 @@ export default function SaleServicePage() {
                         </div>
                     </div>
                     {!self && (
-                        <div className=" lg:w-fit p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30 ">
+                        <div className=" lg:w-fit p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-40 ">
                             <div className=" w-full bg-white lg:w-[413px] rounded-2xl border p-6 flex flex-col gap-4 ">
                                 <p className=" text-2xl font-bold ">Checkout</p>
                                 <div className=" w-full border rounded-t-xl ">
