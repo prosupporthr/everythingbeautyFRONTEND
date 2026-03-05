@@ -31,7 +31,7 @@ import { useAtom } from "jotai";
 import { MapView } from "@/components/map_component";
 import { ProductList } from "@/components/product";
 import ReviewSection from "@/components/landing/reviewsection";
-import { URLS } from "@/helper/services/urls";
+import { URLS } from "@/helper/services/urls"; 
 import { addToast } from "@heroui/toast";
 
 export default function SaleServicePage() {
@@ -124,41 +124,41 @@ export default function SaleServicePage() {
 
     const handleClick = () => {
         
-        // if (!selectedDate || !data) return; 
+        if (!selectedDate || !data) return; 
         
 
-        // const selectedDay = new Date(selectedDate).getUTCDay();
-        // const selectedTime = new Date (selectedDate).toTimeString().slice(0, 5); // "HH:mm"
+        const selectedDay = new Date(selectedDate).getUTCDay();
+        const selectedTime = new Date (selectedDate).toTimeString().slice(0, 5); // "HH:mm"
 
-        // const isValidDay = data.days?.includes(selectedDay);
+        const isValidDay = data.days?.includes(selectedDay);
 
-        // const isValidTime =
-        //     data.openingTime &&
-        //     data.closingTime &&
-        //     selectedTime >= data.openingTime &&
-        //     selectedTime <= data.closingTime;
+        const isValidTime =
+            data.openingTime &&
+            data.closingTime &&
+            selectedTime >= data.openingTime &&
+            selectedTime <= data.closingTime;
 
-        // if (!isValidDay) {
-        //     addToast({
-        //         title: "Unavailable Day",
-        //         description:
-        //             "This service is not available on the selected day.",
-        //         color: "danger",
-        //     });
-        //     return;
-        // }
+        if (!isValidDay) {
+            addToast({
+                title: "Unavailable Day",
+                description:
+                    "This service is not available on the selected day.",
+                color: "danger",
+            });
+            return;
+        }
 
-        // if (!isValidTime) {
-        //     addToast({
-        //         title: "Unavailable Time",
-        //         description: `Please select a time between ${data.openingTime} and ${data.closingTime}.`,
-        //         color: "danger",
-        //     });
-        //     return;
-        // }
-
+        if (!isValidTime) {
+            addToast({
+                title: "Unavailable Time",
+                description: `Please select a time between ${data.openingTime} and ${data.closingTime}.`,
+                color: "danger",
+            });
+            return;
+        }
+ 
         router.push(
-            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate.toISOString()}`,
+            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}`,
         );
     };
 
