@@ -1,4 +1,4 @@
-import { Aboutsection, Navbar, Productsection, Reviewsection } from "@/components/landing";
+import { Aboutsection, Productsection, Reviewsection } from "@/components/landing";
 import HeroSection from "@/components/landing/herosection"; 
 
 export default function Home() {

@@ -7,7 +7,7 @@ export default function Verified({ item }: { item: IBusinessDetails }) {
         <>
             {item?.licenseStatus === "LICENSED" && (
                 <div
-                    className="absolute top-3 right-3 z-50
+                    className="absolute top-3 right-3 z-30
                 flex items-center justify-center
                 w-8 h-8 rounded-full
                 bg-gradient-to-br from-[#B983FF] via-[#9747FF] to-[#6E2BFF]
