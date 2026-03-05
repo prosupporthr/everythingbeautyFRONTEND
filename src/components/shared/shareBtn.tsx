@@ -8,11 +8,13 @@ export default function ShareBtn({
     type: "product" | "services" | "user";
     id: string;
 }) {
+    const BASE_DOMAIN = process.env.NEXT_PUBLIC_DOMAIN_URL as string;
+
     const copyItem = () => {
         navigator.clipboard.writeText(
-            type === "user" ?
-            `https://everythingbeauty-frontend.vercel.app/profile/${id}/opengraph`:
-            `https://everythingbeauty-frontend.vercel.app/sales/${id}/${type}/opengraph`,
+            type === "user"
+                ? `${BASE_DOMAIN}/profile/${id}/opengraph`
+                : `${BASE_DOMAIN}/sales/${id}/${type}/opengraph`,
         );
         addToast({
             title: "copied successful",
