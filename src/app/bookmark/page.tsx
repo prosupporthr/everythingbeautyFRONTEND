@@ -111,7 +111,7 @@ export default function Bookmark() {
                                             <p className=" text-xs " >{formatNumber(Number(item?.service?.hourlyRate))}</p>
                                         </div>
                                         <div className=" w-full flex flex-col lg:flex-row gap-3 mt-auto " >
-                                            <CustomButton height="45px" onClick={() => router.push(`/sales/${item?.service?.businessId}/services`)} fullWidth >Buy</CustomButton>
+                                            <CustomButton height="45px" onClick={() => router.push(`/sales/${item?.service?.businessId}/services`)} fullWidth >Book</CustomButton>
                                             <CustomButton height="45px" onClick={() => deleteHandler(item?.service?.name, item?._id)} variant="customDanger" fullWidth >Remove</CustomButton>
                                         </div>
                                     </div>
