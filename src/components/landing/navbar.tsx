@@ -62,8 +62,7 @@ export default function Navbar() {
         // if(userId && !data?.firstName){
         //     refetch()
         // }
-
-    }, [data, isLoading]); 
+    }, [data, isLoading]);
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
@@ -100,8 +99,7 @@ export default function Navbar() {
             setIsOpen(true);
             sessionStorage.setItem("show", "true");
         }
-    }, [review]); 
-    
+    }, [review]);
 
     return (
         <div
@@ -146,7 +144,9 @@ export default function Navbar() {
                                 className=" relative  "
                                 onClick={() => setShowNotification(true)}
                             >
-                                <div className={` ${!isRead ? " rotate-15" : ""} `}>
+                                <div
+                                    className={` ${!isRead ? " rotate-15" : ""} `}
+                                >
                                     <RiNotification2Fill size={"25px"} />
                                 </div>
                                 {!isRead && (
@@ -212,16 +212,6 @@ export default function Navbar() {
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
                                             <button className=" h-[40px] flex w-full justify-center items-center text-sm font-medium ">
                                                 FAQs
-                                            </button>
-                                        </div>
-                                        <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
-                                            <button
-                                                onClick={() =>
-                                                    HandleRouter("/business")
-                                                }
-                                                className=" h-[40px] flex w-full justify-center items-center text-sm font-medium "
-                                            >
-                                                Join as a stylist
                                             </button>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
@@ -304,7 +294,7 @@ export default function Navbar() {
                                                 FAQs
                                             </button>
                                         </div>
-                                        {user?.business?._id && (
+                                        {user?.business?._id ? (
                                             <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
                                                 <button
                                                     onClick={() =>
@@ -315,6 +305,19 @@ export default function Navbar() {
                                                     {user?._id
                                                         ? "Dashboard"
                                                         : "Join as a stylist"}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                                <button
+                                                    onClick={() =>
+                                                        HandleRouter(
+                                                            "/business",
+                                                        )
+                                                    }
+                                                    className=" h-[40px] flex w-full justify-center items-center text-sm font-medium "
+                                                >
+                                                    Join as a stylist
                                                 </button>
                                             </div>
                                         )}
