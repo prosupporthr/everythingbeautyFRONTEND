@@ -14,21 +14,23 @@ export default function BusinessPage() {
 
     return (
         <div className=" w-full flex flex-col items-center ">
-            <div className=" w-full flex flex-col items-center px-8 ">
+            <div className=" w-full flex flex-col items-center px-4 lg:px-8 ">
                 <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 ">
                     <div className=" w-full flex gap-5 h-[78px] border-b border-gray-100 items-center text-primary ">
                         <button onClick={() => router.back()}>
                             <IoArrowBackOutline size={"22px"} />
                         </button>
-                        <p className=" text-2xl font-medium ">
+                        <p className=" text-xl lg:text-2xl font-bold ">
                             Create a business portfolio
                         </p>
                     </div>
-                    <div className=" w-full flex gap-8 ">
+                    <div className=" w-full flex  lg:flex-row flex-col gap-8 ">
                         <div className=" w-full flex flex-col gap-4 ">
                             <div className=" w-full flex items-center border-b border-gray-100 gap-2 pb-4 ">
+                                <div className=" w-fit " > 
                                 <div className=" w-12 h-12 rounded-full border border-[#E7E7E7] bg-[#FAFAFA] flex justify-center items-center ">
                                     <LuCalendarFold />
+                                </div>
                                 </div>
                                 <div className=" flex flex-col ">
                                     <p className=" text-xs font-bold ">{`You won't be charged until Vendors accepts your request.`}</p>
@@ -95,7 +97,7 @@ export default function BusinessPage() {
                             />
                         </div>
                         <div className=" w-full flex ">
-                            <div className=" w-full h-fit bg-white p-6 border border-[#EAEBEDCC] flex flex-col gap-2 rounded-2xl ">
+                            <div className=" w-full h-fit bg-white p-4 lg:p-6 border border-[#EAEBEDCC] flex flex-col gap-2 rounded-2xl ">
                                 <div className=" w-full flex items-center justify-between ">
                                     <p className=" text-sm text-secondary ">
                                         Amount
