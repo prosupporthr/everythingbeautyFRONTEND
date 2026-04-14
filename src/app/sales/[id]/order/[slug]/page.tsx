@@ -1,159 +1,240 @@
-"use client"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
+"use client";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { RiCalendar2Line } from "react-icons/ri";
-import { IoIosCheckmarkCircle } from "react-icons/io"; 
+import { IoIosCheckmarkCircle } from "react-icons/io";
 import { CustomImage } from "@/components/custom";
 import { IBusinessDetails, IProductDetail } from "@/helper/model/business";
 import { useFetchData } from "@/hooks/useFetchData";
 import { dateFormatMonthAndYear } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { LoadingLayout, PaymentBtn } from "@/components/shared"; 
+import { LoadingLayout, PaymentBtn, PaymentMethod } from "@/components/shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
 
 export default function OrderPage() {
-
-    const router = useRouter()
+    const router = useRouter();
     const param = useParams();
 
     const id = param.id as string;
     const slug = param.slug as string;
     const query = useSearchParams();
-    const qty = query?.get('qty') as string;
-    const color = query?.get('color') as string;
-    const [user] = useAtom(userAtom)
+    const qty = query?.get("qty") as string;
+    const color = query?.get("color") as string;
+    const [user] = useAtom(userAtom);
 
     // const { orderMutation, isLoading: loadingBooking } = useBooking()
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
-        endpoint: `/business/${id}`, name: ["business"]
-    })
+        endpoint: `/business/${id}`,
+        name: ["business"],
+    });
 
     const { data: product, isLoading: loading } = useFetchData<IProductDetail>({
-        endpoint: URLS.PRODUCTBYID(slug), name: ["product"]
-    }) 
+        endpoint: URLS.PRODUCTBYID(slug),
+        name: ["product"],
+    });
 
     return (
-        <LoadingLayout loading={loading || isLoading} >
-            <div className=" w-full flex flex-col gap-6 p-6 " >
-                <div className=" flex items-center gap-2  " >
-                    <button onClick={() => router.back()} className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+        <LoadingLayout loading={loading || isLoading}>
+            <div className=" w-full flex flex-col gap-6 p-6 ">
+                <div className=" flex items-center gap-2  ">
+                    <button
+                        onClick={() => router.back()}
+                        className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary "
+                    >
                         <IoArrowBackOutline size={"22px"} />
                     </button>
-                    <p className=" text-lg lg:text-2xl font-semibold lg:font-medium " >Request to book</p>
+                    <p className=" text-lg lg:text-2xl font-semibold lg:font-medium ">
+                        Request to book
+                    </p>
                 </div>
-                <div className=" w-full flex lg:flex-row flex-col-reverse gap-6 lg:gap-12 lg:p-4 " >
-                    <div className=" w-full flex flex-col gap-4 " >
-                        <div className=" hidden lg:flex items-center gap-3 pb-3 border-b " >
-                            <div className=" w-fit " >
-                                <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                <div className=" w-full flex lg:flex-row flex-col-reverse gap-6 lg:gap-12 lg:p-4 ">
+                    <div className=" w-full flex flex-col gap-4 ">
+                        <div className=" hidden lg:flex items-center gap-3 pb-3 border-b ">
+                            <div className=" w-fit ">
+                                <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary ">
                                     <RiCalendar2Line size={"20px"} />
                                 </div>
                             </div>
-                            <div className=" flex flex-col text-xs " >
-                                <p className=" font-bold " >{`You won't be charged until Vendors accepts your request.`}</p>
-                                <p className=" font-medium " >{`This usually takes up to 24 hours`}</p>
+                            <div className=" flex flex-col text-xs ">
+                                <p className=" font-bold ">{`You won't be charged until Vendors accepts your request.`}</p>
+                                <p className=" font-medium ">{`This usually takes up to 24 hours`}</p>
                             </div>
                         </div>
-                        <div className=" w-full flex lg:flex-row flex-col gap-4 lg:gap-2 lg:items-center pb-3 border-b " >
-                            <div className=" w-full lg:w-[123px] h-[300px] lg:h-[103px] rounded-2xl bg-gray-200 " >
-                                <CustomImage alt={product?.name as string} style={{
-                                    borderRadius: "16px"
-                                }}
-                                    src={product?.pictures[0] as string} fillContainer />
+                        <div className=" w-full flex lg:flex-row flex-col gap-4 lg:gap-2 lg:items-center pb-3 border-b ">
+                            <div className=" w-full lg:w-[123px] h-[300px] lg:h-[103px] rounded-2xl bg-gray-200 ">
+                                <CustomImage
+                                    alt={product?.name as string}
+                                    style={{
+                                        borderRadius: "16px",
+                                    }}
+                                    src={product?.pictures[0] as string}
+                                    fillContainer
+                                />
                             </div>
-                            <div className=" lg:hidden flex items-center gap-3 pb-3 border-b " >
-                                <div className=" w-fit " >
-                                    <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary " >
+                            <div className=" lg:hidden flex items-center gap-3 pb-3 border-b ">
+                                <div className=" w-fit ">
+                                    <div className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary ">
                                         <RiCalendar2Line size={"20px"} />
                                     </div>
                                 </div>
-                                <div className=" flex flex-col text-xs " >
-                                    <p className=" font-bold " >{`You won't be charged until Vendors accepts your request.`}</p>
-                                    <p className=" font-medium " >{`This usually takes up to 24 hours`}</p>
+                                <div className=" flex flex-col text-xs ">
+                                    <p className=" font-bold ">{`You won't be charged until Vendors accepts your request.`}</p>
+                                    <p className=" font-medium ">{`This usually takes up to 24 hours`}</p>
                                 </div>
                             </div>
-                            <div className=" flex flex-col gap-1 text-sm " >
-                                <div className=" flex gap-4 items-center " >
-                                    <p className=" text-secondary w-[100px] " >Product:</p>
-                                    <p className=" font-bold text-left capitalize " >{product?.name}</p>
+                            <div className=" flex flex-col gap-1 text-sm ">
+                                <div className=" flex gap-4 items-center ">
+                                    <p className=" text-secondary w-[100px] ">
+                                        Product:
+                                    </p>
+                                    <p className=" font-bold text-left capitalize ">
+                                        {product?.name}
+                                    </p>
                                 </div>
-                                <div className=" flex gap-4 items-center " >
-                                    <p className=" text-secondary w-[100px] " >Quatity:</p>
-                                    <p className=" font-bold text-left " >{formatNumber(Number(qty), "")}</p>
+                                <div className=" flex gap-4 items-center ">
+                                    <p className=" text-secondary w-[100px] ">
+                                        Quatity:
+                                    </p>
+                                    <p className=" font-bold text-left ">
+                                        {formatNumber(Number(qty), "")}
+                                    </p>
                                 </div>
                                 {color && (
-                                    <div className=" flex gap-4 items-center " >
-                                        <p className=" text-secondary w-[100px] " >Color:</p>
-                                        <p className=" font-bold text-left " >{color}</p>
+                                    <div className=" flex gap-4 items-center ">
+                                        <p className=" text-secondary w-[100px] ">
+                                            Color:
+                                        </p>
+                                        <p className=" font-bold text-left ">
+                                            {color}
+                                        </p>
                                     </div>
                                 )}
-                                <div className=" flex gap-4 items-center " >
-                                    <p className=" text-secondary w-[100px] " >Price:</p>
-                                    <p className=" font-bold text-left " >{formatNumber((Number(product?.price) * Number(qty)))}</p>
+                                <div className=" flex gap-4 items-center ">
+                                    <p className=" text-secondary w-[100px] ">
+                                        Price:
+                                    </p>
+                                    <p className=" font-bold text-left ">
+                                        {formatNumber(
+                                            Number(product?.price) *
+                                                Number(qty),
+                                        )}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        <div className=" w-full flex-col flex gap-3 pb-3 border-b " >
-                            <div className=" w-full flex justify-between items-center " >
-                                <p >Payment schedule:</p>
-                                <p className=" text-xs text-secondary " >Full payments</p>
+                        <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
+                            <div className=" w-full flex justify-between items-center ">
+                                <p>Payment schedule:</p>
+                                <p className=" text-xs text-secondary ">
+                                    Full payments
+                                </p>
                             </div>
-                            <div className=" w-full flex justify-between items-center " >
-                                <div className=" flex items-center gap-1 " >
-                                    <IoIosCheckmarkCircle size={"25px"} color="#25C26E" />
-                                    <p className=" text-sm font-bold text-secondary " >{formatNumber((Number(product?.price) * Number(qty)) + 1)}</p>
+                            <div className=" w-full flex justify-between items-center ">
+                                <div className=" flex items-center gap-1 ">
+                                    <IoIosCheckmarkCircle
+                                        size={"25px"}
+                                        color="#25C26E"
+                                    />
+                                    <p className=" text-sm font-bold text-secondary ">
+                                        {formatNumber(
+                                            Number(product?.price) *
+                                                Number(qty) +
+                                                1,
+                                        )}
+                                    </p>
                                 </div>
-                                <p className=" text-xs text-secondary " >Paid on {dateFormatMonthAndYear(new Date().toISOString() as string)}</p>
+                                <p className=" text-xs text-secondary ">
+                                    Paid on{" "}
+                                    {dateFormatMonthAndYear(
+                                        new Date().toISOString() as string,
+                                    )}
+                                </p>
                             </div>
-                            <p className=" underline text-brand text-xs " >see all</p>
-                        </div> 
-                        <div className=" w-full flex-col flex gap-3 pb-3 border-b " >
-                            <p className=" text-sm " >Cancellation policy</p>
-                            <p className=" text-xs text-secondary " >Free cancellation up until 4 Apr . Cancel before check in on 10 Apr for a 50% refund. No refunds </p>
+                            <p className=" underline text-brand text-xs ">
+                                see all
+                            </p>
+                        </div>
+                        <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
+                            <p className=" text-sm ">Cancellation policy</p>
+                            <p className=" text-xs text-secondary ">
+                                Free cancellation up until 4 Apr . Cancel before
+                                check in on 10 Apr for a 50% refund. No
+                                refunds{" "}
+                            </p>
                         </div>
                         {/* <div className=" w-full lg:w-[300px] " >
                             <CustomButton fullWidth onClick={handleClick} isLoading={loadingBooking} >Pay</CustomButton>
                         </div> */}
-                        <PaymentBtn type={"product"} id={slug} amount={(Number(product?.price) * Number(qty)) as number} user={user as IUserDetail} businessID={id} qty={Number(qty)} />
+
+                        <PaymentMethod />
+                        <PaymentBtn
+                            type={"product"}
+                            id={slug}
+                            amount={
+                                (Number(product?.price) * Number(qty)) as number
+                            }
+                            user={user as IUserDetail}
+                            businessID={id}
+                            qty={Number(qty)}
+                        />
                     </div>
-                    <div className=" w-full lg:w-fit " >
-                        <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 " >
-                            <div className=" w-full flex items-center gap-2 pb-3 border-b " >
-                                <div className=" w-fit " >
-                                    <div className=" w-[96px] h-[94px] rounded-lg bg-gray-200 " >
-                                        <CustomImage alt={data?.name as string} style={{
-                                            borderRadius: "8px"
-                                        }} src={data?.pictures[0] as string} fillContainer />
+                    <div className=" w-full lg:w-fit ">
+                        <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 ">
+                            <div className=" w-full flex items-center gap-2 pb-3 border-b ">
+                                <div className=" w-fit ">
+                                    <div className=" w-[96px] h-[94px] rounded-lg bg-gray-200 ">
+                                        <CustomImage
+                                            alt={data?.name as string}
+                                            style={{
+                                                borderRadius: "8px",
+                                            }}
+                                            src={data?.pictures[0] as string}
+                                            fillContainer
+                                        />
                                     </div>
                                 </div>
-                                <div className=" flex flex-col gap-1 " >
-                                    <p className=" text-xl font-bold capitalize  " >{data?.name}</p>
-                                    <p className=" text-sm " >{data?.location}</p>
+                                <div className=" flex flex-col gap-1 ">
+                                    <p className=" text-xl font-bold capitalize  ">
+                                        {data?.name}
+                                    </p>
+                                    <p className=" text-sm ">
+                                        {data?.location}
+                                    </p>
                                 </div>
                             </div>
-                            <div className=" flex flex-col w-full gap-3 pb-3 border-b " >
-                                <div className=" w-full flex justify-between items-center text-sm " >
-                                    <p >Amount</p>
-                                    <p>{formatNumber((Number(product?.price) * Number(qty)))}</p>
+                            <div className=" flex flex-col w-full gap-3 pb-3 border-b ">
+                                <div className=" w-full flex justify-between items-center text-sm ">
+                                    <p>Amount</p>
+                                    <p>
+                                        {formatNumber(
+                                            Number(product?.price) *
+                                                Number(qty),
+                                        )}
+                                    </p>
                                 </div>
-                                <p className=" font-bold mt-3 " >Pricing</p>
-                                <div className=" w-full flex justify-between items-center text-sm text-secondary " >
-                                    <p >Taxes</p>
+                                <p className=" font-bold mt-3 ">Pricing</p>
+                                <div className=" w-full flex justify-between items-center text-sm text-secondary ">
+                                    <p>Taxes</p>
                                     <p>$1</p>
                                 </div>
                             </div>
-                            <div className=" w-full flex justify-between items-center text-sm " >
-                                <p className=" font-medium " >Total</p>
-                                <p className=" text-xl font-bold " >{formatNumber((Number(product?.price) * Number(qty)) + 1)}</p>
+                            <div className=" w-full flex justify-between items-center text-sm ">
+                                <p className=" font-medium ">Total</p>
+                                <p className=" text-xl font-bold ">
+                                    {formatNumber(
+                                        Number(product?.price) * Number(qty) +
+                                            1,
+                                    )}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </LoadingLayout>
-    )
+    );
 }

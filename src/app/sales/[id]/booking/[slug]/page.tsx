@@ -12,7 +12,7 @@ import {
     dateTimeFormat,
 } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { LoadingLayout, PaymentBtn } from "@/components/shared";
+import { LoadingLayout, PaymentBtn, PaymentMethod } from "@/components/shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { IUserDetail } from "@/helper/model/user";
@@ -44,8 +44,7 @@ export default function BookingPage() {
     const depositPercent = Number(services?.initialDepositPercentage || 0);
     const hourlyRate = Number(services?.hourlyRate || 0);
 
-    const initialPayment = (hourlyRate * depositPercent) / 100;
-    console.log(services);
+    const initialPayment = (hourlyRate * depositPercent) / 100; 
 
     return (
         <LoadingLayout loading={loading || isLoading}>
@@ -166,6 +165,7 @@ export default function BookingPage() {
                             </p>
                             <Textarea />
                         </div> */}
+                        <PaymentMethod />
                         <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
                             <p className=" text-sm ">Cancellation policy</p>
                             <p className=" text-xs text-secondary ">

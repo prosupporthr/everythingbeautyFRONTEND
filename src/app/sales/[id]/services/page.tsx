@@ -255,10 +255,10 @@ export default function SaleServicePage() {
                         <p className=" text-xl lg:text-2xl font-semibold ">
                             Service offered
                         </p>
-                        <div className=" w-full flex border-b pb-4 gap-4 overflow-x-auto ">
+                        <div className=" w-full grid lg:grid-cols-3 border-b pb-4 gap-4 ">
                             {services.map((item, index) => {
                                 return (
-                                    <div className=" w-fit " key={index}>
+                                    <div className=" w-full lg:w-fit " key={index}>
                                         <BusinessServiceCard
                                             bookmark={!self ? true : false}
                                             selected={selectedOption?.service}
