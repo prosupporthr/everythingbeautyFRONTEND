@@ -10,3 +10,5 @@ export { default as CancelSubscriptionBtn } from "./cancelSubscription"
 export { default as Notification } from "./notification"
 
 export { default as GetAccountNumber } from "./getAccountNumber"
+
+export { default as SuccessModal } from "./successModal"

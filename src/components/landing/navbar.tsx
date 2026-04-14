@@ -62,7 +62,7 @@ export default function Navbar() {
         // if(userId && !data?.firstName){
         //     refetch()
         // }
-    }, [data, isLoading]);
+        }, [data, isLoading]);
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {

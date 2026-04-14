@@ -5,6 +5,9 @@ import { IUserDetail } from "@/helper/model/user";
 import { ModalLayout, StripePaymentForm } from ".";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
+import { paymentMethodAtom } from "@/store/paymentmethod";
+import { useEffect } from "react";
+import { SuccessModal } from "../modals";
 
 interface IProps {
     type:
@@ -22,21 +25,23 @@ interface IProps {
     bookingDate?: string;
     title?: string;
     fullWidth?: true;
+    isClosable?: boolean
 }
 
 export default function PaymentBtn({
     type,
     id,
-    amount, 
+    amount,
     qty,
     businessID,
     ordered,
     bookingDate,
     title,
     fullWidth,
+    isClosable
 }: IProps) {
-
-    const [ user ] = useAtom(userAtom)
+    const [user] = useAtom(userAtom);
+    const [paymentmethod, setPaymentMethod] = useAtom(paymentMethodAtom);
 
     const {
         orderMutation,
@@ -45,6 +50,8 @@ export default function PaymentBtn({
         intent,
         isOpen,
         setIsOpen,
+        isShow,
+        setIsShow,
         orderID,
         paymentID,
         transactionMutation,
@@ -54,13 +61,14 @@ export default function PaymentBtn({
         userID: user?._id as string,
     });
 
-    const handleClick = () => {
+    const handleClick = () => { 
+
         if (type === "product") {
-            if (ordered) {
+            if (ordered) { 
                 transactionMutation.mutate({
                     userId: user?._id as string,
                     amount: amount ?? 0,
-                    source: "stripe",
+                    source: paymentmethod,
                     type: type,
                     flow: "inbound",
                     typeId: id,
@@ -78,11 +86,11 @@ export default function PaymentBtn({
                 });
             }
         } else if (type === "booking") {
-            if (ordered) {
+            if (ordered) { 
                 transactionMutation.mutate({
                     userId: user?._id as string,
                     amount: amount ?? 0,
-                    source: "stripe",
+                    source: paymentmethod,
                     type: type,
                     flow: "inbound",
                     typeId: id,
@@ -113,9 +121,25 @@ export default function PaymentBtn({
         }
     };
 
+    const checkMethod = () => {
+        if(paymentmethod === "stripe") {
+            setIsShow(false)
+        } else {
+            setIsShow(true)
+        }
+
+        handleClick() 
+    }
+ 
+    useEffect(() => {
+        setPaymentMethod("stripe");
+    }, []);
+
+
+
     return (
         <div className={` w-full ${fullWidth ? "" : "lg:w-[300px]"} `}>
-            <CustomButton fullWidth onClick={handleClick} isLoading={isLoading}>
+            <CustomButton fullWidth onClick={checkMethod} isLoading={isLoading}>
                 {title ?? "Pay"}
             </CustomButton>
             <ModalLayout isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -127,6 +151,17 @@ export default function PaymentBtn({
                     type={type}
                 />
             </ModalLayout>
+
+            <SuccessModal
+                linkID={ordered ? id : orderID}
+                isloading={transactionMutation.isPending}
+                isError={transactionMutation.isError}
+                isSuccess={transactionMutation.isSuccess}
+                type={type as string}
+                isOpen={isShow}
+                setIsOpen={setIsShow}
+                isClosable={isClosable}
+            />
         </div>
     );
 }

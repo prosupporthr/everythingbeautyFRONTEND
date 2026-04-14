@@ -1,10 +1,12 @@
-"use client"
+"use client";
 import { handleError } from "@/helper/services/errorHandler";
-import httpService from "@/helper/services/httpService"; 
-import { useMutation } from "@tanstack/react-query";
+import httpService from "@/helper/services/httpService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { URLS } from "@/helper/services/urls";
-import { IBooking, IOrder } from "@/helper/model/business"; 
+import { IBooking, IOrder } from "@/helper/model/business";
 import { useState } from "react";
+import { useAtom } from "jotai";
+import { paymentMethodAtom } from "@/store/paymentmethod";
 
 interface IProps {
     type:
@@ -32,24 +34,25 @@ interface ITransaction {
     currency: "usd";
 }
 
-const useBooking = ({ amount, type, userID }: IProps) => { 
-
+const useBooking = ({ amount, type, userID }: IProps) => {
     // const queryClient = useQueryClient()
-    const [isOpen, setIsOpen] = useState(false); 
+
+    const [paymentmethod] = useAtom(paymentMethodAtom);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isShow, setIsShow] = useState(false);
     const [intent, setIntent] = useState("");
     const [orderID, setOrderID] = useState("");
-    const [paymentID, setPaymentID] = useState("");
+    const [paymentID, setPaymentID] = useState(""); 
+
+    const queryClient = useQueryClient()
 
     /** 🔹 Business */
     const bookingMutation = useMutation({
         mutationFn: (data: IBooking) => httpService.post(URLS.BOOKING, data),
         onError: handleError,
-        onSuccess: (res) => {
-            // addToast({
-            //     title: "Success",
-            //     description: res?.data?.message,
-            //     color: "success",
-            // });
+        onSuccess: (res) => { 
+
+            setIsShow(true);
             transactionMutation.mutate({
                 userId: userID,
                 amount: amount,
@@ -59,7 +62,7 @@ const useBooking = ({ amount, type, userID }: IProps) => {
                 typeId: res?.data?.data?._id,
                 currency: "usd",
             });
-            setOrderID(res?.data?.data?._id)
+            setOrderID(res?.data?.data?._id);
             // router.push(`/myorder/${res?.data?.data?._id}/service`);
         },
     });
@@ -68,12 +71,8 @@ const useBooking = ({ amount, type, userID }: IProps) => {
     const orderMutation = useMutation({
         mutationFn: (data: IOrder) => httpService.post(URLS.ORDER, data),
         onError: handleError,
-        onSuccess: (res) => {
-            // addToast({
-            //     title: "Success",
-            //     description: res?.data?.message,
-            //     color: "success",
-            // });
+        onSuccess: (res) => { 
+            setIsShow(true);
 
             transactionMutation.mutate({
                 userId: userID,
@@ -84,7 +83,7 @@ const useBooking = ({ amount, type, userID }: IProps) => {
                 typeId: res?.data?.data?._id,
                 currency: "usd",
             });
-            setOrderID(res?.data?.data?._id)
+            setOrderID(res?.data?.data?._id);
 
             // router.push(`/myorder/${res?.data?.data?._id}/product`);
             // router.push("/")
@@ -96,11 +95,16 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         mutationFn: (data: ITransaction) =>
             httpService.post(URLS.TRANSACTION, data),
         onError: handleError,
-        onSuccess: (data) => {  
+        onSuccess: (data) => { 
 
-            setPaymentID(data?.data?.data?.paymentId)
-            setIntent(data?.data?.data?.clientSecret);
-            setIsOpen(true)
+            if (paymentmethod === "stripe") {
+                setPaymentID(data?.data?.data?.paymentId);
+                setIntent(data?.data?.data?.clientSecret);
+                setIsOpen(true);
+            } else {
+                queryClient.invalidateQueries({ queryKey: ["order"] })
+                queryClient.invalidateQueries({ queryKey: ["booking"] })
+            }
         },
     });
 
@@ -116,9 +120,11 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         transactionMutation,
         isOpen,
         setIsOpen,
+        isShow,
+        setIsShow,
         intent,
         orderID,
-        paymentID
+        paymentID,
     };
 };
 

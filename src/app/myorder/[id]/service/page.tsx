@@ -10,7 +10,12 @@ import {
     IBusinessDetails,
     IOrderDetail,
 } from "@/helper/model/business";
-import { LoadingLayout, PaymentBtn, UserCard } from "@/components/shared";
+import {
+    LoadingLayout,
+    PaymentBtn,
+    PaymentMethod,
+    UserCard,
+} from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
@@ -30,14 +35,16 @@ export default function BookedServicesPage() {
 
     const { data, isLoading } = useFetchData<IBookingDetail>({
         endpoint: `/booking/${id}`,
-        name: ["business", id],
+        name: ["booking", id],
     });
 
-    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>({
-        endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
-        name: ["has-reviewed", id],
-        enable: user?._id && data?.businessId ? true : false,
-    });
+    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>(
+        {
+            endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
+            name: ["has-reviewed", id],
+            enable: user?._id && data?.businessId ? true : false,
+        },
+    );
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
@@ -49,8 +56,7 @@ export default function BookedServicesPage() {
         if (user?._id) {
             formik.setFieldValue("userId", user?._id);
         }
-    }, [data?.businessId, user?._id]); 
-    
+    }, [data?.businessId, user?._id]);
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -189,17 +195,22 @@ export default function BookedServicesPage() {
                                         />
                                     </div>
 
-                                    {(data?.status === "APPROVED" && !hasReview) && (
-                                        <div className=" lg:max-w-[300px] w-full ">
-                                            <CustomButton
-                                                onClick={() => setIsOpen(true)}
-                                                fullWidth
-                                            >
-                                                Rate Business
-                                            </CustomButton>
-                                        </div>
+                                    {data?.status === "APPROVED" &&
+                                        !hasReview && (
+                                            <div className=" lg:max-w-[300px] w-full ">
+                                                <CustomButton
+                                                    onClick={() =>
+                                                        setIsOpen(true)
+                                                    }
+                                                    fullWidth
+                                                >
+                                                    Rate Business
+                                                </CustomButton>
+                                            </div>
+                                        )}
+                                    {data?.status === "AWAITING_APPROVAL" && (
+                                        <PaymentMethod />
                                     )}
-
                                     {data?.status === "AWAITING_APPROVAL" && (
                                         <div className=" lg:max-w-[300px] w-full ">
                                             <PaymentBtn
@@ -209,6 +220,7 @@ export default function BookedServicesPage() {
                                                 id={data?._id}
                                                 amount={data?.totalPrice}
                                                 user={user as IUserDetail}
+                                                isClosable
                                             />
                                         </div>
                                     )}

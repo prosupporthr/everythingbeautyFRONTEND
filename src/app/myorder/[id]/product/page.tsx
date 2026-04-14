@@ -6,7 +6,12 @@ import { RiCalendar2Line } from "react-icons/ri";
 import { CustomButton, CustomImage } from "@/components/custom";
 import { useFetchData } from "@/hooks/useFetchData";
 import { IBusinessDetails, IOrderDetail } from "@/helper/model/business";
-import { LoadingLayout, PaymentBtn, UserCard } from "@/components/shared";
+import {
+    LoadingLayout,
+    PaymentBtn,
+    PaymentMethod,
+    UserCard,
+} from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { IUserDetail } from "@/helper/model/user";
 import { FaTruck } from "react-icons/fa6";
@@ -25,7 +30,7 @@ export default function OrderedProductPage() {
 
     const { data, isLoading } = useFetchData<IOrderDetail>({
         endpoint: `/order/${id}`,
-        name: ["business", id],
+        name: ["order", id],
     });
 
     const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>(
@@ -197,14 +202,21 @@ export default function OrderedProductPage() {
                                         )}
 
                                     {data?.status === "PROCESSING" && (
+                                        <PaymentMethod />
+                                    )}
+                                    {data?.status === "PROCESSING" && (
                                         <div className=" lg:max-w-[300px] w-full ">
                                             <PaymentBtn
                                                 type={"product"}
                                                 title="Make Payment"
                                                 ordered
                                                 id={data?._id}
-                                                amount={data?.totalPrice * data?.quantity}
+                                                amount={
+                                                    data?.totalPrice *
+                                                    data?.quantity
+                                                }
                                                 user={user as IUserDetail}
+                                                isClosable
                                             />
                                         </div>
                                     )}
