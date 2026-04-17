@@ -26,7 +26,7 @@ export default function BusinessHeader() {
     }
 
     return (
-        <div className=" w-full flex lg:flex-row flex-col h-fit lg:gap-0 gap-3 py-6 justify-between lg:items-center " >
+        <div className={` ${tab === "profile" ? "hidden" : " flex " } w-full  lg:flex-row flex-col h-fit lg:gap-0 gap-3 py-6 justify-between lg:items-center `} >
             <div className=" flex items-center gap-3 " >
                 <p className=" text-2xl font-medium capitalize " >{tab === "store" ? "My Store" : tab ? tab : `Welcome, ${user?.firstName + " " + user?.lastName}`}</p>
             </div>
