@@ -1,3 +1,4 @@
+"use client"
 import { Spinner } from "@heroui/spinner";
 import { ModalLayout } from "../shared";
 import { HiMiniCheckBadge } from "react-icons/hi2";
