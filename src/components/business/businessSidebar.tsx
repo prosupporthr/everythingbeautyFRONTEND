@@ -35,7 +35,7 @@ export default function BusinessSidebar() {
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: 100, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 120, damping: 18 }}
-                    className="fixed z-10 right-0 top-1/2 -translate-y-1/2 w-[100px] flex justify-center items-center"
+                    className="fixed hidden z-10 right-0 top-1/2 -translate-y-1/2 w-[100px] lg:flex justify-center items-center"
                 >
                     <div
                         style={{ boxShadow: "0px 4px 8px 3px #0000000F" }}

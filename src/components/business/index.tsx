@@ -2,6 +2,7 @@
 
 export { default as BusinessSidebar } from "./businessSidebar" 
 export { default as BusinessHeader } from "./businessHeader"
+export { default as BusinessBottomNav } from "./businessBottomNav"
 export { default as SchedularList } from "./schedularList"
 
 // page
