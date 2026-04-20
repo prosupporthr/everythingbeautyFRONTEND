@@ -33,6 +33,7 @@ export default function Navbar() {
 
     const [showNotification, setShowNotification] = useState(false);
     const [isRead, setIsRead] = useState(true);
+    const token = localStorage.getItem("accesstoken");
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
@@ -44,7 +45,7 @@ export default function Navbar() {
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
         name: ["review"],
-        enable: user?._id ? true : false,
+        enable: false,
     });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();

@@ -28,7 +28,7 @@ export default function BusinessList(
                 <div className=" w-full grid lg:grid-cols-4 gap-4 " >
                     {data?.map((item) => {
                         return (
-                            <BusinessCard item={item} key={item._id} />
+                            <BusinessCard item={item} key={item?._id} />
                         )
                     })}
                 </div>

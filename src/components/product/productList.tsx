@@ -25,9 +25,9 @@ export default function ProductList(
             </div>
             <LoadingLayout loading={isLoading} length={data?.length} >
                 <div className=" w-full grid lg:grid-cols-4 gap-4 " >
-                    {data?.map((item) => {
+                    {data?.filter((item) => item?._id)?.map((item) => {
                         return (
-                            <ProductCard item={item} key={item._id} />
+                            <ProductCard item={item} key={item?._id} />
                         )
                     })}
                 </div>
