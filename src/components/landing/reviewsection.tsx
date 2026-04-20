@@ -4,6 +4,7 @@ import { ReviewCard } from "../cards";
 import { IRatingDetails } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { LoadingLayout } from "../shared";
+import { useEffect, useState } from "react";
 
 export default function ReviewSection(
     {
@@ -13,9 +14,18 @@ export default function ReviewSection(
     }
 ) {
 
+
+    const [ review, setReview ] = useState<IRatingDetails[]>([])
+
     const { data = [], isLoading } = useFetchData<IRatingDetails[]>({
-        endpoint: !businessId ? URLS.REVIEW : URLS.REVIEWBYBUSINESSID(businessId as string), name: ["reviewbusiness"]
+        endpoint: !businessId ? URLS.REVIEW : URLS.REVIEWBYBUSINESSID(businessId as string), name: ["reviewbusiness"], enable: businessId ? true : false
     }) 
+
+    useEffect(()=> {
+        if(data[0]?._id){
+            setReview(data)
+        }
+    }, [data])
  
     return (
         <div className=" w-full flex flex-col gap-3 " >
@@ -23,7 +33,7 @@ export default function ReviewSection(
             <LoadingLayout loading={isLoading} length={data?.length} >
                 <div className=" w-full overflow-x-auto " >
                     <div className=" w-auto flex gap-4 " >
-                        {data?.map((item, index) => {
+                        {review?.map((item, index) => {
                             return (
                                 <div key={index} >
                                     <ReviewCard {...item} />

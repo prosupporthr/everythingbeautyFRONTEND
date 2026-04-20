@@ -13,7 +13,7 @@ import {
     StarRating,
     Verified,
 } from "@/components/shared";
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import { PiClockLight } from "react-icons/pi";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useParams, useRouter } from "next/navigation";
@@ -31,8 +31,9 @@ import { useAtom } from "jotai";
 import { MapView } from "@/components/map_component";
 import { ProductList } from "@/components/product";
 import ReviewSection from "@/components/landing/reviewsection";
-import { URLS } from "@/helper/services/urls"; 
+import { URLS } from "@/helper/services/urls";
 import { addToast } from "@heroui/toast";
+import { textLimit } from "@/helper/utils/textlimit";
 
 export default function SaleServicePage() {
     const param = useParams();
@@ -123,12 +124,10 @@ export default function SaleServicePage() {
     }, [data, isLoading, setMarker]);
 
     const handleClick = () => {
-        
-        if (!selectedDate || !data) return; 
-        
+        if (!selectedDate || !data) return;
 
         const selectedDay = new Date(selectedDate).getUTCDay();
-        const selectedTime = new Date (selectedDate).toTimeString().slice(0, 5); // "HH:mm"
+        const selectedTime = new Date(selectedDate).toTimeString().slice(0, 5); // "HH:mm"
 
         const isValidDay = data.days?.includes(selectedDay);
 
@@ -156,7 +155,7 @@ export default function SaleServicePage() {
             });
             return;
         }
- 
+
         router.push(
             `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}`,
         );
@@ -170,6 +169,11 @@ export default function SaleServicePage() {
         );
         setIndex(id);
     };
+
+    const [myLocation, setMyLocation] = useState({
+        lat: 0,
+        lng: 0,
+    });
 
     const self = user?._id === data?.creator?._id;
 
@@ -198,13 +202,21 @@ export default function SaleServicePage() {
                 <div className=" hidden lg:flex w-full gap-3 ">
                     <StarRating rating={Number(data?.rating)} />
                     <p className=" font-medium ">
-                        {data?.location} •{" "}
+                        {textLimit(data?.location + "", 30)} •{" "}
                         <span
                             className={` ${status ? " text-success-500 " : "text-red-500"}  `}
                         >
                             {status ? "Open Now" : "Closed"}
                         </span>{" "}
-                        • <span className=" text-brand ">Get directions</span>
+                        •{" "}
+                        <a
+                            target="_blank"
+                            href={`https://www.google.com/maps/dir/?api=1&origin=${Number(myLocation?.lat)},${Number(myLocation?.lng)}&destination=${Number(data?.lat)},${Number(data?.long)}`}
+                        >
+                            <button className=" text-brand ">
+                                Get directions
+                            </button>
+                        </a>
                     </p>
                 </div>
                 <div className=" w-full h-[350px] relative rounded-b-2xl lg:rounded-2xl bg-gray-300 ">
@@ -255,10 +267,13 @@ export default function SaleServicePage() {
                         <p className=" text-xl lg:text-2xl font-semibold ">
                             Service offered
                         </p>
-                        <div className=" w-full flex border-b pb-4 gap-4 overflow-x-auto ">
+                        <div className=" w-full grid lg:grid-cols-3 border-b pb-4 gap-4 ">
                             {services.map((item, index) => {
                                 return (
-                                    <div className=" w-fit " key={index}>
+                                    <div
+                                        className=" w-full lg:w-fit "
+                                        key={index}
+                                    >
                                         <BusinessServiceCard
                                             bookmark={!self ? true : false}
                                             selected={selectedOption?.service}
@@ -475,6 +490,7 @@ export default function SaleServicePage() {
                             <MapView
                                 hidesearch={true}
                                 marker={marker}
+                                setMyLocat={setMyLocation}
                                 setMarker={setMarker}
                                 outclick={true}
                                 height="460px"

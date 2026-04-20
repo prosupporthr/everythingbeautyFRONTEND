@@ -32,7 +32,7 @@ export default function Navbar() {
     const queryClient = useQueryClient();
 
     const [showNotification, setShowNotification] = useState(false);
-    const [isRead, setIsRead] = useState(true);
+    const [isRead, setIsRead] = useState(true); 
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
@@ -44,7 +44,7 @@ export default function Navbar() {
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
         name: ["review"],
-        enable: user?._id ? true : false,
+        enable: data?._id ? true : false,
     });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
@@ -62,7 +62,7 @@ export default function Navbar() {
         // if(userId && !data?.firstName){
         //     refetch()
         // }
-    }, [data, isLoading]);
+        }, [data, isLoading]);
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
