@@ -442,9 +442,8 @@ export default function SaleServicePage() {
                                 <CustomButton
                                     onClick={handleClick}
                                     isDisabled={
-                                        selectedOption.service && selectedDate
-                                            ? false
-                                            : true
+                                        selectedOption.service && selectedOption.date && selectedOption.time ?
+                                        false : true
                                     }
                                 >
                                     Book Now
