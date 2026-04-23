@@ -87,10 +87,10 @@ export default function HeroSection() {
                     background:
                         "linear-gradient(0deg, rgba(151, 71, 255, 0.05), rgba(151, 71, 255, 0.05)),linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15))",
                 }}
-                className=" absolute inset-0 z-10 "
+                className=" absolute inset-0 z-[2] "
             />
             {user?._id && (
-                <div className=" absolute bottom-0 z-20 inset-x-0 ">
+                <div className=" absolute bottom-0 z-[3] inset-x-0 ">
                     {!isLoading && items && items.length > 0 && (
                         <ResponsiveCarousel items={items} />
                     )}
