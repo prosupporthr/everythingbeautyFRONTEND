@@ -43,10 +43,7 @@ export default function CustomUserLocation({
     const [address, setAddress] = React.useState("")
     const [addressOther, setAddressOther] = React.useState<IOtherAddress>({} as IOtherAddress)
 
-    const { addressMutation, editAddressMutation, isLoading, open, setOpen } = useEditUser()
-
-    console.log("lat "+latname);
-    console.log("lng "+lngname);
+    const { addressMutation, editAddressMutation, isLoading, open, setOpen } = useEditUser() 
     
 
     const selectLocation = (item: google.maps.LatLngLiteral) => {
@@ -99,9 +96,7 @@ export default function CustomUserLocation({
                 isPrimary: true
             })
         }
-    }
-    console.log(id);
-    
+    } 
 
     return (
         <Loader loading={isLoading} >

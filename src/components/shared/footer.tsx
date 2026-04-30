@@ -8,11 +8,11 @@ export default function Footer() {
     const id = param.id; 
 
     return (
-        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`) ||  pathname?.includes(`message`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
+        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`) ||  pathname?.includes(`message`) ||  pathname?.includes(`ship`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
             <div className=" max-w-[1276px] w-full flex flex-col gap-6 " >
                 <div className=" w-full flex lg:flex-row flex-col gap-6 justify-between " >
                     <div className=" flex flex-col gap-1 max-w-[308px] " >
-                        <p className=" text-xl font-bold text-brand " >Everything Beauty</p>
+                        <p className=" text-xl font-bold text-brand " >Apheera</p>
                         <p className=" text-sm text-secondary " >Bringing the military community together to share homes, rooms, and spaces. </p>
                     </div>
                     <div className=" flex lg:flex-row flex-col gap-6 lg:gap-0" >

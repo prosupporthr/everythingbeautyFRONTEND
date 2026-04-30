@@ -4,52 +4,68 @@
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 @custom-variant dark (&:is(.dark *));
 
+
+@font-face {
+  font-family: "AvantGarde";
+  src: url("/fonts/AvantGarde-Demi-Regular.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.avantgarde {
+  font-family: "AvantGarde", sans-serif;
+  font-weight: 500;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #1E1E20;
-  --secondary: #747474;
-  --brand: #9747FF;
-  --bordercolor: #EAEBEDCC;
+    --background: #ffffff;
+    --foreground: #171717;
+    --primary: #1e1e20;
+    --secondary: #747474;
+    --brand: #9747ff;
+    --bordercolor: #eaebedcc;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-brand: var(--brand);
-  --font-sans: var(--font-dms-sans); 
-  --color-bordercolor: var(--bordercolor);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-brand: var(--brand);
+    --font-sans: var(--font-dms-sans);
+    --color-bordercolor: var(--bordercolor);
 }
 
 @media (prefers-color-scheme: dark) {
-  /* :root {
+    /* :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   } */
 }
 
 @layer base {
-  *, ::before, ::after {
-    /* color: var(--primary); */
-    border-color: var(--bordercolor);
-  }
+    *,
+    ::before,
+    ::after {
+        /* color: var(--primary); */
+        border-color: var(--bordercolor);
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--primary);
-  font-family: var(--font-sans);
-  border-color: var(--bordercolor) !important;
+    background: var(--background);
+    color: var(--primary);
+    font-family: var(--font-sans);
+    border-color: var(--bordercolor) !important;
 }
 
-button{
-  cursor: pointer;
+button {
+    cursor: pointer;
 }
 
 .PhoneInputInput:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: inherit !important; /* keep your border color */
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit !important; /* keep your border color */
 }
