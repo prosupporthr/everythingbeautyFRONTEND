@@ -16,21 +16,34 @@ export default function BusinessServiceCard({
 }) {
     const router = useRouter();
 
+    const formatTime = (timeString: string) => {
+        // Create a dummy date object with the specified time
+        const [hours, minutes] = timeString.split(":");
+        const date = new Date();
+        date.setHours(parseInt(hours), parseInt(minutes));
+
+        return new Intl.DateTimeFormat("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+        }).format(date);
+    };
+
     const ServiceCard = (service: IServiceDetail) => {
         return (
             <div className=" w-full flex flex-col gap-2 py-1 ">
                 <div className=" w-full flex font-semibold justify-between text-sm items-center ">
-                    <p className=" capitalize ">
+                    <p className=" capitalize  ">
                         {textLimit(service.name, 20)}
                     </p>
                     <p>{formatNumber(service?.hourlyRate)}/hr</p>
                 </div>
-                <div className=" w-full grid grid-cols-5 gap-3 ">
-                    <div className=" w-full border border-brand flex justify-center items-center h-[35px] font-semibold text-brand text-xs rounded-xl">
-                        {item?.openingTime}
+                <div className=" w-full flex flex-wrap gap-3 ">
+                    <div className=" w-fit  px-2  border border-brand flex justify-center items-center h-[35px] font-semibold text-brand text-xs rounded-xl">
+                        {formatTime(item?.openingTime)}
                     </div>
-                    <div className=" w-full border border-brand flex justify-center items-center h-[35px] font-semibold text-brand text-xs rounded-xl">
-                        {item?.closingTime}
+                    <div className=" w-fit border border-brand flex justify-center items-center px-2 h-[35px] font-semibold text-brand text-xs rounded-xl">
+                        {formatTime(item?.closingTime)}
                     </div>
                 </div>
             </div>
@@ -72,15 +85,13 @@ export default function BusinessServiceCard({
                 className={` w-full flex ${item?.services?.length > 0 ? " border-b " : ""} flex-col gap-1 px-2 py-2 `}
             >
                 <div className=" w-full flex font-bold items-center justify-between ">
-                    <p className=" text-lg font-bold capitalize ">
-                        {item?.name}
-                    </p>
+                    <p className=" font-bold capitalize ">{item?.name}</p>
                     {/* <p className=" font-bold text-sm " >2.1 KM</p> */}
                 </div>
                 <StarRating rating={item?.rating} />
                 <p
                     // onClick={(e) => handleClick(e)}
-                    className=" font-medium text-brand cursor-pointer "
+                    className=" font-medium text-sm text-brand cursor-pointer "
                 >
                     {textLimit(item?.location, 20)}
                 </p>

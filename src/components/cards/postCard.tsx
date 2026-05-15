@@ -33,14 +33,16 @@ export default function PostCard({ item }: { item: IPostDetail }) {
                         </div>
                     )}
                     <div className=" flex flex-col ">
-                        <p className=" text-sm font-bold capitalize ">{item?.business.name}</p>
+                        <p className=" text-sm font-bold capitalize ">
+                            {item?.business.name}
+                        </p>
                         <p className=" text-xs text-secondary ">
-                           {textLimit(item?.business?.location, 20)}
+                            {textLimit(item?.business?.location, 20)}
                         </p>
                     </div>
                 </div>
             </div>
-            <div className=" w-full h-[478px] flex ">
+            <div className=" w-full h-[200px] lg:h-[478px] flex ">
                 <CustomImage src={item?.images[0]} alt="post" fillContainer />
             </div>
             <div className=" w-full flex flex-col px-4 ">
@@ -63,32 +65,38 @@ export default function PostCard({ item }: { item: IPostDetail }) {
                     #SkincareGoals #EverythingBeauty #GlowFacial #SalonLife
                     #BeautyTransformation
                 </p> */}
-                <div className=" w-full border border-[#8127CF1A] mt-4 bg-[#F0F3FF] rounded-2xl h-[82px] p-4 flex justify-between ">
-                    <div className=" flex items-center gap-2 ">
-                        <div className=" w-12 h-12 rounded-xl flex justify-center items-center ">
-                            {item.product.pictures && (
-                                <CustomImage src={item.product.pictures[0]+""} alt="pic" fillContainer />
-                            )}
+                {item?.product?.pictures && (
+                    <div className=" w-full border border-[#8127CF1A] mt-4 bg-[#F0F3FF] rounded-2xl h-[82px] p-4 flex justify-between ">
+                        <div className=" flex items-center gap-2 ">
+                            <div className=" w-12 h-12 rounded-xl flex justify-center items-center ">
+                                {item?.product?.pictures && (
+                                    <CustomImage
+                                        src={item.product.pictures[0] + ""}
+                                        alt="pic"
+                                        fillContainer
+                                    />
+                                )}
+                            </div>
+                            <div className=" flex flex-col ">
+                                <p className=" text-sm font-bold ">
+                                    {item?.product?.name}
+                                </p>
+                                <p className=" text-xs text-secondary ">
+                                    60 mins •{" "}
+                                    {formatNumber(Number(item?.product?.price))}
+                                </p>
+                            </div>
                         </div>
-                        <div className=" flex flex-col ">
-                            <p className=" text-sm font-bold ">
-                                {item?.product?.name}
-                            </p>
-                            <p className=" text-xs text-secondary ">
-                                60 mins •{" "}
-                                {formatNumber(Number(item?.product?.price))}
-                            </p>
-                        </div>
+                        <CustomButton
+                            onClick={() =>
+                                router.push(`/sales/${item?.productId}/product`)
+                            }
+                            height="40px"
+                        >
+                            Book
+                        </CustomButton>
                     </div>
-                    <CustomButton
-                        onClick={() =>
-                            router.push(`/sales/${item?.productId}/product`)
-                        }
-                        height="40px"
-                    >
-                        Book
-                    </CustomButton>
-                </div>
+                )}
                 {item?.userId !== user?._id && (
                     <div className=" w-full flex gap-2 mt-6 ">
                         <div className=" w-fit mt-1 ">

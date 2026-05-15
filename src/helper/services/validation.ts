@@ -111,18 +111,18 @@ export const reviewSchema = Yup.object().shape({
 }); 
 
 export const postSchema = Yup.object({
-    productId: Yup.string()
-        .required("Product is required"),
+    // productId: Yup.string()
+    //     .required("Product is required"),
 
     body: Yup.string()
         .trim()
         .required("Post content is required")
         .min(3, "Post content is too short"),
 
-    // images: Yup.array()
-    //     .of(
-    //         Yup.mixed<File>().required()
-    //     )
-    //     .min(1, "Please upload at least one image")
-    //     .max(10, "You can upload a maximum of 10 images"),
+    images: Yup.array()
+        .of(
+            Yup.mixed<File>().required()
+        )
+        .min(1, "Please upload at least one image")
+        .max(10, "You can upload a maximum of 10 images"),
 });
