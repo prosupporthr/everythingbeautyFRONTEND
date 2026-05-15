@@ -8,7 +8,7 @@ export default function Footer() {
     const id = param.id; 
 
     return (
-        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`) ||  pathname?.includes(`message`) ||  pathname?.includes(`ship`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
+        <div className={` w-full bg-[#FCFAFF] ${(pathname?.includes("post") || pathname?.includes("auth") || pathname?.includes("sale") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) || pathname?.includes(`business/${id}/dashboard`) ||  pathname?.includes(`message`) ||  pathname?.includes(`ship`)) ? "hidden" : "flex"} justify-center pt-[100px] pb-10 px-8 `} >
             <div className=" max-w-[1276px] w-full flex flex-col gap-6 " >
                 <div className=" w-full flex lg:flex-row flex-col gap-6 justify-between " >
                     <div className=" flex flex-col gap-1 max-w-[308px] " >
@@ -32,7 +32,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className=" w-full border-t border-[#EAEBEDCC] h-[40px] flex justify-center items-end " >
-                    <p className=" text-sm " >© 2025 Manemap.llc All Rights Reserved</p>
+                    <p className=" text-sm " >© {new Date().getFullYear()} Apheera All Rights Reserved</p>
                 </div>
             </div>
         </div>

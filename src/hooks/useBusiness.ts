@@ -10,24 +10,28 @@ import { URLS } from "@/helper/services/urls";
 import { useState } from "react";
 import {
     businessSchema,
+    postSchema,
     productSchema,
     serviceSchema,
 } from "@/helper/services/validation";
 import {
     IBookingmark,
     IBusiness,
+    IPost,
     IProduct,
     IServices,
 } from "@/helper/model/business";
 import { useUserStore } from "./user";
+import { createFormData } from "@/helper/services/createFormData";
 
 interface IProps {
     services?: boolean;
     product?: boolean;
     business?: boolean;
+    post?: boolean;
 }
 
-const useBusiness = ({ services, product, business }: IProps) => {
+const useBusiness = ({ services, product, business, post }: IProps) => {
     const router = useRouter();
     const userId = localStorage.getItem("userid") as string;
     const [imageFile, setImageFile] = useState<File | string | null>("");
@@ -100,6 +104,37 @@ const useBusiness = ({ services, product, business }: IProps) => {
 
             queryClient.invalidateQueries({ queryKey: ["service"] });
             router.push(`/business/${id}/dashboard?tab=services`);
+        },
+    });
+
+    /** 🔹 Service */
+    const postMutation = useMutation({
+        mutationFn: (data: IPost) => httpService.post(URLS.POST, data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+            queryClient.invalidateQueries({ queryKey: ["post"] });
+            router.push(`/business/${id}/dashboard?tab=post`); 
+        },
+    });
+
+    /** 🔹 Service */
+    const postEditMutation = useMutation({
+        mutationFn: (data: IPost) =>
+            httpService.patch(URLS.POSTBYID(slug), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+
+            queryClient.invalidateQueries({ queryKey: ["post"] });
         },
     });
 
@@ -207,6 +242,10 @@ const useBusiness = ({ services, product, business }: IProps) => {
             ...formikProduct.values,
             pictures: [res + ""],
         };
+        const payloadpost = {
+            ...formikPost.values,
+            images: [res + ""],
+        };
 
         if (business) {
             if (id) {
@@ -226,7 +265,14 @@ const useBusiness = ({ services, product, business }: IProps) => {
             } else {
                 productMutation.mutate(payloadproduct);
             }
+        } else if (post) {
+            if (slug) {
+                postEditMutation.mutate(payloadpost);
+            } else {
+                postMutation.mutate(payloadpost);
+            }
         }
+        console.log(res);
     });
 
     /** 🔹 Formik Instances */
@@ -258,7 +304,7 @@ const useBusiness = ({ services, product, business }: IProps) => {
                     description: "At least one picture is required",
                     color: "danger",
                 });
-            } 
+            }
         },
     });
 
@@ -280,6 +326,31 @@ const useBusiness = ({ services, product, business }: IProps) => {
             } else if (imageFile) {
                 const formdata = new FormData();
                 formdata.append("file", imageFile);
+                uploadMutation.mutate(formdata);
+            } else {
+                addToast({
+                    title: "Error",
+                    description: "At least one picture is required",
+                    color: "danger",
+                });
+            }
+        },
+    });
+
+    /** 🔹 Formik Instances */
+    const formikPost = useFormik<IPost>({
+        initialValues: {
+            productId: "",
+            body: "",
+            images: [],
+        },
+        validationSchema: postSchema,
+        onSubmit: (data) => {
+            if (slug && !imageFile) {
+                postEditMutation.mutate(data);
+            } else if (data.images?.length > 0) {
+                const formdata = new FormData(); 
+                formdata.append("file", data.images[0]);
                 uploadMutation.mutate(formdata);
             } else {
                 addToast({
@@ -321,6 +392,8 @@ const useBusiness = ({ services, product, business }: IProps) => {
 
     const isLoading =
         uploadMutation.isPending ||
+        postMutation.isPending ||
+        postEditMutation.isPending ||
         businessMutation.isPending ||
         servicesMutation.isPending ||
         servicesEditMutation.isPending ||
@@ -333,6 +406,7 @@ const useBusiness = ({ services, product, business }: IProps) => {
 
     return {
         formik,
+        formikPost,
         formikService,
         formikProduct,
         isLoading,

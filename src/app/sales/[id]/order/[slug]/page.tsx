@@ -5,14 +5,16 @@ import { RiCalendar2Line } from "react-icons/ri";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { CustomImage } from "@/components/custom";
 import { IBusinessDetails, IProductDetail } from "@/helper/model/business";
+import { IAddressDetail } from "@/helper/model/auth";
 import { useFetchData } from "@/hooks/useFetchData";
 import { dateFormatMonthAndYear } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { LoadingLayout, PaymentBtn, PaymentMethod } from "@/components/shared";
+import { AddressPicker, LoadingLayout, PaymentBtn, PaymentMethod } from "@/components/shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
+import { useState } from "react";
 
 export default function OrderPage() {
     const router = useRouter();
@@ -24,6 +26,8 @@ export default function OrderPage() {
     const qty = query?.get("qty") as string;
     const color = query?.get("color") as string;
     const [user] = useAtom(userAtom);
+
+    const [defaultAddress, setDefaultAddress] = useState({} as IAddressDetail); 
 
     // const { orderMutation, isLoading: loadingBooking } = useBooking()
 
@@ -166,10 +170,7 @@ export default function OrderPage() {
                                 refunds{" "}
                             </p>
                         </div>
-                        {/* <div className=" w-full lg:w-[300px] " >
-                            <CustomButton fullWidth onClick={handleClick} isLoading={loadingBooking} >Pay</CustomButton>
-                        </div> */}
-
+                        <AddressPicker setAddress={setDefaultAddress} ship /> 
                         <PaymentMethod />
                         <PaymentBtn
                             type={"product"}
@@ -180,6 +181,7 @@ export default function OrderPage() {
                             user={user as IUserDetail}
                             businessID={id}
                             qty={Number(qty)}
+                            address={defaultAddress}
                         />
                     </div>
                     <div className=" w-full lg:w-fit ">

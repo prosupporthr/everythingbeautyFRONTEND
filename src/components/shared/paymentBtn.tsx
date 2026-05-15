@@ -8,6 +8,8 @@ import { userAtom } from "@/store/user";
 import { paymentMethodAtom } from "@/store/paymentmethod";
 import { useEffect } from "react";
 import { SuccessModal } from "../modals";
+import { IAddressDetail } from "@/helper/model/auth"; 
+import { addToast } from "@heroui/toast"
 
 interface IProps {
     type:
@@ -25,7 +27,8 @@ interface IProps {
     bookingDate?: string;
     title?: string;
     fullWidth?: true;
-    isClosable?: boolean
+    isClosable?: boolean;
+    address?: IAddressDetail;
 }
 
 export default function PaymentBtn({
@@ -38,7 +41,8 @@ export default function PaymentBtn({
     bookingDate,
     title,
     fullWidth,
-    isClosable
+    isClosable,
+    address,
 }: IProps) {
     const [user] = useAtom(userAtom);
     const [paymentmethod, setPaymentMethod] = useAtom(paymentMethodAtom);
@@ -61,10 +65,9 @@ export default function PaymentBtn({
         userID: user?._id as string,
     });
 
-    const handleClick = () => { 
-
+    const handleClick = () => {
         if (type === "product") {
-            if (ordered) { 
+            if (ordered) {
                 transactionMutation.mutate({
                     userId: user?._id as string,
                     amount: amount ?? 0,
@@ -79,6 +82,7 @@ export default function PaymentBtn({
                     userId: user?._id as string,
                     businessId: businessID as string,
                     productId: id,
+                    addressId: address?._id+"",
                     quantity: qty as number,
                     totalPrice: amount ?? 0,
                     paymentStatus: "pending",
@@ -86,7 +90,7 @@ export default function PaymentBtn({
                 });
             }
         } else if (type === "booking") {
-            if (ordered) { 
+            if (ordered) {
                 transactionMutation.mutate({
                     userId: user?._id as string,
                     amount: amount ?? 0,
@@ -122,20 +126,31 @@ export default function PaymentBtn({
     };
 
     const checkMethod = () => {
-        if(paymentmethod === "stripe") {
-            setIsShow(false)
+         if (paymentmethod === "stripe") {
+            setIsShow(false);
         } else {
-            setIsShow(true)
+            setIsShow(true);
         }
 
-        handleClick() 
-    }
- 
+        if (!address?._id && type === "product") {
+            addToast({
+                title: "Warning",
+                description: "Select an address for shipment",
+                color: "warning",
+            });
+            console.log("no address");
+
+        } else {
+            console.log("address");
+            handleClick();
+        }
+    };
+
     useEffect(() => {
         setPaymentMethod("stripe");
     }, []);
 
-
+    console.log(address);
 
     return (
         <div className={` w-full ${fullWidth ? "" : "lg:w-[300px]"} `}>

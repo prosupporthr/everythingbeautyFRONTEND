@@ -166,7 +166,7 @@ export default function OrderedProductPage() {
                                                 <span className=" font-bold ">
                                                     Address:
                                                 </span>{" "}
-                                                {data?.business?.location}
+                                                {data?.address?.address}
                                             </p>
                                             <p className=" text-sm font-medium ">
                                                 <span className=" font-bold ">

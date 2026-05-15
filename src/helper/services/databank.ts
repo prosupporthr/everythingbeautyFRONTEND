@@ -1,7 +1,7 @@
 import { MessageQuestion, ProfileDelete, SecuritySafe } from "iconsax-reactjs";
 import { BiMessageDetail } from "react-icons/bi";
 import { BsPersonCircle, BsShop } from "react-icons/bs";
-import { IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
+import { IoChatbox, IoChatboxOutline, IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 
 export const menulist = [
@@ -29,6 +29,11 @@ export const menulist = [
         title: "Favourite",
         icon: IoHeartOutline,
         link: "/bookmark"
+    },
+    {
+        title: "Post",
+        icon: IoChatboxOutline,
+        link: "/post"
     },
     {
         title: "My Order",

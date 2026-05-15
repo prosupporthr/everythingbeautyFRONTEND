@@ -20,7 +20,7 @@ export default function Shippment() {
     const [user] = useAtom(userAtom);
 
     const [defaultAddress, setDefaultAddress] = useState({} as IAddressDetail); 
-
+    
     useEffect(() => {
         if (defaultAddress?._id && user?._id) {
             formik.setFieldValue("address_from.city", defaultAddress?.city);
@@ -46,7 +46,7 @@ export default function Shippment() {
         <FormikProvider value={formik}>
             <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
                 <div className=" w-full flex flex-col justify-center items-center px-6 lg:px-8 ">
-                    <form className=" max-w-[600px] flex flex-col gap-6 w-full ">
+                    <form onSubmit={formik.handleSubmit} className=" max-w-[600px] flex flex-col gap-6 w-full ">
                         {formik.values?.parcels.map((_, index) => {
                             return (
                                 <div
@@ -92,7 +92,7 @@ export default function Shippment() {
                         <AddressPicker setAddress={setDefaultAddress} ship />
                         <div className=" w-full flex gap-4 ">
                             <CustomButton variant="outlinebrand" >Cancel</CustomButton>
-                            <CustomButton isLoading={isLoading} >Create Shipment</CustomButton>
+                            <CustomButton type="submit" isLoading={isLoading} >Create Shipment</CustomButton>
                         </div>
                     </form>
                     <ModalLayout

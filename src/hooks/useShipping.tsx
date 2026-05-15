@@ -3,12 +3,12 @@
 import { IShipmentForm } from "@/helper/model/ship";
 import { handleError } from "@/helper/services/errorHandler";
 import httpService from "@/helper/services/httpService";
-import { URLS } from "@/helper/services/urls";
-import { reviewSchema } from "@/helper/services/validation";
+import { URLS } from "@/helper/services/urls"; 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+ 
 
 const useShipping = () => {
     const queryClient = useQueryClient(); 
@@ -29,17 +29,6 @@ const useShipping = () => {
                 name: "",
                 country: "",
             },
-
-            address_to: {
-                email: "",
-                phone: "",
-                state: "",
-                city: "",
-                street: "",
-                name: "",
-                country: "",
-            },
-
             parcels: [
                 {
                     mass_unit: "kg",
@@ -50,10 +39,11 @@ const useShipping = () => {
                     width: "",
                 },
             ],
-        },
-        validationSchema: reviewSchema,
+        }, 
         onSubmit: (data) => {
             createShipping.mutate(data);
+            console.log(data);
+            
             queryClient.invalidateQueries({ queryKey: ["has-reviewed"] });
         },
     });

@@ -18,8 +18,7 @@ export interface IParcel {
 }
 
 export interface IShipmentForm {
-    address_from: IAddress;
-    address_to: IAddress;
+    address_from: IAddress; 
     parcels: IParcel[];
 }
 
