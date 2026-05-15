@@ -340,7 +340,6 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
     /** 🔹 Formik Instances */
     const formikPost = useFormik<IPost>({
         initialValues: {
-            productId: "",
             body: "",
             images: [],
         },
