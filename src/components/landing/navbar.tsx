@@ -108,7 +108,7 @@ export default function Navbar() {
             <div
                 className={` w-full ${pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) ? "hidden" : pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `}
             >
-                <button className=" flex flex-col " onClick={() => router.push("/")}>
+                <button className=" flex flex-col " onClick={() => router.push(user?._id ? "/post" : "/")}>
                     <CustomImage
                         nopopup
                         src={"/images/logo.png"}

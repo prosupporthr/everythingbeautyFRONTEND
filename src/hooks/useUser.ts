@@ -37,12 +37,10 @@ const useUser = () => {
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            })
-
-            console.log(res);
+            }) 
             setUser(res?.data?.data)
             
-            router.push(`/?id=${res?.data?.data?._id}`)
+            router.push(`/post?id=${res?.data?.data?._id}`)
         },
     })
 
