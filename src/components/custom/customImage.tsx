@@ -9,6 +9,7 @@ type Props = Omit<ImageProps, "src"> & {
   className?: string;
   fallbackSrc?: string; // fallback image (public path)
   fillContainer?: boolean; // use image fill (position absolute)
+  post?: boolean;
   aspectRatio?: number; // optional aspect ratio (width/height)
   overlayer?: boolean;
   nopopup?: boolean
@@ -20,8 +21,10 @@ export default function CustomImage({
   className = "",
   fallbackSrc = "/images/fallback.png",
   fillContainer = false,
+  objectPosition,
   aspectRatio,
   overlayer,
+  post,
   nopopup = true,
   ...rest
 }: Props) {
@@ -63,6 +66,28 @@ export default function CustomImage({
           fill
           {...rest}                // ✅ makes the image fill its parent container
           className="w-full h-full object-cover " // ✅ tailwind classes
+          sizes="100vw"             // ✅ responsive loading
+          priority                   // (optional) load immediately if above the fold
+        />
+        {overlayer && (
+          <div className=" absolute inset-0 bg-black opacity-40 rounded-lg " />
+        )}
+        <FullImageModal />
+        {/* <img alt={alt} src={imgSrc+""} className=" w-full h-full object-cover " /> */}
+      </div>
+    );
+  }
+
+
+  if (post) {
+    return (
+      <div onClick={() => setIsOpen(nopopup ? "" : imgSrc)} className={`relative bg-gray-200 flex justify-center items-center w-full py-2 h-full ${className}`}>
+        <Image
+          src={imgSrc as string}    // ✅ your image URL (string)
+          alt={alt}
+          fill
+          {...rest}                // ✅ makes the image fill its parent container
+          className="w-auto h-full object-contain " // ✅ tailwind classes
           sizes="100vw"             // ✅ responsive loading
           priority                   // (optional) load immediately if above the fold
         />
