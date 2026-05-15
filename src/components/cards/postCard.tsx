@@ -43,7 +43,7 @@ export default function PostCard({ item }: { item: IPostDetail }) {
                 </div>
             </div>
             <div className=" w-full h-[200px] lg:h-[478px] flex ">
-                <CustomImage src={item?.images[0]} alt="post" fillContainer />
+                <CustomImage post src={item?.images[0]} alt="post" />
             </div>
             <div className=" w-full flex flex-col px-4 ">
                 <div className=" w-full flex justify-between items-center ">
