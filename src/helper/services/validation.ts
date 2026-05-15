@@ -108,4 +108,21 @@ export const reviewSchema = Yup.object().shape({
         .required("Rating is required")
         .min(1, "Rating must be at least 1")
         .max(5, "Rating cannot be more than 5"),
+}); 
+
+export const postSchema = Yup.object({
+    productId: Yup.string()
+        .required("Product is required"),
+
+    body: Yup.string()
+        .trim()
+        .required("Post content is required")
+        .min(3, "Post content is too short"),
+
+    // images: Yup.array()
+    //     .of(
+    //         Yup.mixed<File>().required()
+    //     )
+    //     .min(1, "Please upload at least one image")
+    //     .max(10, "You can upload a maximum of 10 images"),
 });

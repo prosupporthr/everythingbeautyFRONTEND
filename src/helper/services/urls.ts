@@ -39,7 +39,10 @@ export const URLS = {
     PRODUCTBUSINESSBYID: (item: string) => `/product/business/${item}`,
     USERUPDATE: (item: string) => `/user/${item}`,
     BOOKMARK: `/bookmarks/toggle`,
-    BOOKMARKBYID: (item: string) => `/bookmarks/${item}`
+    BOOKMARKBYID: (item: string) => `/bookmarks/${item}`,
+    SHIPPING: (item: string) => `/shipment/${item}`,
+    POST: "/post",
+    POSTBYID: (item: string) => `/post/${item}`
 }
 
 // export const IMAGE_URL = process.env.NEXT_PUBLIC_RESOURCE_URL as string; 

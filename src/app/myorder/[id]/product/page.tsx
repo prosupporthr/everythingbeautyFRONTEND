@@ -33,13 +33,11 @@ export default function OrderedProductPage() {
         name: ["order", id],
     });
 
-    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>(
-        {
-            endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
-            name: ["has-reviewed", id],
-            enable: user?._id && data?.businessId ? true : false,
-        },
-    );
+    const { data: hasReview } = useFetchData<boolean>({
+        endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
+        name: ["has-reviewed", id],
+        enable: user?._id && data?.businessId ? true : false,
+    });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
@@ -52,7 +50,6 @@ export default function OrderedProductPage() {
             formik.setFieldValue("userId", user?._id);
         }
     }, [data?.businessId, user?._id]);
-    console.log(data);
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -169,7 +166,7 @@ export default function OrderedProductPage() {
                                                 <span className=" font-bold ">
                                                     Address:
                                                 </span>{" "}
-                                                {data?.business?.location}
+                                                {data?.address?.address}
                                             </p>
                                             <p className=" text-sm font-medium ">
                                                 <span className=" font-bold ">
@@ -187,8 +184,10 @@ export default function OrderedProductPage() {
                                         />
                                     </div>
 
-                                    {data?.status === "COMPLETED" &&
-                                        !hasReview && (
+                                    {(data?.status === "COMPLETED" &&
+                                        user?._id !==
+                                            data?.business?.creator?._id &&
+                                        !hasReview)&& (
                                             <div className=" lg:max-w-[300px] w-full ">
                                                 <CustomButton
                                                     onClick={() =>
@@ -201,25 +200,44 @@ export default function OrderedProductPage() {
                                             </div>
                                         )}
 
-                                    {data?.status === "PROCESSING" && (
-                                        <PaymentMethod />
-                                    )}
-                                    {data?.status === "PROCESSING" && (
-                                        <div className=" lg:max-w-[300px] w-full ">
-                                            <PaymentBtn
-                                                type={"product"}
-                                                title="Make Payment"
-                                                ordered
-                                                id={data?._id}
-                                                amount={
-                                                    data?.totalPrice *
-                                                    data?.quantity
-                                                }
-                                                user={user as IUserDetail}
-                                                isClosable
-                                            />
-                                        </div>
-                                    )}
+
+
+                                    {(user?._id === data?.business?.creator?._id) && (
+                                            <div className=" lg:max-w-[300px] w-full ">
+                                                <CustomButton
+                                                    onClick={() =>
+                                                        router.push(`/shippment/${id}`)
+                                                    }
+                                                    fullWidth
+                                                >
+                                                    Ship
+                                                </CustomButton>
+                                            </div>
+                                        )}
+
+                                    {data?.status === "PROCESSING" &&
+                                        user?._id !==
+                                            data?.business?.creator?._id && (
+                                            <PaymentMethod />
+                                        )}
+                                    {data?.status === "PROCESSING" &&
+                                        user?._id !==
+                                            data?.business?.creator?._id && (
+                                            <div className=" lg:max-w-[300px] w-full ">
+                                                <PaymentBtn
+                                                    type={"product"}
+                                                    title="Make Payment"
+                                                    ordered
+                                                    id={data?._id}
+                                                    amount={
+                                                        data?.totalPrice *
+                                                        data?.quantity
+                                                    }
+                                                    user={user as IUserDetail}
+                                                    isClosable
+                                                />
+                                            </div>
+                                        )}
                                 </div>
                                 <div className=" max-w-[500px] w-full flex flex-col gap-3 ">
                                     <div className=" flex gap-2 items-center text-[#0CC23A]  ">

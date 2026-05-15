@@ -52,7 +52,10 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         onError: handleError,
         onSuccess: (res) => { 
 
-            setIsShow(true);
+            if (paymentmethod === "wallet") {
+                setIsShow(true);
+            }
+            
             transactionMutation.mutate({
                 userId: userID,
                 amount: amount,
@@ -72,7 +75,10 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         mutationFn: (data: IOrder) => httpService.post(URLS.ORDER, data),
         onError: handleError,
         onSuccess: (res) => { 
-            setIsShow(true);
+
+            if (paymentmethod === "wallet") {
+                setIsShow(true);
+            }
 
             transactionMutation.mutate({
                 userId: userID,
@@ -97,11 +103,15 @@ const useBooking = ({ amount, type, userID }: IProps) => {
         onError: handleError,
         onSuccess: (data) => { 
 
+            console.log(paymentmethod);
+            
+
             if (paymentmethod === "stripe") {
                 setPaymentID(data?.data?.data?.paymentId);
                 setIntent(data?.data?.data?.clientSecret);
                 setIsOpen(true);
             } else {
+                setIsShow(true)
                 queryClient.invalidateQueries({ queryKey: ["order"] })
                 queryClient.invalidateQueries({ queryKey: ["booking"] })
             }

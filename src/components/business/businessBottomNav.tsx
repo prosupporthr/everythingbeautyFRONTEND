@@ -6,6 +6,7 @@ import {
     Home,
     Briefcase,
     Shop,
+    Message,
     User,
 } from "iconsax-reactjs";
 
@@ -21,6 +22,7 @@ export default function BusinessBottomNav() {
 
     const tabs = [
         { label: "Overview", value: null, icon: Home },
+        { label: "Post", value: "post", icon: Message },
         { label: "Services", value: "services", icon: Briefcase },
         { label: "Store", value: "store", icon: Shop },
         { label: "Profile", value: "profile", icon: User },
