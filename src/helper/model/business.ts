@@ -118,7 +118,7 @@ export interface IProduct {
 export interface IPost {
     body: string;
     images: string[];
-    productId: string;
+    productId?: string;
 }
 
 export interface IBookingmark {
