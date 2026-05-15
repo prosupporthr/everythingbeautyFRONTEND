@@ -1,11 +1,16 @@
-"use client"
+"use client";
 import { PostCard } from "@/components/cards";
 import { CustomButton } from "@/components/custom";
 import { LoadingLayout } from "@/components/shared";
 import { IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
+import { userAtom } from "@/store/user";
+import { addToast } from "@heroui/toast";
 import { People, Star1 } from "iconsax-reactjs";
+import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
+import { IoMdAdd } from "react-icons/io";
 
 export default function PostPage() {
     const {
@@ -19,10 +24,35 @@ export default function PostPage() {
         limit: 10,
     });
 
+    const [user] = useAtom(userAtom);
+    const router = useRouter();
+
+    const handleClick = () => {
+        if(user?.business?._id) {
+            router.push(`/business/${user?.business?._id}/create/post`);
+        } else { 
+            addToast({
+                title: "Warning",
+                description: "Join as a Stylist to create post",
+                color: "warning",
+            })
+        }
+    };
+
     return (
         <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
             <div className=" flex-1 flex flex-col p-6 pr-0 gap-4 overflow-auto ">
-                <p className=" text-lg font-medium ">Recent Post</p>
+                <div className=" w-full flex justify-between items-center ">
+                    <p className=" text-lg font-medium ">Recent Post</p>
+                    <CustomButton
+                        onClick={handleClick} 
+                        height="40px"
+                        className=" w-[150px] "
+                        startIcon={<IoMdAdd color="white" size={"18px"} />}
+                    >
+                        {"Add Post"}
+                    </CustomButton>
+                </div>
                 <div className=" w-full flex flex-col gap-4 ">
                     <LoadingLayout
                         loading={isLoading}

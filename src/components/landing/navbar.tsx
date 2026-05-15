@@ -124,19 +124,35 @@ export default function Navbar() {
                 )}
                 {!isLoading && (
                     <div className=" flex gap-3 items-center ">
-                        {user?.plan === "free" && (
+                        {user?.plan === "free" ? (
                             <div className=" w-[120px] ">
                                 <CustomButton
                                     onClick={() => router.push("/business")}
                                     fullWidth
                                     variant="outlinebrand"
                                     fontSize="12px"
-                                    height="45px"
+                                    height="40px"
                                     className=" text-primary lg:flex hidden "
                                 >
-                                    Create Business
+                                    Join As Stylist
                                 </CustomButton>
                             </div>
+                        ) : (!pathname.includes("dashboard") && user?._id) ? (
+                            <div className=" w-[120px] ">
+                                <CustomButton
+                                    onClick={() => handleClick("dashboard")}
+                                    fullWidth
+                                    variant="outlinebrand"
+                                    fontSize="12px"
+                                    height="40px"
+                                    className=" text-primary lg:flex hidden "
+                                >
+                                    Dashboard
+                                </CustomButton>
+                            </div>
+                        ) : (
+                            <>
+                            </>
                         )}
 
                         {user?._id && (
