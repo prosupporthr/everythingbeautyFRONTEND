@@ -1,10 +1,12 @@
 "use client";
 import { PostCard } from "@/components/cards";
+import LandingBusinessCard from "@/components/cards/landingBusinessCard";
 import { CustomButton } from "@/components/custom";
 import { LoadingLayout } from "@/components/shared";
-import { IPostDetail } from "@/helper/model/business";
+import { IBusinessDetails, IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
+import { useFetchData } from "@/hooks/useFetchData";
 import { userAtom } from "@/store/user";
 import { addToast } from "@heroui/toast";
 import { People, Star1 } from "iconsax-reactjs";
@@ -24,20 +26,33 @@ export default function PostPage() {
         limit: 10,
     });
 
+    const { data, isLoading: loading } = useFetchData<IBusinessDetails[]>({
+        endpoint: `/business/filter`,
+        name: ["business"],
+    });
+
     const [user] = useAtom(userAtom);
     const router = useRouter();
 
     const handleClick = () => {
-        if(user?.business?._id) {
+        if (user?.business?._id) {
             router.push(`/business/${user?.business?._id}/create/post`);
-        } else { 
+        } else {
             addToast({
                 title: "Warning",
                 description: "Join as a Stylist to create post",
                 color: "warning",
-            })
+            });
         }
     };
+
+    const business = data
+        ?.filter((_, index) => index < 4)
+        ?.map((item) => (
+            <div key={item?._id}>
+                <LandingBusinessCard small item={item} />
+            </div>
+        ));
 
     return (
         <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
@@ -45,7 +60,7 @@ export default function PostPage() {
                 <div className=" w-full flex justify-between items-center ">
                     <p className=" text-lg font-medium ">Recent Post</p>
                     <CustomButton
-                        onClick={handleClick} 
+                        onClick={handleClick}
                         height="40px"
                         className=" w-[150px] "
                         startIcon={<IoMdAdd color="white" size={"18px"} />}
@@ -123,9 +138,19 @@ export default function PostPage() {
                     </div>
                 </div>
                 <div className=" flex w-full flex-col gap-4 ">
-                    <p className=" font-bold ">Discovery</p>
-                    <div className=" w-full grid grid-cols-2 gap-4 text-white ">
-                        <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
+                    <div className=" w-full flex justify-between items-center ">
+                        <p className=" font-bold ">Discovery</p>
+                        <button
+                            onClick={() => router.push("/businesslist")}
+                            className=" font-bold text-xs "
+                        >
+                            View All
+                        </button>
+                    </div>
+                    <LoadingLayout loading={loading} length={data?.length}>
+                        <div className=" w-full grid grid-cols-2 gap-4 text-white ">
+                            {business}
+                            {/* <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
                             <div className=" mt-auto flex flex-col gap-3 ">
                                 <Star1 size={20} />
                                 <p className=" text-sm font-bold ">
@@ -156,8 +181,9 @@ export default function PostPage() {
                                     All the hair stylists
                                 </p>
                             </div>
+                        </div> */}
                         </div>
-                    </div>
+                    </LoadingLayout>
                 </div>
                 <div
                     style={{

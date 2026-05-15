@@ -7,6 +7,7 @@ import { ResponsiveCarousel, StarRating, Verified } from "../shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { useRouter } from "next/navigation";
+import LandingBusinessCard from "../cards/landingBusinessCard";
 
 export default function HeroSection() {
 
@@ -21,43 +22,8 @@ export default function HeroSection() {
 
     // Map data to carousel items
     const items = data?.map((item) => (
-        <div
-            key={item._id} // assuming your IBusinessDetails has `id`
-            className="bg-white h-[350px] rounded-2xl flex flex-col gap-4 items-center justify-center p-4 shadow-md"
-        >
-            <div className=" rounded-2xl w-full h-full bg-gray-200 relative ">
-                <CustomImage
-                    nopopup
-                    alt={item?.name}
-                    style={{
-                        borderRadius: "16px",
-                    }}
-                    src={item?.pictures[0]}
-                    fillContainer
-                />
-                <Verified item={item} />
-            </div>
-            <div className=" w-full flex justify-between items-center "> 
-                <div className=" flex flex-col items-start ">
-                    <p className=" font-bold capitalize text-sm ">
-                        {item?.name}
-                    </p>
-                    <p className=" text-secondary text-xs ">
-                        {textLimit(item?.location, 20)}
-                    </p>
-                    <StarRating rating={Number(item?.rating)} />
-                </div>
-                <div className=" w-fit px-2 ">
-                    <CustomButton
-                        fontSize="12px"
-                        fontWeight="bold"
-                        height="40px"
-                        onClick={()=> router.push(`/sales/${item?._id}/services`)}
-                    >
-                        Book Now
-                    </CustomButton>
-                </div>
-            </div>
+        <div key={item?._id} >
+            <LandingBusinessCard item={item} />
         </div>
     ));
 

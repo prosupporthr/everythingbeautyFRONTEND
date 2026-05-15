@@ -83,7 +83,7 @@ export default function BusinessListPage() {
                     refetching={isFetchingMore}
                     length={items?.length}
                 >
-                    <div className="w-full columns-1 lg:columns-3 gap-6 px-4 lg:px-6 space-y-6">
+                    <div className="w-ful grid grid-cols-3 gap-4 px-4 lg:px-6 space-y-6">
                         {items?.map((item) => {
                             return (
                                 <div
