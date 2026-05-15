@@ -19,7 +19,7 @@ export default function PostCard({ item }: { item: IPostDetail }) {
     return (
         <div
             style={{ boxShadow: "0px 1px 2px 0px #0000000D" }}
-            className=" w-full border rounded-3xl flex flex-col gap-3 pb-4 "
+            className=" w-full border rounded-3xl h-fit flex flex-col gap-3 pb-4 "
         >
             <div className=" w-full flex items-center justify-between pt-4 px-4 ">
                 <div className=" flex items-center gap-2 ">
