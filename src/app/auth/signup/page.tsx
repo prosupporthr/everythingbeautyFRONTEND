@@ -13,7 +13,7 @@ export default function SignupPage() {
         <FormikProvider value={formik} >
             <form onSubmit={formik.handleSubmit} className=" w-full lg:w-[350px] flex flex-col items-center gap-6 " >
                 <div className=" w-fit flex-col flex gap-0.5 " >
-                    <p className=" lg:text-2xl font-medium text-lg text-center " >Signup to Everything Beauty</p>
+                    <p className=" lg:text-2xl font-medium text-lg text-center " >Signup to Apheera</p>
                     <p className=" text-secondary text-sm w-[300px] text-center ">Find top stylists. Book with ease. Create your account to get started.</p>
                 </div>
                 <CustomInput label="Email" name="email" type="email" placeholder="Email Address" />

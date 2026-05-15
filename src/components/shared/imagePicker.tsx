@@ -12,7 +12,7 @@ export default function ImagePicker({
     imageFile,
     setImageFile
 }: {
-    type?: "image" | "document" | "video" | "user" | "resources" | "chat";
+    type?: "image" | "document" | "video" | "user" | "resources" | "chat" | "post";
     preview?: string;
     imageFile: File | string | null
     setImageFile: (by: File | string | null) => void
@@ -113,6 +113,35 @@ export default function ImagePicker({
                     type="button"
                     onClick={handleButtonClick}
                     className="bg-neonblue-50 w-full h-full rounded-lg relative flex justify-center items-center flex-col gap-1"
+                >
+                    <RiImage2Line size={64} className="z-20 text-neonblue-600" />
+                    <p className="text-sm font-semibold">
+                        Drag an image here or{" "}
+                        <span className="text-neonblue-600">Upload</span>
+                    </p>
+                    <p className="text-xs font-medium text-violet-300">
+                        PDF, JPG or PNG, less than 10MB
+                    </p>
+
+                    {previewUrl && (
+                        <div className="absolute inset-0 bg-black opacity-50 rounded-lg">
+                            <CustomImage
+                                src={previewUrl + ""}
+                                alt="image"
+                                fillContainer
+                                style={{ borderRadius: "8px" }}
+                            />
+                        </div>
+                    )}
+                </button>
+            )}
+
+            {/* Type = image */}
+            {type === "post" && (
+                <button
+                    type="button"
+                    onClick={handleButtonClick}
+                    className="bg-neonblue-50 w-full h-full border border-dashed border-[#CFC2D6] rounded-lg relative flex justify-center items-center flex-col gap-1"
                 >
                     <RiImage2Line size={64} className="z-20 text-neonblue-600" />
                     <p className="text-sm font-semibold">

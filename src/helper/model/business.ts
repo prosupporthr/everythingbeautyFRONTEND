@@ -1,3 +1,4 @@
+import { IAddressDetail } from "./auth";
 import { IUserDetail } from "./user";
 
 export interface IBusiness {
@@ -25,6 +26,7 @@ export interface IBooking {
 export interface IOrder {
     userId: string;
     businessId: string;
+    addressId: string;
     productId: string;
     quantity: number;
     totalPrice: number;
@@ -50,10 +52,10 @@ export interface IBusinessDetails {
     enabled: boolean;
     createdAt: string;
     updatedAt: string;
-    services: IServiceDetail[]
+    services: IServiceDetail[];
     creator: IUserDetail;
     licenseNumber: string;
-    licenseStatus: "NOT_LICENSED" | "LICENSED"
+    licenseStatus: "NOT_LICENSED" | "LICENSED";
 }
 
 export interface IServices {
@@ -69,6 +71,7 @@ export interface IServices {
 
 export interface IOrderDetail {
     _id: string;
+    address: IAddressDetail;
     isDeleted: boolean;
     userId: string;
     businessId: string;
@@ -110,6 +113,12 @@ export interface IProduct {
     pictures?: string[];
     colors?: { label: string; color: string }[];
     quantity?: string | number;
+}
+
+export interface IPost {
+    body: string;
+    images: string[];
+    productId: string;
 }
 
 export interface IBookingmark {
@@ -207,17 +216,32 @@ export interface ITransaction {
 }
 
 export interface IBank {
-    "id": string,
-    "bankName": string,
-    "last4": string,
-    "currency": string,
-    "status": string,
-    "isDefault": false
+    id: string;
+    bankName: string;
+    last4: string;
+    currency: string;
+    status: string;
+    isDefault: false;
 }
 
 export interface IWithdraw {
-    "userId": string,
-    "amount": number,
-    "bankAccountId": string,
-    "currency": string
-  }
+    userId: string;
+    amount: number;
+    bankAccountId: string;
+    currency: string;
+} 
+
+export interface IPostDetail {
+    _id: string;
+    isDeleted: boolean;
+    body: string;
+    images: string[];
+    userId: string;
+    productId: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    likeCount: number;
+    business: IBusiness;
+    product: IProduct;
+}

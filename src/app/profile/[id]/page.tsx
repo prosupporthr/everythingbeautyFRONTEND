@@ -1,4 +1,5 @@
 "use client";
+import { BusinessPost } from "@/components/business";
 import { CustomButton } from "@/components/custom";
 import { LoadingLayout, ShareBtn } from "@/components/shared";
 import { IUserDetail } from "@/helper/model/user";
@@ -137,6 +138,18 @@ export default function ProfilePage() {
                                 >
                                     Product
                                 </CustomButton>
+                                <CustomButton
+                                    onClick={() => setSelectedTab("post")}
+                                    variant={
+                                        selectedTab === "post"
+                                            ? "primary"
+                                            : "outline"
+                                    }
+                                    height="40px"
+                                    className={` !font-medium  ${selectedTab === "post" ? "!bg-[#F7F2FF] !text-brand  " : ""}  `}
+                                >
+                                    Post
+                                </CustomButton>
                             </div>
                             <Suspense
                                 fallback={
@@ -153,6 +166,12 @@ export default function ProfilePage() {
                                 )}
                                 {selectedTab === "store" && (
                                     <BusinessProduct
+                                        isProfile={userData?._id === id}
+                                        businessId={data?.business?._id}
+                                    />
+                                )}
+                                {selectedTab === "post" && (
+                                    <BusinessPost
                                         isProfile={userData?._id === id}
                                         businessId={data?.business?._id}
                                     />

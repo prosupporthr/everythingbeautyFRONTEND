@@ -13,3 +13,5 @@ export { default as OrderCard } from "./orderCard"
 
 export { default as UserChatCard } from "./userChatCard"
 export { default as MessageCard } from "./messageCard"
+
+export { default as PostCard } from "./postCard"
