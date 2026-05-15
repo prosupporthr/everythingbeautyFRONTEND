@@ -81,7 +81,7 @@ const useAuth = () => {
             if (user?.firstName) {
                 setIsOpen(true)
                 queryClient.invalidateQueries({ queryKey: ["user"] })
-                router.push(`/?id=${user?._id}`)
+                router.push(`/post?id=${user?._id}`)
             } else {
                 router.push("/auth/onboarding")
             }

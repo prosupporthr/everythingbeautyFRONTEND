@@ -1,25 +1,28 @@
 "use client";
 import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
 import { StarRating } from "../shared";
-import { CustomImage } from "../custom";
+import { CustomButton, CustomImage } from "../custom";
 import { useRouter } from "next/navigation";
 import { textLimit } from "@/helper/utils/textlimit";
 import { formatNumber } from "@/helper/utils/numberFormat";
+import { useState } from "react";
 
 export default function BusinessServiceCard({
-    item, 
+    item,
 }: {
     item: IBusinessDetails;
     setLocation?: (location: google.maps.LatLngLiteral | null) => void;
     location?: google.maps.LatLngLiteral | null;
 }) {
-    const router = useRouter(); 
+    const router = useRouter();
 
     const ServiceCard = (service: IServiceDetail) => {
         return (
             <div className=" w-full flex flex-col gap-2 py-1 ">
                 <div className=" w-full flex font-semibold justify-between text-sm items-center ">
-                    <p className=" capitalize " >{textLimit(service.name, 20)}</p>
+                    <p className=" capitalize ">
+                        {textLimit(service.name, 20)}
+                    </p>
                     <p>{formatNumber(service?.hourlyRate)}/hr</p>
                 </div>
                 <div className=" w-full grid grid-cols-5 gap-3 ">
@@ -44,6 +47,13 @@ export default function BusinessServiceCard({
     //         setOpen(true)
     //     }
     // }
+
+    const [show, setShow] = useState(false);
+
+    const handleClick = (e: any) => {
+        e.stopPropagation();
+        setShow((prev) => !prev);
+    };
 
     return (
         <div
@@ -75,13 +85,26 @@ export default function BusinessServiceCard({
                     {textLimit(item?.location, 20)}
                 </p>
             </div>
-            {item?.services?.length > 0 && (
-                <div className=" w-full flex-col flex gap-2 ">
-                    {item?.services?.slice(0, 2)?.map((item) => {
-                        return <ServiceCard {...item} />;
-                    })}
-                </div>
+            {show && (
+                <>
+                    {item?.services?.length > 0 && (
+                        <div className=" w-full flex-col flex gap-2 ">
+                            {item?.services?.slice(0, 2)?.map((item) => {
+                                return <ServiceCard {...item} />;
+                            })}
+                        </div>
+                    )}
+                </>
             )}
+            <div className=" w-full flex justify-center pt-2 items-center ">
+                <button
+                    disabled={item?.services?.length === 0}
+                    className=" text-brand text-sm w-full disabled:opacity-25 font-semibold "
+                    onClick={(e) => handleClick(e)}
+                >
+                    {show ? "Hide" : "Show more"}
+                </button>
+            </div>
         </div>
     );
 }

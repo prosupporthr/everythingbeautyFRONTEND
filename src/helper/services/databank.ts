@@ -1,7 +1,7 @@
-import { MessageQuestion, ProfileDelete, SecuritySafe } from "iconsax-reactjs";
+import { MessageQuestion, ProfileDelete } from "iconsax-reactjs";
 import { BiMessageDetail } from "react-icons/bi";
 import { BsPersonCircle, BsShop } from "react-icons/bs";
-import { IoChatbox, IoChatboxOutline, IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
+import { IoChatboxOutline, IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 
 export const menulist = [
