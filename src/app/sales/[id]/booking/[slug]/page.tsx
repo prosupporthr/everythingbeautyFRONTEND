@@ -4,8 +4,13 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { RiCalendar2Line } from "react-icons/ri";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Textarea } from "@heroui/input";
-import { CustomImage } from "@/components/custom";
-import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
+import { CustomButton, CustomImage } from "@/components/custom";
+import {
+    IBusinessDetails,
+    ISelectStaff,
+    IServiceDetail,
+    IStaffDetail,
+} from "@/helper/model/business";
 import { useFetchData } from "@/hooks/useFetchData";
 import {
     dateFormatMonthAndYear,
@@ -16,6 +21,10 @@ import { LoadingLayout, PaymentBtn, PaymentMethod } from "@/components/shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { IUserDetail } from "@/helper/model/user";
+import { URLS } from "@/helper/services/urls";
+import { StaffCard } from "@/components/cards";
+import { useEffect, useState } from "react";
+import { SelectStaffModal } from "@/components/modals";
 
 export default function BookingPage() {
     const router = useRouter();
@@ -25,9 +34,14 @@ export default function BookingPage() {
     const slug = param.slug as string;
     const query = useSearchParams();
     const date = query?.get("date") as string;
+    const staffId = query?.get("staff") as string;
     const [user] = useAtom(userAtom);
+    const [isOpen, setIsOpen] = useState(false);
 
-    // const { bookingMutation, isLoading: loadingBooking } = useBooking()
+    const [selectedStaff, setSelectedStaff] = useState<ISelectStaff>({
+        label: "",
+        value: "",
+    }); 
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
         endpoint: `/business/${id}`,
@@ -41,10 +55,26 @@ export default function BookingPage() {
         },
     );
 
+    const { data: staff } = useFetchData<IStaffDetail>(
+        {
+            endpoint: URLS.STAFFBYID(selectedStaff?.value ? selectedStaff?.value : staffId),
+            name: ["staff", staffId, selectedStaff?.value],
+        },
+    );
+
     const depositPercent = Number(services?.initialDepositPercentage || 0);
     const hourlyRate = Number(services?.hourlyRate || 0);
 
-    const initialPayment = (hourlyRate * depositPercent) / 100; 
+    const initialPayment = (hourlyRate * depositPercent) / 100;
+
+    useEffect(()=> {
+        if(staff && !selectedStaff?.label) {
+            setSelectedStaff({
+                label: staff?.name,
+                value: staff?._id
+            })
+        }
+    }, [staff])
 
     return (
         <LoadingLayout loading={loading || isLoading}>
@@ -180,8 +210,25 @@ export default function BookingPage() {
                             amount={initialPayment as number}
                             user={user as IUserDetail}
                             businessID={id}
+                            staffId={staffId}
                             bookingDate={date}
                         />
+                        <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
+                            <div className=" w-full flex justify-between items-center ">
+                                <p className=" font-bold ">Selected Staff:</p>
+                            </div>
+                            <StaffCard item={staff as IStaffDetail} />
+
+                            <div className={` w-full lg:w-[300px] `}>
+                                <CustomButton
+                                    fullWidth
+                                    onClick={() => setIsOpen(true)}
+                                    isLoading={isLoading}
+                                >
+                                    {"Change Staff"}
+                                </CustomButton>
+                            </div>
+                        </div>
                     </div>
                     <div className=" w-full lg:w-fit ">
                         <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 ">
@@ -238,14 +285,21 @@ export default function BookingPage() {
                             <div className=" w-full flex justify-between items-center text-sm ">
                                 <p className=" font-medium ">Total</p>
                                 <p className=" text-xl font-bold ">
-                                    {formatNumber(
-                                        Number(initialPayment) + 1,
-                                    )}
+                                    {formatNumber(Number(initialPayment) + 1)}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <SelectStaffModal
+                    selectStaff={selectedStaff}
+                    setSelectStaff={setSelectedStaff}
+                    id={id + ""}
+                    isOpen={isOpen}
+                    onClose={setIsOpen}
+                    type="user"
+                />
             </div>
         </LoadingLayout>
     );

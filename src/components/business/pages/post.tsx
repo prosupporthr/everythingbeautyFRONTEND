@@ -4,7 +4,10 @@ import { LoadingLayout } from "@/components/shared";
 import { IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";  
-import { useParams } from "next/navigation"; 
+import usePost from "@/hooks/usePost";
+import { userAtom } from "@/store/user";
+import { useAtom } from "jotai";
+// import { useParams } from "next/navigation"; 
 
 export default function PostPage({
     isProfile,
@@ -13,10 +16,10 @@ export default function PostPage({
     isProfile?: boolean;
     businessId?: string;
 }) {
-    const param = useParams();
-    const id = param.id as string;
+    // const param = useParams();
+    // const id = param.id as string;
 
-    // const effectiveBusinessId = businessId ?? id ?? "";
+    const [user] = useAtom(userAtom);
 
     const {
         items = [],
@@ -25,9 +28,11 @@ export default function PostPage({
         isFetchingMore,
     } = useInfiniteScroller<IPostDetail>({
         queryKeyBase: "post",
-        endpoint: URLS.POST,
+        endpoint: URLS.POSTBYUSERID(user?._id+""),
         limit: 10, 
     }); 
+
+    const { handleLikePost } = usePost()
 
     return (
         <LoadingLayout
@@ -36,10 +41,10 @@ export default function PostPage({
             length={items?.length}
             ref={ref}
         >
-            <div className=" w-full grid lg:grid-cols-2 gap-4 ">
+            <div className={` w-full grid lg:grid-cols-3 gap-4 `}>
                 {items?.map((item, index) => {
                     return (
-                        <PostCard key={index} item={item} />
+                        <PostCard click={handleLikePost} key={index} isProfile={true} item={item} />
                     );
                 })}
             </div>

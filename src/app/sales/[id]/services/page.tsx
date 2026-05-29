@@ -9,6 +9,7 @@ import CustomDateTimePicker from "@/components/custom/customDatePicker";
 import {
     LoadingLayout,
     MessageBtn,
+    ModalLayout,
     ShareBtn,
     StarRating,
     Verified,
@@ -17,7 +18,7 @@ import { useEffect, useState } from "react";
 import { PiClockLight } from "react-icons/pi";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useParams, useRouter } from "next/navigation";
-import { IBusinessDetails, IServiceDetail } from "@/helper/model/business";
+import { IBusinessDetails, ISelectStaff, IServiceDetail } from "@/helper/model/business";
 import { convertDataForSelect } from "@/helper/utils/convertDataForSelect";
 import { days } from "@/helper/utils/databank";
 import { isBusinessOpen } from "@/helper/utils/dateStatus";
@@ -34,6 +35,8 @@ import ReviewSection from "@/components/landing/reviewsection";
 import { URLS } from "@/helper/services/urls";
 import { addToast } from "@heroui/toast";
 import { textLimit } from "@/helper/utils/textlimit";
+import { formatTime } from "@/helper/utils/dateFormat";
+import { SelectStaffModal } from "@/components/modals"; 
 
 export default function SaleServicePage() {
     const param = useParams();
@@ -49,6 +52,7 @@ export default function SaleServicePage() {
     const [user] = useAtom(userAtom);
 
     const [status, setStatus] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [marker, setMarker] = useState(
         {} as google.maps.LatLngLiteral | null,
     );
@@ -89,19 +93,24 @@ export default function SaleServicePage() {
     });
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [selectedStaff, setSelectedStaff] = useState<ISelectStaff>({
+        label: "",
+        value: "",
+    });
 
     useEffect(() => {
-        if (data?._id && !isLoading) {
-            const isStatus =
-                data?.days && data?.openingTime && data?.closingTime
-                    ? isBusinessOpen({
-                          days: data.days,
-                          openingTime: data.openingTime,
-                          closingTime: data.closingTime,
-                      })
-                    : false;
-            setStatus(isStatus);
-        }
+        if (!data?._id || isLoading) return;
+
+        const isStatus =
+            data.days && data.openingTime && data.closingTime
+                ? isBusinessOpen({
+                      days: data.days,
+                      openingTime: data.openingTime,
+                      closingTime: data.closingTime,
+                  })
+                : false;
+
+        setStatus(isStatus);
     }, [data, isLoading]);
 
     useEffect(() => {
@@ -156,8 +165,17 @@ export default function SaleServicePage() {
             return;
         }
 
+        if(!selectedStaff.label){
+            addToast({
+                title: "Warning",
+                description: `Please select a staff.`,
+                color: "warning",
+            });
+            return;
+        }
+
         router.push(
-            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}`,
+            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}&staff=${selectedStaff?.value}`,
         );
     };
 
@@ -352,8 +370,13 @@ export default function SaleServicePage() {
                                                         {days[item]}
                                                     </p>
                                                     <p className=" ml-auto ">
-                                                        {data?.openingTime}-
-                                                        {data?.closingTime}
+                                                        {formatTime(
+                                                            data?.openingTime,
+                                                        )}
+                                                        -
+                                                        {formatTime(
+                                                            data?.closingTime,
+                                                        )}
                                                     </p>
                                                 </div>
                                             );
@@ -404,8 +427,16 @@ export default function SaleServicePage() {
                                             options={options}
                                         />
                                     </div>
+                                    <div className=" p-2 w-full ">
+                                        <button
+                                            onClick={() => setIsOpen(true)}
+                                            className=" w-full h-[45px] rounded-2xl border "
+                                        >
+                                            <p className=" capitalize text-sm font-medium " >{selectedStaff?.label ? selectedStaff?.label : "Select Stylist"}</p>
+                                        </button>
+                                    </div>
                                     <div
-                                        className={` w-full ${selectedOption.service ? " flex " : " lg:flex hidden "} py-2 `}
+                                        className={` w-full ${selectedOption.service ? " flex " : " lg:flex hidden "} border-t py-2 `}
                                     >
                                         <div className=" w-full border-r px-4 ">
                                             <CustomDateTimePicker
@@ -442,8 +473,11 @@ export default function SaleServicePage() {
                                 <CustomButton
                                     onClick={handleClick}
                                     isDisabled={
-                                        selectedOption.service && selectedOption.date && selectedOption.time ?
-                                        false : true
+                                        selectedOption.service &&
+                                        selectedOption.date &&
+                                        selectedOption.time
+                                            ? false
+                                            : true
                                     }
                                 >
                                     Book Now
@@ -498,6 +532,14 @@ export default function SaleServicePage() {
                     )}
                     <ReviewSection businessId={data?._id} />
                 </div>
+                <SelectStaffModal
+                    selectStaff={selectedStaff}
+                    setSelectStaff={setSelectedStaff}
+                    id={id + ""}
+                    isOpen={isOpen}
+                    onClose={setIsOpen}
+                    type="user"
+                />
             </div>
         </LoadingLayout>
     );

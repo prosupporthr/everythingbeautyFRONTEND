@@ -17,11 +17,12 @@ export interface IBusiness {
 
 export interface IBooking {
     userId: string;
+    staffId: string;
     businessId: string;
     serviceId: string;
     totalPrice: number;
     bookingDate: string;
-}
+} 
 
 export interface IOrder {
     userId: string;
@@ -32,6 +33,11 @@ export interface IOrder {
     totalPrice: number;
     paymentStatus: string;
     status: string;
+} 
+
+export interface ISelectStaff {
+    label: string;
+    value: string;
 }
 
 export interface IBusinessDetails {
@@ -97,6 +103,8 @@ export interface IBookingDetail {
     totalPrice: number;
     bookingDate: string;
     paymentStatus: string;
+    staff: IStaffDetail;
+    staffId: string;
     status: string;
     createdAt: string;
     updatedAt: string;
@@ -117,8 +125,42 @@ export interface IProduct {
 
 export interface IPost {
     body: string;
-    images: string[];
+    images?: string[];
     productId?: string;
+}
+
+export interface IStaff {
+    name: string;
+    email: string;
+    address: string;
+    porfolioLink: string;
+    primarySpeciality: string;
+    yearsOfExperience: number | string;
+    skills: string[];
+    image?: string;
+}
+export interface IStaffDetail {
+    _id: string;
+    isDeleted: boolean;
+    businessId: string;
+
+    name: string;
+    email: string;
+    address: string;
+    porfolioLink: string;
+
+    primarySpeciality: string;
+    yearsOfExperience: number;
+    rating: number;
+
+    skills: string[];
+
+    image: string;
+
+    createdAt: string;
+    updatedAt: string;
+
+    __v: number;
 }
 
 export interface IBookingmark {
@@ -229,7 +271,7 @@ export interface IWithdraw {
     amount: number;
     bankAccountId: string;
     currency: string;
-} 
+}
 
 export interface IPostDetail {
     _id: string;
@@ -238,6 +280,7 @@ export interface IPostDetail {
     images: string[];
     userId: string;
     productId: string;
+    hasLiked: boolean;
     createdAt: string;
     updatedAt: string;
     __v: number;

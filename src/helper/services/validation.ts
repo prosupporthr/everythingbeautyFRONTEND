@@ -77,7 +77,7 @@ export const serviceSchema = Yup.object().shape({
         .when("acceptsInitialDeposit", {
             is: true,
             then: (schema) =>
-                schema.required("Initial deposit percentage is required"), 
+                schema.required("Initial deposit percentage is required"),
         }),
 });
 
@@ -108,21 +108,42 @@ export const reviewSchema = Yup.object().shape({
         .required("Rating is required")
         .min(1, "Rating must be at least 1")
         .max(5, "Rating cannot be more than 5"),
-}); 
+});
 
 export const postSchema = Yup.object({
-    // productId: Yup.string()
-    //     .required("Product is required"),
-
     body: Yup.string()
         .trim()
         .required("Post content is required")
         .min(3, "Post content is too short"),
+});
 
-    images: Yup.array()
-        .of(
-            Yup.mixed<File>().required()
-        )
-        .min(1, "Please upload at least one image")
-        .max(10, "You can upload a maximum of 10 images"),
+export const staffSchema = Yup.object({
+    name: Yup.string().trim().required("Name is required"),
+
+    email: Yup.string()
+        .trim()
+        .email("Invalid email address")
+        .required("Email is required"),
+
+    address: Yup.string().trim().required("Address is required"),
+
+    porfolioLink: Yup.string()
+        .trim()
+        .url("Enter a valid portfolio URL")
+        .required("Portfolio link is required"),
+
+    primarySpeciality: Yup.string()
+        .trim()
+        .required("Primary speciality is required"),
+
+    yearsOfExperience: Yup.number()
+        .typeError("Years of experience must be a number")
+        .positive("Years of experience must be positive")
+        .integer("Years of experience must be a whole number")
+        .required("Years of experience is required"),
+
+    skills: Yup.array()
+        .of(Yup.string().trim().required("Skill cannot be empty"))
+        .min(1, "At least one skill is required")
+        .required("Skills are required"),
 });

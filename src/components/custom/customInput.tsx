@@ -3,6 +3,7 @@ import { Input, Textarea } from "@heroui/input"
 import React from "react"
 import { useFormikContext, getIn, FormikValues } from "formik"
 import { allowOnlyAlphaNumericNoSpace } from "@/helper/utils/inputfilter"
+import { capitalize } from "lodash"
 
 interface IProps {
   name: string
@@ -126,7 +127,7 @@ export default function CustomInput({
               classNames={{
                 inputWrapper:
                   "bg-white border border-gray-300 rounded-md h-[45px]", // 👈 force height
-                input: "text-gray-900 h-full ",
+                input: "text-gray-900 h-full capitalize ",
               }}
               startContent={
                 startContent

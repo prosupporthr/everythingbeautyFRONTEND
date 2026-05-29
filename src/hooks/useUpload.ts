@@ -38,7 +38,7 @@ export const useUploadMutation = <T>(
 
         onSuccess: (res) => { 
             // Default navigation (can be overridden) 
-            onSuccessCallback(res?.data?.url)
+            onSuccessCallback(res?.data?.urls)
         },
     })
 }
