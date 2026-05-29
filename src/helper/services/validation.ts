@@ -129,8 +129,7 @@ export const staffSchema = Yup.object({
 
     porfolioLink: Yup.string()
         .trim()
-        .url("Enter a valid portfolio URL")
-        .required("Portfolio link is required"),
+        .url("Enter a valid portfolio URL"),
 
     primarySpeciality: Yup.string()
         .trim()

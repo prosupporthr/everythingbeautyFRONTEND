@@ -33,7 +33,7 @@ export default function StaffForm(
         staffId: id
     }); 
 
-    const { data, isLoading: loading } = useFetchData<IStaffDetail>({
+    const { data } = useFetchData<IStaffDetail>({
         endpoint: URLS.STAFFBYID(id+""),
         name: ["staff", id+""],
         enable: id ? true : false
@@ -45,9 +45,17 @@ export default function StaffForm(
                 "skills",
                 formik.values.skills.filter((skill: string) => skill !== item),
             );
+            if(formik.values.primarySpeciality === item) {
+                formik.setFieldValue("primarySpeciality", "");
+            }
         } else {
+            if(formik.values.skills.length === 0) {
+                formik.setFieldValue("primarySpeciality", item);
+            }
             formik.setFieldValue("skills", [...formik.values.skills, item]);
         }
+
+        
     }; 
 
     useEffect(() => {
@@ -108,6 +116,7 @@ export default function StaffForm(
                         <CustomInput
                             name="primarySpeciality"
                             label="Primary Specialty"
+                            disabled={true}
                         />
                         <CustomInput
                             name="yearsOfExperience"
