@@ -41,7 +41,7 @@ export default function BookingPage() {
     const [selectedStaff, setSelectedStaff] = useState<ISelectStaff>({
         label: "",
         value: "",
-    }); 
+    });
 
     const { data, isLoading } = useFetchData<IBusinessDetails>({
         endpoint: `/business/${id}`,
@@ -55,9 +55,11 @@ export default function BookingPage() {
         },
     );
 
-    const { data: staff } = useFetchData<IStaffDetail>(
+    const { data: staff, isLoading: loadingstaff } = useFetchData<IStaffDetail>(
         {
-            endpoint: URLS.STAFFBYID(selectedStaff?.value ? selectedStaff?.value : staffId),
+            endpoint: URLS.STAFFBYID(
+                selectedStaff?.value ? selectedStaff?.value : staffId,
+            ),
             name: ["staff", staffId, selectedStaff?.value],
         },
     );
@@ -67,14 +69,14 @@ export default function BookingPage() {
 
     const initialPayment = (hourlyRate * depositPercent) / 100;
 
-    useEffect(()=> {
-        if(staff && !selectedStaff?.label) {
+    useEffect(() => {
+        if (staff && !selectedStaff?.label) {
             setSelectedStaff({
                 label: staff?.name,
-                value: staff?._id
-            })
+                value: staff?._id,
+            });
         }
-    }, [staff])
+    }, [staff]);
 
     return (
         <LoadingLayout loading={loading || isLoading}>
@@ -217,7 +219,9 @@ export default function BookingPage() {
                             <div className=" w-full flex justify-between items-center ">
                                 <p className=" font-bold ">Selected Staff:</p>
                             </div>
-                            <StaffCard item={staff as IStaffDetail} />
+                            <LoadingLayout loading={loadingstaff}>
+                                <StaffCard item={staff as IStaffDetail} />
+                            </LoadingLayout>
 
                             <div className={` w-full lg:w-[300px] `}>
                                 <CustomButton
@@ -293,6 +297,7 @@ export default function BookingPage() {
                 </div>
 
                 <SelectStaffModal
+                    order={true}
                     selectStaff={selectedStaff}
                     setSelectStaff={setSelectedStaff}
                     id={id + ""}

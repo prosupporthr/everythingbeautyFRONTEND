@@ -533,6 +533,7 @@ export default function SaleServicePage() {
                     <ReviewSection businessId={data?._id} />
                 </div>
                 <SelectStaffModal
+                    order={true}
                     selectStaff={selectedStaff}
                     setSelectStaff={setSelectedStaff}
                     id={id + ""}
