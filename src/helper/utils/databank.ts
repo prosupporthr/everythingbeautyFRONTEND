@@ -12,6 +12,18 @@ export const days = [
     "Saturday"
 ]
 
+export const skill = [
+    "Hair Weaving",
+    "Precision Cutting",
+    "Balayage",
+    "Color Artistry",
+    "Advanced Skincare",
+    "Bridal Styling",
+    "Chemical Texturizing",
+    "Scalp Treatments",
+    "Brow & Lash Artistry"
+]
+
 
 export const walletList = [
     // {

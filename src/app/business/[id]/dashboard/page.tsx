@@ -18,6 +18,11 @@ const BusinessOverview = lazy(() =>
         default: module.BusinessOverview,
     })),
 );
+const BusinessStaff = lazy(() =>
+    import("@/components/business").then((module) => ({
+        default: module.BusinessStaff,
+    })),
+);
 const DashboardProfile = lazy(() =>
     import("@/components/business").then((module) => ({
         default: module.DashboardProfile,
@@ -40,7 +45,8 @@ export default function BusinessDashboardPage() {
             }
         >
             <div className=" flex flex-col w-full lg:pr-[100px]  ">
-                {!tab && <BusinessOverview />}
+                {!tab && <BusinessStaff />}
+                {tab === "appointment" && <BusinessOverview />}
                 {tab === "post" && <BusinessPost />}
                 {tab === "services" && <BusinessServices />}
                 {tab === "store" && <BusinessProduct />}

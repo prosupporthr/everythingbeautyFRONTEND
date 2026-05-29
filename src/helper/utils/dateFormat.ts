@@ -40,3 +40,15 @@ export function dateFormatDay(date: string) {
 
 export const timeFormat = (isoString: string) =>
   moment(isoString).format("h:mm A")
+
+
+export const formatTime = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 || 12;
+
+  return `${formattedHour}:${minute
+      .toString()
+      .padStart(2, "0")} ${suffix}`;
+};

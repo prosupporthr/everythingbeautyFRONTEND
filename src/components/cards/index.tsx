@@ -15,3 +15,4 @@ export { default as UserChatCard } from "./userChatCard"
 export { default as MessageCard } from "./messageCard"
 
 export { default as PostCard } from "./postCard"
+export { default as StaffCard } from "./staffCard"

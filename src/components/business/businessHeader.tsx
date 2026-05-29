@@ -31,7 +31,7 @@ export default function BusinessHeader() {
             className={` ${tab === "profile" ? "hidden" : " flex "} w-full  lg:flex-row flex-col h-fit lg:gap-0 gap-3 py-6 justify-between lg:items-center `}
         >
             <div className=" flex items-center gap-3 ">
-                <p className=" text-2xl font-medium capitalize ">
+                <p className=" text-2xl font-semibold capitalize ">
                     {tab === "store"
                         ? "My Store"
                         : tab
@@ -40,7 +40,17 @@ export default function BusinessHeader() {
                 </p>
             </div>
             <div className=" flex items-center gap-3 lg:mr-20 ">
-                {(tab === "services" || tab === "store" || tab === "post" || !tab) && (
+                {(!tab || tab === "appointment") && (
+                    <div className=" w-fit text-xs font-semibold ">
+                        <button onClick={()=> router.push(`/business/${id}/dashboard`)} className={` ${!tab ? " bg-[#EADFF8] " : ""} w-[100px] h-[40px] rounded-l-full text-brand shadow `}>
+                            My Staff
+                        </button>
+                        <button onClick={()=> router.push(`/business/${id}/dashboard?tab=appointment`)} className={` ${tab === "appointment" ? " bg-[#EADFF8] " : ""}  w-[100px] h-[40px] rounded-r-full text-brand shadow `}>
+                            Appointment
+                        </button>
+                    </div>
+                )}
+                {(tab === "services" || tab === "store" || tab === "post") && (
                     <div className=" w-fit lg:ml-0 ml-auto ">
                         <CustomButton
                             onClick={handleClick}

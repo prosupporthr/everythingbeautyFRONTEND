@@ -54,7 +54,7 @@ export default function ImagePicker({
 
             setImageFile(convertedFile);
 
-            // setPreviewUrl(URL?.createObjectURL(file));
+            setPreviewUrl(URL?.createObjectURL(file));
         } catch (error) {
             console.error("Error converting image:", error);
             addToast({

@@ -80,7 +80,7 @@ const useEditUser = () => {
                 color: "success",
             })
             setOpen(false)
-            queryClient.invalidateQueries({ queryKey: ["address"] })
+            queryClient.invalidateQueries({ queryKey: ["post"] })
         },
     })
 

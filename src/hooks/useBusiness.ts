@@ -13,6 +13,7 @@ import {
     postSchema,
     productSchema,
     serviceSchema,
+    staffSchema,
 } from "@/helper/services/validation";
 import {
     IBookingmark,
@@ -20,27 +21,34 @@ import {
     IPost,
     IProduct,
     IServices,
+    IStaff,
 } from "@/helper/model/business";
-import { useUserStore } from "./user";
-import { createFormData } from "@/helper/services/createFormData";
+import { useUserStore } from "./user"; 
 
 interface IProps {
     services?: boolean;
     product?: boolean;
     business?: boolean;
     post?: boolean;
+    staff?: boolean;
+    edit?: boolean;
+    staffId?: string; 
 }
 
-const useBusiness = ({ services, product, business, post }: IProps) => {
+const useBusiness = ({ services, product, business, post, staff, edit, staffId}: IProps) => {
     const router = useRouter();
     const userId = localStorage.getItem("userid") as string;
     const [imageFile, setImageFile] = useState<File | string | null>("");
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [previews, setPreviews] = useState<string[]>([]);
+    const [isOpen, setIsOpen] = useState(false);
 
     const { refetch } = useUserStore();
 
     const param = useParams();
     const id = param.id as string;
-    const slug = param.slug as string;
+    const slug = param.slug as string; 
+    
 
     const queryClient = useQueryClient();
 
@@ -86,7 +94,10 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
                 description: res?.data?.message,
                 color: "success",
             });
-            router.push(`/business/${id}/dashboard?tab=services`);
+            if (id) {
+                router.push(`/business/${id}/dashboard?tab=services`);
+            }
+            setIsOpen(false);
         },
     });
 
@@ -118,7 +129,7 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
                 color: "success",
             });
             queryClient.invalidateQueries({ queryKey: ["post"] });
-            router.push(`/business/${id}/dashboard?tab=post`); 
+            router.push(`/business/${id}/dashboard?tab=post`);
         },
     });
 
@@ -135,6 +146,22 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
             });
 
             queryClient.invalidateQueries({ queryKey: ["post"] });
+        },
+    });
+
+    /** 🔹 Service */
+    const postDeleteMutation = useMutation({
+        mutationFn: (data: string) => httpService.delete(URLS.POSTBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+
+            console.log("post");
+            queryClient.invalidateQueries({ queryKey: ["post"], exact: false });
         },
     });
 
@@ -232,19 +259,72 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
         },
     });
 
-    const uploadMutation = useUploadMutation((res) => {
+    /** 🔹 Staff */
+    const staffMutation = useMutation({
+        mutationFn: (data: IStaff) =>
+            httpService.post(URLS.STAFFBYBUSINESSID(id+""), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+        },
+    });
+
+    /** 🔹 Staff */
+    const staffEditMutation = useMutation({
+        mutationFn: (data: IStaff) =>
+            httpService.patch(URLS.STAFFBYID(staffId+""), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }); 
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+        },
+    });
+
+    /** 🔹 Staff */
+    const changeStaffMutation = useMutation({
+        mutationFn: (data: {
+            newStaffId: string
+        }) =>
+            httpService.patch(URLS.TRANSFERSTAFFBYID(id), data),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            }); 
+            queryClient.invalidateQueries({ queryKey: ["booking"] });
+        },
+    });
+
+    const uploadMutation = useUploadMutation((res: Array<string>) => {
         const payload = { ...formik.values, pictures: [res + ""] };
+
         const payloadservices = {
             ...formikService.values,
-            pictures: [res + ""],
+            pictures: res,
         };
         const payloadproduct = {
             ...formikProduct.values,
-            pictures: [res + ""],
+            pictures: res,
         };
         const payloadpost = {
             ...formikPost.values,
-            images: [res + ""],
+            images: res,
+        };
+ 
+        const payloadstaff = {
+            ...formikStaff.values,
+            image: res[0],
         };
 
         if (business) {
@@ -271,8 +351,13 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
             } else {
                 postMutation.mutate(payloadpost);
             }
+        } else if (staff) {
+            if (edit) {
+                staffEditMutation.mutate(payloadstaff);
+            } else {
+                staffMutation.mutate(payloadstaff);
+            }
         }
-        console.log(res);
     });
 
     /** 🔹 Formik Instances */
@@ -341,15 +426,43 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
     const formikPost = useFormik<IPost>({
         initialValues: {
             body: "",
-            images: [],
         },
         validationSchema: postSchema,
         onSubmit: (data) => {
-            if (slug && !imageFile) {
+            if (slug && !imageFiles) {
                 postEditMutation.mutate(data);
-            } else if (data.images?.length > 0) {
-                const formdata = new FormData(); 
-                formdata.append("file", data.images[0]);
+            } else if (imageFiles.length > 0) {
+                const formdata = new FormData();
+                formdata.append("file", imageFiles[0]);
+                uploadMutation.mutate(formdata);
+            } else {
+                addToast({
+                    title: "Error",
+                    description: "Please upload at least one image",
+                    color: "danger",
+                });
+            }
+        },
+    });
+
+    /** 🔹 Formik Instances */
+    const formikStaff = useFormik<IStaff>({
+        initialValues: {
+            name: "",
+            email: "",
+            address: "",
+            porfolioLink: "",
+            primarySpeciality: "",
+            yearsOfExperience: "",
+            skills: [], 
+        },
+        validationSchema: staffSchema,
+        onSubmit: (data) => {
+            if (edit && !imageFile) {
+                staffEditMutation.mutate(data);
+            } else if (imageFile) {
+                const formdata = new FormData();
+                formdata.append("file", imageFile);
                 uploadMutation.mutate(formdata);
             } else {
                 addToast({
@@ -401,21 +514,35 @@ const useBusiness = ({ services, product, business, post }: IProps) => {
         productEditMutation.isPending ||
         productDeleteMutation.isPending ||
         bookmarkMutation.isPending ||
-        bookmarkdeleteMutation.isPending;
+        bookmarkdeleteMutation.isPending ||
+        postDeleteMutation.isPending ||
+        staffMutation.isPending ||
+        staffEditMutation.isPending;
 
     return {
         formik,
-        formikPost,
+        formikPost, 
         formikService,
         formikProduct,
+        formikStaff,
         isLoading,
         productDeleteMutation,
         servicesDeleteMutation,
+        postDeleteMutation,
         bookmarkMutation,
+        staffMutation,
+        staffEditMutation,
         bookmarkdeleteMutation,
+        changeStaffMutation,
         userId,
         setImageFile,
         imageFile,
+        isOpen,
+        setIsOpen,
+        imageFiles,
+        setImageFiles,
+        previews,
+        setPreviews,
     };
 };
 

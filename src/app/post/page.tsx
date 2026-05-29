@@ -2,17 +2,20 @@
 import { PostCard } from "@/components/cards";
 import LandingBusinessCard from "@/components/cards/landingBusinessCard";
 import { CustomButton } from "@/components/custom";
-import { LoadingLayout } from "@/components/shared";
+import { PostForm } from "@/components/forms";
+import { LoadingLayout, ModalLayout } from "@/components/shared";
 import { IBusinessDetails, IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
+import useBusiness from "@/hooks/useBusiness";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
+import usePost from "@/hooks/usePost";
 import { userAtom } from "@/store/user";
 import { addToast } from "@heroui/toast";
-import { People, Star1 } from "iconsax-reactjs";
+import { People, Send } from "iconsax-reactjs";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
-import { IoMdAdd } from "react-icons/io";
+import { useState } from "react";
 
 export default function PostPage() {
     const {
@@ -31,12 +34,26 @@ export default function PostPage() {
         name: ["business"],
     });
 
+    const { handleLikePost } = usePost()
+
     const [user] = useAtom(userAtom);
     const router = useRouter();
 
+    const [open, setOpen] = useState(false);
+
+    const {
+        formikPost,
+        imageFiles,
+        setImageFiles,
+        setPreviews,
+        isLoading: loadingPost,
+    } = useBusiness({
+        post: true,
+    });
+
     const handleClick = () => {
         if (user?.business?._id) {
-            router.push(`/business/${user?.business?._id}/create/post`);
+            setOpen(true);
         } else {
             addToast({
                 title: "Warning",
@@ -56,17 +73,28 @@ export default function PostPage() {
 
     return (
         <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
-            <div className=" flex-1 flex flex-col p-6 pr-0 gap-4 overflow-auto ">
-                <div className=" w-full flex justify-between items-center ">
-                    <p className=" text-lg font-medium ">Recent Post</p>
-                    <CustomButton
+            <div className=" flex-1 flex items-center flex-col p-6 pr-0 gap-4 overflow-auto ">
+                <div className=" max-w-[500px] w-full flex flex-col gap-4 " >
+                <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center ">
+                    {/* <CustomButton
                         onClick={handleClick}
+                        fontSize="12px"
                         height="40px"
-                        className=" w-[150px] "
-                        startIcon={<IoMdAdd color="white" size={"18px"} />}
+                        className=" font-medium "
                     >
-                        {"Add Post"}
-                    </CustomButton>
+                        {"Create Post"}
+                    </CustomButton> */}
+                    <input
+                        value={formikPost.values?.body}
+                        onChange={(e) =>
+                            formikPost.setFieldValue("body", e.target.value)
+                        }
+                        className="w-full h-full border-0 rounded-r-full text-sm px-3 outline-none focus:outline-none focus:ring-0"
+                        placeholder="What is on your mind today?"
+                    />
+                    <button className=" w-fit px-3 h-full flex justify-center items-center " >
+                        <Send size={"25px"} className=" text-brand " />
+                    </button>
                 </div>
                 <div className=" w-full flex flex-col gap-4 ">
                     <LoadingLayout
@@ -76,9 +104,10 @@ export default function PostPage() {
                         ref={ref}
                     >
                         {items?.map((item, index) => {
-                            return <PostCard key={index} item={item} />;
+                            return <PostCard click={handleLikePost} key={index} item={item} />;
                         })}
                     </LoadingLayout>
+                </div>
                 </div>
             </div>
             <div className=" max-w-[470px] w-full pl-0 p-6 flex flex-col gap-6 overflow-auto ">
@@ -149,39 +178,7 @@ export default function PostPage() {
                     </div>
                     <LoadingLayout loading={loading} length={data?.length}>
                         <div className=" w-full grid grid-cols-2 gap-4 text-white ">
-                            {business}
-                            {/* <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
-                            <div className=" mt-auto flex flex-col gap-3 ">
-                                <Star1 size={20} />
-                                <p className=" text-sm font-bold ">
-                                    All hair Product
-                                </p>
-                            </div>
-                        </div>
-                        <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
-                            <div className=" mt-auto flex flex-col gap-3 ">
-                                <Star1 size={20} />
-                                <p className=" text-sm font-bold ">
-                                    All Skin care product{" "}
-                                </p>
-                            </div>
-                        </div>
-                        <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
-                            <div className=" mt-auto flex flex-col gap-3 ">
-                                <Star1 size={20} />
-                                <p className=" text-sm font-bold ">
-                                    All the hair stylists
-                                </p>
-                            </div>
-                        </div>
-                        <div className=" w-full h-[177px] rounded-3xl flex p-4 flex-col bg-brand ">
-                            <div className=" mt-auto flex flex-col gap-3 ">
-                                <Star1 size={20} />
-                                <p className=" text-sm font-bold ">
-                                    All the hair stylists
-                                </p>
-                            </div>
-                        </div> */}
+                            {business} 
                         </div>
                     </LoadingLayout>
                 </div>
@@ -210,6 +207,16 @@ export default function PostPage() {
                     </CustomButton>
                 </div>
             </div>
+            <ModalLayout isOpen={open} onClose={() => setOpen(false)}>
+                <PostForm
+                    modal
+                    setPreviews={setPreviews}
+                    formik={formikPost}
+                    imageFiles={imageFiles}
+                    isLoading={loadingPost}
+                    setImageFiles={setImageFiles}
+                />
+            </ModalLayout>
         </div>
     );
 }
