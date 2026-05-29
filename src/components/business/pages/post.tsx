@@ -4,6 +4,7 @@ import { LoadingLayout } from "@/components/shared";
 import { IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";  
+import { useFetchData } from "@/hooks/useFetchData";
 import usePost from "@/hooks/usePost";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
@@ -21,25 +22,35 @@ export default function PostPage({
 
     const [user] = useAtom(userAtom);
 
+    // const {
+    //     items = [],
+    //     ref,
+    //     isLoading,
+    //     isFetchingMore,
+    // } = useInfiniteScroller<IPostDetail>({
+    //     queryKeyBase: "post",
+    //     endpoint: URLS.POSTBYUSERID(user?._id+""),
+    //     limit: 10, 
+    // }); 
+
+
     const {
-        items = [],
-        ref,
-        isLoading,
-        isFetchingMore,
-    } = useInfiniteScroller<IPostDetail>({
-        queryKeyBase: "post",
+        data: items,
+        isLoading
+        // isRefetching,
+    } = useFetchData<IPostDetail[]>({
         endpoint: URLS.POSTBYUSERID(user?._id+""),
-        limit: 10, 
-    }); 
+        name: ["post", user?._id+""],
+    });
 
     const { handleLikePost } = usePost()
 
     return (
         <LoadingLayout
             loading={isLoading}
-            refetching={isFetchingMore}
+            // refetching={isFetchingMore}
             length={items?.length}
-            ref={ref}
+            // ref={ref}
         >
             <div className={` w-full grid lg:grid-cols-3 gap-4 `}>
                 {items?.map((item, index) => {
