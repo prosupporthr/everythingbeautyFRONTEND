@@ -7,13 +7,14 @@ import { IBusinessDetails, IStaffDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useFetchData } from "@/hooks/useFetchData";
 import { ProfileAdd } from "iconsax-reactjs";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react"; 
 
 export default function Staff() {
     const param = useParams();
     const id = param.id as string;
     const [ isOpen, setIsOpen ] = useState(false)
+    const router = useRouter()
 
     const { data, isLoading: loading } = useFetchData<IBusinessDetails>({
         endpoint: URLS.BUSINESSBYID(id),
@@ -50,10 +51,10 @@ export default function Staff() {
                             weaving and bespoke skincare treatments.
                         </p>
                         <div className=" flex gap-4 mt-4 ">
-                            <CustomButton>
+                            <CustomButton onClick={()=> router.push(`/business/${data?._id}/edit`)} >
                                 Edit Business
                             </CustomButton>
-                            <CustomButton variant="outlinebrand">
+                            <CustomButton onClick={()=> router.push(`/business/${data?._id}/dashboard?tab=profile`)} variant="outlinebrand">
                                 View Profile
                             </CustomButton>
                         </div>

@@ -435,12 +435,8 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 const formdata = new FormData();
                 formdata.append("file", imageFiles[0]);
                 uploadMutation.mutate(formdata);
-            } else {
-                addToast({
-                    title: "Error",
-                    description: "Please upload at least one image",
-                    color: "danger",
-                });
+            } else { 
+                postMutation.mutate(data);
             }
         },
     });
