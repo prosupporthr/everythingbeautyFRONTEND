@@ -11,8 +11,9 @@ import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
 import usePost from "@/hooks/usePost";
 import { userAtom } from "@/store/user";
+import { Spinner } from "@heroui/spinner";
 import { addToast } from "@heroui/toast";
-import { People, Send } from "iconsax-reactjs";
+import { Gallery, People, Send } from "iconsax-reactjs";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,7 +35,7 @@ export default function PostPage() {
         name: ["business"],
     });
 
-    const { handleLikePost } = usePost()
+    const { handleLikePost } = usePost();
 
     const [user] = useAtom(userAtom);
     const router = useRouter();
@@ -63,6 +64,18 @@ export default function PostPage() {
         }
     };
 
+    const handleSubmit = () => {
+        if (user?.business?._id) {
+            formikPost.handleSubmit()
+        } else {
+            addToast({
+                title: "Warning",
+                description: "Join as a Stylist to create post",
+                color: "warning",
+            });
+        }
+    };
+
     const business = data
         ?.filter((_, index) => index < 4)
         ?.map((item) => (
@@ -74,40 +87,50 @@ export default function PostPage() {
     return (
         <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
             <div className=" flex-1 flex items-center flex-col p-6 pr-0 gap-4 overflow-auto ">
-                <div className=" max-w-[500px] w-full flex flex-col gap-4 " >
-                <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center ">
-                    {/* <CustomButton
-                        onClick={handleClick}
-                        fontSize="12px"
-                        height="40px"
-                        className=" font-medium "
-                    >
-                        {"Create Post"}
-                    </CustomButton> */}
-                    <input
-                        value={formikPost.values?.body}
-                        onChange={(e) =>
-                            formikPost.setFieldValue("body", e.target.value)
-                        }
-                        className="w-full h-full border-0 rounded-r-full text-sm px-3 outline-none focus:outline-none focus:ring-0"
-                        placeholder="What is on your mind today?"
-                    />
-                    <button className=" w-fit px-3 h-full flex justify-center items-center " >
-                        <Send size={"25px"} className=" text-brand " />
-                    </button>
-                </div>
-                <div className=" w-full flex flex-col gap-4 ">
-                    <LoadingLayout
-                        loading={isLoading}
-                        refetching={isFetchingMore}
-                        length={items?.length}
-                        ref={ref}
-                    >
-                        {items?.map((item, index) => {
-                            return <PostCard click={handleLikePost} key={index} item={item} />;
-                        })}
-                    </LoadingLayout>
-                </div>
+                <div className=" max-w-[500px] w-full flex flex-col gap-4 ">
+                    <div className=" w-full flex flex-col gap-2 ">
+                        <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center "> 
+                            <input
+                                value={formikPost.values?.body}
+                                onChange={(e) =>
+                                    formikPost.setFieldValue(
+                                        "body",
+                                        e.target.value,
+                                    )
+                                }
+                                className="w-full h-full border-0 rounded-r-full text-sm px-3 outline-none focus:outline-none focus:ring-0"
+                                placeholder="What is on your mind today?"
+                            />
+                            <button onClick={handleSubmit} className=" w-fit px-3 h-full flex justify-center items-center ">
+                                {loadingPost ? 
+                                <Spinner size="sm" /> : 
+                                <Send size={"25px"} className=" text-brand " />
+                                }
+                            </button>
+                        </div>
+                        <button onClick={()=> handleClick()} className=" flex justify-center items-center gap-2 ">
+                            <Gallery size={25} />
+                            <p>Add Photos/Video in your post</p>
+                        </button>
+                    </div>
+                    <div className=" w-full flex flex-col gap-4 ">
+                        <LoadingLayout
+                            loading={isLoading}
+                            refetching={isFetchingMore}
+                            length={items?.length}
+                            ref={ref}
+                        >
+                            {items?.map((item, index) => {
+                                return (
+                                    <PostCard
+                                        click={handleLikePost}
+                                        key={index}
+                                        item={item}
+                                    />
+                                );
+                            })}
+                        </LoadingLayout>
+                    </div>
                 </div>
             </div>
             <div className=" max-w-[470px] w-full pl-0 p-6 flex flex-col gap-6 overflow-auto ">
@@ -178,7 +201,7 @@ export default function PostPage() {
                     </div>
                     <LoadingLayout loading={loading} length={data?.length}>
                         <div className=" w-full grid grid-cols-2 gap-4 text-white ">
-                            {business} 
+                            {business}
                         </div>
                     </LoadingLayout>
                 </div>
