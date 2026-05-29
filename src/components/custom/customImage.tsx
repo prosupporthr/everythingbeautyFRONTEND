@@ -65,7 +65,7 @@ export default function CustomImage({
           alt={alt}
           fill
           {...rest}                // ✅ makes the image fill its parent container
-          className="w-full h-full object-cover " // ✅ tailwind classes
+          className={` ${className} w-full h-full object-cover rounded-2xl `} // ✅ tailwind classes
           sizes="100vw"             // ✅ responsive loading
           priority                   // (optional) load immediately if above the fold
         />

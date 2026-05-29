@@ -7,8 +7,9 @@ import { CustomButton, CustomImage } from "@/components/custom";
 import { useFetchData } from "@/hooks/useFetchData";
 import {
     IBookingDetail,
-    IBusinessDetails,
-    IOrderDetail,
+    IBusinessDetails, 
+    ISelectStaff,
+    IStaffDetail,
 } from "@/helper/model/business";
 import {
     LoadingLayout,
@@ -17,14 +18,15 @@ import {
     UserCard,
 } from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { IUserDetail } from "@/helper/model/user";
-import { FaTruck } from "react-icons/fa6";
+import { IUserDetail } from "@/helper/model/user"; 
 import { dateTimeFormat } from "@/helper/utils/dateFormat";
-import { RatingBusinessModal } from "@/components/modals";
+import { RatingBusinessModal, SelectStaffModal } from "@/components/modals";
 import useRating from "@/hooks/useRating";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { URLS } from "@/helper/services/urls";
+import { StaffCard } from "@/components/cards";
 
 export default function BookedServicesPage() {
     const router = useRouter();
@@ -33,16 +35,34 @@ export default function BookedServicesPage() {
     const id = param.id as string;
     const [user] = useAtom(userAtom);
 
+    const [selectedStaff, setSelectedStaff] = useState<ISelectStaff>({
+        label: "",
+        value: "",
+    });
+
     const { data, isLoading } = useFetchData<IBookingDetail>({
         endpoint: `/booking/${id}`,
         name: ["booking", id],
     });
 
-    const { data: hasReview, isLoading: loadingreview } = useFetchData<boolean>(
+    const [isShow, setIsShow] = useState(false);
+
+    const { data: hasReview } = useFetchData<boolean>(
         {
             endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
             name: ["has-reviewed", id],
             enable: user?._id && data?.businessId ? true : false,
+        },
+    ); 
+
+    const { data: staff, isLoading: loadingstaff } = useFetchData<IStaffDetail>(
+        {
+            endpoint: URLS.STAFFBYID(
+                selectedStaff?.value
+                    ? selectedStaff?.value
+                    : data?.staffId + "",
+            ),
+            name: ["staff", data?.staffId + "", selectedStaff?.value],
         },
     );
 
@@ -58,12 +78,21 @@ export default function BookedServicesPage() {
         }
     }, [data?.businessId, user?._id]);
 
+    useEffect(() => {
+        if (staff && !selectedStaff?.label) {
+            setSelectedStaff({
+                label: staff?.name,
+                value: staff?._id,
+            });
+        }
+    }, [staff]); 
+
     return (
         <div className=" w-full min-h-[50vh] ">
             <LoadingLayout loading={isLoading}>
                 <div className=" w-full flex flex-col py-6 lg:py-10 gap-10 h-full ">
                     <div className=" w-full flex flex-col px-6 lg:px-8 ">
-                        <div className=" w-full max-w-[1276px] flex flex-col gap-4 pb-5 ">
+                        <div className=" w-full  flex flex-col gap-4 pb-5 ">
                             <div className=" flex gap-3 items-center ">
                                 <button
                                     onClick={() => router.back()}
@@ -157,7 +186,7 @@ export default function BookedServicesPage() {
                                                 <p className=" text-secondary w-[100px] ">
                                                     Status:
                                                 </p>
-                                                <p className=" font-bold text-left ">
+                                                <p className={` ${data?.status === "APPROVED" ? " border border-success-200 text-success-600 " : " border-warning-200 text-warning-600 "} text-[10px] px-2 h-[25px] rounded-2xl flex justify-center items-center font-bold text-left `}>
                                                     {data?.status}
                                                 </p>
                                             </div>
@@ -225,30 +254,27 @@ export default function BookedServicesPage() {
                                         </div>
                                     )}
                                 </div>
-                                <div className=" lg:max-w-[500px] w-full flex flex-col gap-3 ">
-                                    <div className=" flex gap-2 items-center text-[#0CC23A]  ">
-                                        <FaTruck size={"20px"} />
+
+                                <div className=" w-fit flex-col flex gap-3 pb-3 border-b ">
+                                    <div className=" flex justify-between items-center ">
                                         <p className=" font-bold ">
-                                            Shipping on all orders:
+                                            Selected Staff:
                                         </p>
                                     </div>
-                                    <div className=" flex flex-col text-sm font-medium ">
-                                        <p>
-                                            Seller-Fulfilled Shipping - The
-                                            seller handles the entire shipping
-                                            process and not Chasescroll.{" "}
-                                        </p>
-                                        <p>
-                                            Verify that items are in good
-                                            condition and meet the expected
-                                            quality standards before authorizing
-                                            payment.
-                                        </p>
-                                        <p>
-                                            Please inform us if you encounter
-                                            any issues at
-                                            support@evertythingbeauty.com
-                                        </p>
+                                    <LoadingLayout loading={loadingstaff}>
+                                        <StaffCard
+                                            item={staff as IStaffDetail}
+                                        />
+                                    </LoadingLayout>
+
+                                    <div className={` `}>
+                                        <CustomButton
+                                            fullWidth
+                                            onClick={() => setIsShow(true)}
+                                            isLoading={isLoading}
+                                        >
+                                            {"Change Staff"}
+                                        </CustomButton>
                                     </div>
                                 </div>
                             </div>
@@ -257,6 +283,15 @@ export default function BookedServicesPage() {
                 </div>
             </LoadingLayout>
 
+            <SelectStaffModal
+                selectStaff={selectedStaff}
+                setSelectStaff={setSelectedStaff}
+                id={data?.businessId+""}
+                isOpen={isShow}
+                onClose={setIsShow}
+                type="user"
+                currentId={data?.staffId}
+            />
             <RatingBusinessModal
                 tab={tab}
                 open={isOpen}

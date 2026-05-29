@@ -1,5 +1,5 @@
 "use client"
-import { CustomButton, CustomSelect } from "@/components/custom"; 
+import { CustomButton } from "@/components/custom"; 
 import { useParams } from "next/navigation";
 import { lazy, Suspense, useState } from "react";
 import { SchedularList } from "..";

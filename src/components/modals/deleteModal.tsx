@@ -13,7 +13,7 @@ export default function DeleteModal({
 }: {
   isOpen: boolean;
   onClose: (by: boolean) => void;
-  type: "Store" | "Service" | "Address" | "Bookmark" | "user";
+  type: "Store" | "Service" | "Address" | "Bookmark" | "user" | "Post";
   id: string;
   name: string;
 }) {
@@ -21,7 +21,8 @@ export default function DeleteModal({
   const {
     productDeleteMutation,
     servicesDeleteMutation,
-    bookmarkdeleteMutation
+    bookmarkdeleteMutation,
+    postDeleteMutation
   } = useBusiness({});
 
   const {
@@ -29,7 +30,7 @@ export default function DeleteModal({
   } = useEditUser()
 
   const currentMutation =
-    type === "Store" ? productDeleteMutation : type === "Address" ? deleteAddressMutation : type === "Bookmark" ? bookmarkdeleteMutation : servicesDeleteMutation;
+    type === "Store" ? productDeleteMutation : type === "Address" ? deleteAddressMutation : type === "Bookmark" ? bookmarkdeleteMutation : type === "Post"  ? postDeleteMutation : servicesDeleteMutation;
 
   const clickHandler = () => {
     currentMutation.mutate(id, {

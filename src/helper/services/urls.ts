@@ -42,7 +42,12 @@ export const URLS = {
     BOOKMARKBYID: (item: string) => `/bookmarks/${item}`,
     SHIPPING: (item: string) => `/shipment/${item}`,
     POST: "/post",
-    POSTBYID: (item: string) => `/post/${item}`
+    POSTBYID: (item: string) => `/post/${item}`,
+    POSTBYUSERID: (item: string) => `/post/profile/${item}`, 
+    STAFFBYBUSINESSID: (item: string) => `/staff/business/${item}`,
+    STAFFBYID: (item: string) => `/staff/${item}`,
+    TRANSFERSTAFFBYID: (item: string) => `/booking/${item}/transfer`,
+    
 }
 
 // export const IMAGE_URL = process.env.NEXT_PUBLIC_RESOURCE_URL as string; 

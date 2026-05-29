@@ -19,13 +19,19 @@ export default function PostForm({
     isLoading,
     edit,
     preview = [],
+    setPreviews,
+    imageFiles,
+    setImageFiles,
+    modal
 }: {
     formik: FormikProps<IPost>;
-    imageFile: File | string | null;
-    setImageFile: (by: File | string | null) => void;
+    imageFiles: File[];
+    setImageFiles: (files: File[]) => void;
     isLoading: boolean;
     edit?: boolean;
     preview?: string[];
+    setPreviews: (preview: string[]) => void;
+    modal?: boolean;
 }) {
     const param = useParams();
     const id = param.id as string;
@@ -49,8 +55,9 @@ export default function PostForm({
 
     return (
         <FormikProvider value={formik}>
-            <form onSubmit={formik.handleSubmit} className=" w-full flex h-full flex-col gap-4 pt-10 px-4  ">
-                <div className=" w-full max-w-[1276px] flex items-center gap-4 pb-5 ">
+            <form onSubmit={formik.handleSubmit} className={` w-full flex h-full flex-col gap-4 ${modal ? " pt-4 " : " pt-10  px-4"} `}>
+                {!modal && (
+                    <div className=" w-full max-w-[1276px] flex items-center gap-4 pb-5 ">
                     <button
                         onClick={() => router.back()}
                         className=" w-12 h-12 rounded-full flex  border items-center justify-center border-gray-100 text-primary "
@@ -61,15 +68,16 @@ export default function PostForm({
                         {edit ? "Edit" : "Create"} Post
                     </p>
                 </div>
-                <div className=" w-full flex justify-center mb-8 h-full ">
-                    <div className=" w-full flex gap-6 ">
-                        <div className=" w-full  ">
-                            <MultipleImagePicker preview={preview} name="images" />
+                )}
+                <div className={` w-full flex justify-center ${modal ? " mb-8 " :" mb-8 h-full "} `}>
+                    <div className={` ${modal ? " flex-col " : " flex-row "} w-full flex gap-6 `}>
+                        <div className={`" w-full ${modal ? " " : "h-[400px]"} `}>
+                            <MultipleImagePicker imageFiles={imageFiles} setImageFiles={setImageFiles} previews={preview} setPreviews={setPreviews} />
                         </div>
-                        <div className=" w-full h-full flex flex-col gap-3 ">
+                        <div className={` w-full ${modal ? "" : "  h-full "} flex flex-col gap-3 `}>
                             <CustomInput
                                 name="body"
-                                label="Write a Caption"
+                                label="What is on your mind today?"
                                 textarea
                             />
                             <div className=" w-full flex flex-col gap-3 border rounded-2xl  ">
@@ -152,9 +160,9 @@ export default function PostForm({
                                 </LoadingLayout>
                             </div>
 
-                            <div className=" mt-auto w-full flex justify-end ">
+                            <div className={` ${modal ? "" : "mt-auto"} w-full flex justify-end `}>
                                 <CustomButton isLoading={isLoading} height="45px" type="submit">
-                                    Submit
+                                    Post
                                 </CustomButton>
                             </div>
                         </div>

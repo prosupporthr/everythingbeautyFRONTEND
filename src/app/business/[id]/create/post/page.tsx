@@ -5,11 +5,11 @@ import useBusiness from "@/hooks/useBusiness";
 
 export default function CreatePost () {
 
-    const { formikPost, imageFile, setImageFile, isLoading } = useBusiness({
+    const { formikPost, imageFiles, setImageFiles, isLoading, previews, setPreviews } = useBusiness({
         post: true
     })
 
     return(
-        <PostForm imageFile={imageFile} setImageFile={setImageFile} isLoading={isLoading} formik={formikPost} />
+        <PostForm preview={previews} setPreviews={setPreviews} imageFiles={imageFiles} setImageFiles={setImageFiles} isLoading={isLoading} formik={formikPost} />
     )
 }

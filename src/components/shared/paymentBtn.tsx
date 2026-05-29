@@ -28,6 +28,7 @@ interface IProps {
     title?: string;
     fullWidth?: true;
     isClosable?: boolean;
+    staffId?: string;
     address?: IAddressDetail;
 }
 
@@ -42,6 +43,7 @@ export default function PaymentBtn({
     title,
     fullWidth,
     isClosable,
+    staffId,
     address,
 }: IProps) {
     const [user] = useAtom(userAtom);
@@ -107,6 +109,7 @@ export default function PaymentBtn({
                     serviceId: id,
                     totalPrice: amount ?? 0,
                     bookingDate: bookingDate as string,
+                    staffId: staffId as string
                 });
             }
         } else if (
