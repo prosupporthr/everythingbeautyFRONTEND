@@ -4,26 +4,30 @@ import { useState } from "react";
 import { ModalLayout } from "../shared";
 import { StaffForm } from "../forms";
 import { CustomImage } from "../custom";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { IoIosMore } from "react-icons/io";
+import { DeleteModal } from "../modals";
 
 export default function StaffCard({
     item,
     type,
     selectStaff,
     setSelectStaff,
-    isBusiness
+    isBusiness,
 }: {
     item: IStaffDetail;
     type?: "user" | "admin";
     selectStaff?: ISelectStaff;
     setSelectStaff?: (by: ISelectStaff) => void;
-    isBusiness?: boolean
+    isBusiness?: boolean;
 }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [show, setShow] = useState(false);
+    const [isShow, setIsShow] = useState(false);
 
     const handleClick = (item: IStaffDetail) => {
-
         console.log(item);
-        
+
         if (item?.name === selectStaff?.label) {
             setSelectStaff?.({
                 label: "",
@@ -43,13 +47,44 @@ export default function StaffCard({
                 style={{ boxShadow: "0px 8px 30px 0px #7D23E41A" }}
                 className=" w-[283px] flex flex-col gap-4 justify-center items-center rounded-2xl py-5 px-3 border border-[#CEC2D84D] "
             >
-                {(!type && isBusiness) && (
-                    <button
-                        onClick={() => setIsOpen(true)}
-                        className=" absolute top-3 right-3 "
-                    >
-                        <Edit2 size={"20px"} />
-                    </button>
+                {!type && isBusiness && ( 
+                    <div className=" absolute top-3 right-3 ">
+                        <Popover
+                            showArrow
+                            isOpen={show}
+                            onOpenChange={setShow}
+                            backdrop={"opaque"}
+                            offset={10}
+                            placement="top"
+                        >
+                            <PopoverTrigger>
+                                <button className=" w-8 h-8 rounded-full flex justify-center items-center bg-[#FCFCFC] ">
+                                    <IoIosMore size={"20px"} />
+                                </button>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-[100px]">
+                                <div className=" w-full flex flex-col gap-1 ">
+                                    <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 ">
+                                        <button
+                                            onClick={() => setIsOpen(true)}
+                                            className=" h-[40px] flex w-full justify-center items-center text-sm font-medium "
+                                        >
+                                            Edit
+                                        </button>
+                                    </div>
+                                    <div className=" py-1 flex flex-col gap-2 ">
+                                        <button
+                                            onClick={() => setIsShow(true)}
+                                            className=" h-[40px] text-[#FF554A] flex w-full justify-center items-center text-sm font-medium "
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
                 )}
 
                 {type && (
@@ -102,21 +137,7 @@ export default function StaffCard({
                 <div className=" flex items-center gap-1 ">
                     <Star1 variant="Bold" color="#EFD414" />
                     <p className=" text-sm font-bold ">4.9</p>
-                </div>
-                {/* {type && (
-                    <button
-                        onClick={onclick}
-                        className=" w-full flex justify-center items-center "
-                    >
-                        <p className=" text-sm font-bold text-brand ">
-                            {type === "admin"
-                                ? "Transfer"
-                                : type === "user"
-                                  ? "Select"
-                                  : "View"}
-                        </p>
-                    </button>
-                )} */}
+                </div> 
             </div>
 
             <ModalLayout
@@ -130,6 +151,14 @@ export default function StaffCard({
                     setIsOpen={setIsOpen}
                 />
             </ModalLayout>
+ 
+            <DeleteModal
+                isOpen={isShow}
+                onClose={setIsShow}
+                type={"Staff"}
+                id={item?._id}
+                name={item?.name}
+            />
         </div>
     );
 }

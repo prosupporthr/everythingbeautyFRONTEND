@@ -14,6 +14,7 @@ export const URLS = {
     CANCELLATION: `/transactions/subscription/cancel`,
     NOTIFICATIONBYUSER:(item: string) => `/notifications/user/${item}`,
     NOTIFICATIONSTATUS: `/notifications/bulk-read`,
+    NOTIFICATIONCOUNT: (item: string) => `/notifications/user/${item}/unread`,
     CONNECTACCOUNT: (item: string) =>  `/transactions/connect/${item}`,
     ADDACCOUNT: (item: string) =>  `/transactions/connect/onboard/${item}`,
     WALLETBYUSERID: (item: string) =>  `/transactions/wallet/${item}`,

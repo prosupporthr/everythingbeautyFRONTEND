@@ -259,6 +259,21 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         },
     });
 
+    /** 🔹 Product */
+    const staffDeleteMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.STAFFBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+        },
+    });
+
     /** 🔹 Staff */
     const staffMutation = useMutation({
         mutationFn: (data: IStaff) =>
@@ -513,7 +528,8 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         bookmarkdeleteMutation.isPending ||
         postDeleteMutation.isPending ||
         staffMutation.isPending ||
-        staffEditMutation.isPending;
+        staffEditMutation.isPending ||
+        staffDeleteMutation.isPending;
 
     return {
         formik,
@@ -530,6 +546,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         staffEditMutation,
         bookmarkdeleteMutation,
         changeStaffMutation,
+        staffDeleteMutation,
         userId,
         setImageFile,
         imageFile,

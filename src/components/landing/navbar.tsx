@@ -32,7 +32,7 @@ export default function Navbar() {
     const queryClient = useQueryClient();
 
     const [showNotification, setShowNotification] = useState(false);
-    const [isRead, setIsRead] = useState(true); 
+    const [isRead, setIsRead] = useState(true);
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
@@ -47,6 +47,15 @@ export default function Navbar() {
         enable: data?._id ? true : false,
     });
 
+    const { data: count, isLoading: loadingNotification } =
+        useFetchData<number>({
+            endpoint: URLS.NOTIFICATIONCOUNT(user?._id as string),
+            name: ["notificationcount", user?._id as string],
+            enable: user?._id ? true : false,
+        });
+
+    console.log(count);
+
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
@@ -58,11 +67,7 @@ export default function Navbar() {
         ) {
             router.push("/");
         }
-
-        // if(userId && !data?.firstName){
-        //     refetch()
-        // }
-        }, [data, isLoading]);
+    }, [data, isLoading]);
 
     const handleClick = (item: "dashboard" | "logout") => {
         if (item === "dashboard") {
@@ -108,14 +113,17 @@ export default function Navbar() {
             <div
                 className={` w-full ${pathname?.includes("auth") || pathname?.includes(`business/${id}/create`) || pathname?.includes(`business/${id}/edit`) ? "hidden" : pathname?.includes(`/sales/${id}/services`) || pathname?.includes(`/sales/${id}/product`) ? " lg:flex hidden " : "flex"} h-[93px] bg-white shadow px-6 justify-between items-center `}
             >
-                <button className=" flex flex-col " onClick={() => router.push(user?._id ? "/post" : "/")}>
+                <button
+                    className=" flex flex-col "
+                    onClick={() => router.push(user?._id ? "/post" : "/")}
+                >
                     <CustomImage
                         nopopup
                         src={"/images/logo.png"}
                         alt="logo"
                         width={92}
                         height={43}
-                    /> 
+                    />
                 </button>
                 {isLoading && (
                     <div className=" flex h-full justify-center items-center ">
@@ -137,7 +145,7 @@ export default function Navbar() {
                                     Join As Stylist
                                 </CustomButton>
                             </div>
-                        ) : (!pathname.includes("dashboard") && user?._id) ? (
+                        ) : !pathname.includes("dashboard") && user?._id ? (
                             <div className=" w-[120px] ">
                                 <CustomButton
                                     onClick={() => handleClick("dashboard")}
@@ -151,8 +159,7 @@ export default function Navbar() {
                                 </CustomButton>
                             </div>
                         ) : (
-                            <>
-                            </>
+                            <></>
                         )}
 
                         {user?._id && (
@@ -165,9 +172,14 @@ export default function Navbar() {
                                 >
                                     <RiNotification2Fill size={"25px"} />
                                 </div>
-                                {!isRead && (
-                                    <div className=" absolute top-0 right-0 bg-brand w-3 h-3 rounded-full " />
-                                )}
+                                {/* {isRead && ( */}
+                                    <div className=" absolute flex justify-center items-center -top-1 text-white text-[10px] font-bold -right-1 bg-red-500 w-4 h-4 rounded-full ">
+                                        {!loadingNotification && <>{count}</>}
+                                        {loadingNotification && (
+                                            <Spinner size="sm" color="danger" />
+                                        )}
+                                    </div>
+                                {/* )} */}
                             </button>
                         )}
 
