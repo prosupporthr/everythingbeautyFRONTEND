@@ -7,7 +7,7 @@ import { CustomButton, CustomImage } from "@/components/custom";
 import { useFetchData } from "@/hooks/useFetchData";
 import {
     IBookingDetail,
-    IBusinessDetails, 
+    IBusinessDetails,
     ISelectStaff,
     IStaffDetail,
 } from "@/helper/model/business";
@@ -18,7 +18,7 @@ import {
     UserCard,
 } from "@/components/shared";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { IUserDetail } from "@/helper/model/user"; 
+import { IUserDetail } from "@/helper/model/user";
 import { dateTimeFormat } from "@/helper/utils/dateFormat";
 import { RatingBusinessModal, SelectStaffModal } from "@/components/modals";
 import useRating from "@/hooks/useRating";
@@ -47,13 +47,11 @@ export default function BookedServicesPage() {
 
     const [isShow, setIsShow] = useState(false);
 
-    const { data: hasReview } = useFetchData<boolean>(
-        {
-            endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
-            name: ["has-reviewed", id],
-            enable: user?._id && data?.businessId ? true : false,
-        },
-    ); 
+    const { data: hasReview } = useFetchData<boolean>({
+        endpoint: `/review/has-reviewed/${user?._id}/${data?.businessId}`,
+        name: ["has-reviewed", id],
+        enable: user?._id && data?.businessId ? true : false,
+    });
 
     const { data: staff, isLoading: loadingstaff } = useFetchData<IStaffDetail>(
         {
@@ -85,7 +83,7 @@ export default function BookedServicesPage() {
                 value: staff?._id,
             });
         }
-    }, [staff]); 
+    }, [staff]);
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -186,13 +184,44 @@ export default function BookedServicesPage() {
                                                 <p className=" text-secondary w-[100px] ">
                                                     Status:
                                                 </p>
-                                                <p className={` ${data?.status === "APPROVED" ? " border border-success-200 text-success-600 " : " border-warning-200 text-warning-600 "} text-[10px] px-2 h-[25px] rounded-2xl flex justify-center items-center font-bold text-left `}>
+                                                <p
+                                                    className={` ${data?.status === "APPROVED" ? " border border-success-200 text-success-600 " : " border-warning-200 text-warning-600 "} text-[10px] px-2 h-[25px] rounded-2xl flex justify-center items-center font-bold text-left `}
+                                                >
                                                     {data?.status}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
 
+                                    <div className=" w-full flex-col flex gap-2 pb-3 border-b ">
+                                        <p className=" font-semibold ">
+                                            Customer Information
+                                        </p> 
+                                        <p className=" text-sm font-medium capitalize ">
+                                            <span className=" font-bold ">
+                                                Full Name:
+                                            </span>{" "}
+                                            {
+                                                data?.user?.firstName+" "+data?.user?.lastName
+                                            }
+                                        </p>
+                                        <p className=" text-sm font-medium ">
+                                            <span className=" font-bold ">
+                                                Phone Number:
+                                            </span>{" "}
+                                            {
+                                                data?.user?.phoneNumber
+                                            }
+                                        </p>
+                                        <p className=" text-sm font-medium ">
+                                            <span className=" font-bold ">
+                                                Email Address:
+                                            </span>{" "}
+                                            {
+                                                data?.user?.email
+                                            }
+                                        </p>
+                                    </div>
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b ">
                                         <p className=" font-semibold ">
                                             Business Information
@@ -286,7 +315,7 @@ export default function BookedServicesPage() {
             <SelectStaffModal
                 selectStaff={selectedStaff}
                 setSelectStaff={setSelectedStaff}
-                id={data?.businessId+""}
+                id={data?.businessId + ""}
                 isOpen={isShow}
                 onClose={setIsShow}
                 type="user"
