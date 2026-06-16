@@ -9,16 +9,27 @@ import { addToast } from "@heroui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState } from "react"; 
+import { IPostComment } from "@/helper/model/post";
 
 const usePost = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
+
+    const [index, setIndex] = useState<string>("") 
+    const [commentId, setCommentId] = useState<string>("") 
     const [loading, setIsLoading] = useState(false);
+    const [activeReply, setActiveReply] = useState("");
+
+    const [currentComment, setCurrentComment] = useState({
+        id: "",
+        name: "",
+        message: "",
+    });
 
     const handleLikePost = async (postId: string) => {
         const res = await Socket.emitWithAck("post:like", { postId });
-        return res 
+        return res;
     }; 
 
     /** 🔹 Formik Instances */
@@ -45,6 +56,80 @@ const usePost = () => {
             queryClient.invalidateQueries({ queryKey: ["chatlist"] });
 
             setIsLoading(false);
+        },
+    });
+
+    /** 🔹 Formik Instances */
+    const formikComment = useFormik<IPostComment>({
+        initialValues: {
+            body: "",
+            isReply: false,
+            commentId: "", 
+        },
+        // validationSchema: businessSchema,
+        onSubmit: (data) => {  
+            if(data?.commentId) {
+                commentRelpyMutation.mutate(data)
+                setIsLoading(false);
+            } else {
+                commentMutation.mutate(data)
+                setIsLoading(false);
+            }
+        },
+    });
+
+    /** 🔹 Business */
+    const commentMutation = useMutation({
+        mutationFn: (data: IPostComment) =>
+            httpService.post(URLS.POSTCOMMENTBYID(index), data),
+        onError: handleError,
+        onSuccess: () => { 
+            formikComment?.resetForm(); 
+            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] });
+        },
+    });
+
+
+    /** 🔹 Business */
+    const commentRelpyMutation = useMutation({
+        mutationFn: (data: IPostComment) =>
+            httpService.post(URLS.POSTCOMMENTREPLYBYID(commentId), data),
+        onError: handleError,
+        onSuccess: () => { 
+            setActiveReply(formikComment.values?.commentId)
+            setCurrentComment({
+                id: "",
+                name: "",
+                message: "",
+            })
+            formikComment?.resetForm(); 
+            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] });
+        },
+    });
+
+    /** 🔹 Business */
+    const likeCommentMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.patch(URLS.POSTCOMMENTLIKEBYID(data)),
+        onError: handleError,
+        onSuccess: () => {  
+            formikComment?.resetForm(); 
+            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] });
+        },
+    });
+
+    /** 🔹 Business */
+    const deleteCommentMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.POSTCOMMENTDELETEBYID(data)),
+        onError: handleError,
+        onSuccess: () => {  
+            formikComment?.resetForm(); 
+            queryClient.invalidateQueries({ queryKey: ["comment"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] });
         },
     });
 
@@ -116,18 +201,31 @@ const usePost = () => {
     const isLoading =
         createChatMutation?.isPending ||
         postCommentMutation?.isPending ||
+        commentMutation?.isPending ||
+        commentRelpyMutation?.isPending ||
         loading ||
         deleteChatMutation?.isPending ||
         updateNotificationStatus?.isPending;
 
     return {
         formik,
+        formikComment,
         createChatMutation,
         postCommentMutation,
+        commentMutation,
         isLoading,
         deleteChatMutation,
         updateNotificationStatus,
-        handleLikePost
+        setCommentId,
+        commentId,
+        handleLikePost,
+        setIndex,
+        setCurrentComment,
+        currentComment,
+        activeReply,
+        setActiveReply,
+        deleteCommentMutation,
+        likeCommentMutation
     };
 };
 

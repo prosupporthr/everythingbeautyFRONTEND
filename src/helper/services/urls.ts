@@ -48,7 +48,10 @@ export const URLS = {
     STAFFBYBUSINESSID: (item: string) => `/staff/business/${item}`,
     STAFFBYID: (item: string) => `/staff/${item}`,
     TRANSFERSTAFFBYID: (item: string) => `/booking/${item}/transfer`,
-    
+    POSTCOMMENTBYID: (item: string) => `/post/${item}/comment`, 
+    POSTCOMMENTREPLYBYID: (item: string) => `/post/${item}/comment`,
+    POSTCOMMENTLIKEBYID: (item: string) => `/post/comment/${item}/like`,
+    POSTCOMMENTDELETEBYID: (item: string) => `/post/comment/${item}`,      
 }
 
 // export const IMAGE_URL = process.env.NEXT_PUBLIC_RESOURCE_URL as string; 
