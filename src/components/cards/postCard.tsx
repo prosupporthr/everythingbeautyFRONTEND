@@ -1,5 +1,5 @@
-import { Heart, Send, Save2, MessageText } from "iconsax-reactjs";
-import { CgComment } from "react-icons/cg";
+"use client"
+import { Heart, Send } from "iconsax-reactjs"; 
 import { CustomButton, CustomImage, CustomInput } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
 import { formatNumber } from "@/helper/utils/numberFormat";
@@ -11,7 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Avatar, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { textLimit } from "@/helper/utils/textlimit";
 import { useEffect, useState } from "react";
-import { DeleteModal } from "../modals";
+import { CommentModal, DeleteModal } from "../modals";
 import { IoIosMore } from "react-icons/io";
 
 interface IProps {
@@ -138,7 +138,9 @@ export default function PostCard({
                 </div>
             )}
             <div className=" w-full flex flex-col px-4 ">
-            {!item?.images[0] && <p className=" text-sm mb-3 ">{item?.body}</p>}
+                {!item?.images[0] && (
+                    <p className=" text-sm mb-3 ">{item?.body}</p>
+                )}
                 <div className=" w-full flex justify-between items-center ">
                     <div className=" flex gap-3 items-center ">
                         <button
@@ -155,13 +157,13 @@ export default function PostCard({
                                         ? "Bold"
                                         : "Linear"
                                 }
-                                size={20}
+                                size={23}
                             />
                             <p className=" text-[10px] font-bold ">
                                 {liked?.likeCount?.likes}
                             </p>
                         </button>
-                        <MessageText size={20} />
+                        <CommentModal item={item} />
                     </div>
                     <Send size={20} />
                 </div>

@@ -15,6 +15,7 @@ interface CustomModalProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   children: React.ReactNode;
   footer?: React.ReactNode;
+  nospace?: boolean;
   showCloseIcon?: boolean; // ✅ NEW
 }
 
@@ -24,6 +25,7 @@ export default function CustomModal({
   title,
   size = "md",
   children,
+  nospace,
   showCloseIcon = true, // ✅ default visible
 }: CustomModalProps) {
   return (
@@ -33,9 +35,10 @@ export default function CustomModal({
       size={size}
       backdrop="blur"
       onClose={onClose}
+      className="p-0! m-0!"
       hideCloseButton={!showCloseIcon} // ✅ toggle close icon
     >
-      <ModalContent>
+      <ModalContent className=" p-0! m-0! " >
         {() => (
           <>
             {title && (
@@ -45,7 +48,7 @@ export default function CustomModal({
             )}
 
             <ModalBody
-              className={`${!title ? "pt-6" : "pt-0"} max-h-[80vh] overflow-y-auto`}
+              className={`${!title ? "pt-6" : "pt-0"} ${nospace ? " px-0! " : " px-4 "}  max-h-[80vh] overflow-y-auto`}
             >
               {children}
             </ModalBody>

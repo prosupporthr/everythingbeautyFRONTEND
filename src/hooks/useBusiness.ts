@@ -318,6 +318,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 color: "success",
             }); 
             queryClient.invalidateQueries({ queryKey: ["booking"] });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
     });
 

@@ -53,16 +53,14 @@ export default function BookedServicesPage() {
         enable: user?._id && data?.businessId ? true : false,
     });
 
-    const { data: staff, isLoading: loadingstaff } = useFetchData<IStaffDetail>(
-        {
-            endpoint: URLS.STAFFBYID(
-                selectedStaff?.value
-                    ? selectedStaff?.value
-                    : data?.staffId + "",
-            ),
-            name: ["staff", data?.staffId + "", selectedStaff?.value],
-        },
-    );
+    const {
+        data: staff,
+        isLoading: loadingstaff,
+        isRefetching,
+    } = useFetchData<IStaffDetail>({
+        endpoint: URLS.STAFFBYID(data?.staffId + ""),
+        name: ["staff", data?.staffId + ""],
+    });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
@@ -77,13 +75,21 @@ export default function BookedServicesPage() {
     }, [data?.businessId, user?._id]);
 
     useEffect(() => {
-        if (staff && !selectedStaff?.label) {
+        if (!isRefetching && staff) {
             setSelectedStaff({
                 label: staff?.name,
                 value: staff?._id,
             });
         }
-    }, [staff]);
+    }, [staff, isRefetching]);
+
+    const onCloseStaff = (item: boolean) => {
+        setSelectedStaff({
+            label: staff?.name + "",
+            value: staff?._id + "",
+        });
+        setIsShow(item);
+    };
 
     return (
         <div className=" w-full min-h-[50vh] ">
@@ -196,30 +202,26 @@ export default function BookedServicesPage() {
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b ">
                                         <p className=" font-semibold ">
                                             Customer Information
-                                        </p> 
+                                        </p>
                                         <p className=" text-sm font-medium capitalize ">
                                             <span className=" font-bold ">
                                                 Full Name:
                                             </span>{" "}
-                                            {
-                                                data?.user?.firstName+" "+data?.user?.lastName
-                                            }
+                                            {data?.user?.firstName +
+                                                " " +
+                                                data?.user?.lastName}
                                         </p>
                                         <p className=" text-sm font-medium ">
                                             <span className=" font-bold ">
                                                 Phone Number:
                                             </span>{" "}
-                                            {
-                                                data?.user?.phoneNumber
-                                            }
+                                            {data?.user?.phoneNumber}
                                         </p>
                                         <p className=" text-sm font-medium ">
                                             <span className=" font-bold ">
                                                 Email Address:
                                             </span>{" "}
-                                            {
-                                                data?.user?.email
-                                            }
+                                            {data?.user?.email}
                                         </p>
                                     </div>
                                     <div className=" w-full flex-col flex gap-2 pb-3 border-b ">
@@ -290,8 +292,12 @@ export default function BookedServicesPage() {
                                             Selected Staff:
                                         </p>
                                     </div>
-                                    <LoadingLayout loading={loadingstaff}>
+                                    <LoadingLayout
+                                        loading={loadingstaff}
+                                        refetching={isRefetching}
+                                    >
                                         <StaffCard
+                                            isRefetching={isRefetching}
                                             item={staff as IStaffDetail}
                                         />
                                     </LoadingLayout>
@@ -317,7 +323,7 @@ export default function BookedServicesPage() {
                 setSelectStaff={setSelectedStaff}
                 id={data?.businessId + ""}
                 isOpen={isShow}
-                onClose={setIsShow}
+                onClose={onCloseStaff}
                 type="user"
                 currentId={data?.staffId}
             />

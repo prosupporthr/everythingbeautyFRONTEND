@@ -1,6 +1,7 @@
+"use client";
 import { ISelectStaff, IStaffDetail } from "@/helper/model/business";
-import { Clock, Edit2, Star1, TickSquare } from "iconsax-reactjs";
-import { useState } from "react";
+import { Clock, Star1, TickSquare } from "iconsax-reactjs";
+import { useEffect, useState } from "react";
 import { ModalLayout } from "../shared";
 import { StaffForm } from "../forms";
 import { CustomImage } from "../custom";
@@ -14,16 +15,19 @@ export default function StaffCard({
     selectStaff,
     setSelectStaff,
     isBusiness,
+    isRefetching,
 }: {
     item: IStaffDetail;
     type?: "user" | "admin";
     selectStaff?: ISelectStaff;
     setSelectStaff?: (by: ISelectStaff) => void;
     isBusiness?: boolean;
+    isRefetching?: boolean;
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [show, setShow] = useState(false);
     const [isShow, setIsShow] = useState(false);
+    const [ currentImage, setCurrentImage ] = useState("")
 
     const handleClick = (item: IStaffDetail) => {
         console.log(item);
@@ -39,7 +43,7 @@ export default function StaffCard({
                 value: item?._id + "",
             });
         }
-    };
+    }; 
 
     return (
         <div className=" w-fit relative ">
@@ -47,7 +51,7 @@ export default function StaffCard({
                 style={{ boxShadow: "0px 8px 30px 0px #7D23E41A" }}
                 className=" w-[283px] flex flex-col gap-4 justify-center items-center rounded-2xl py-5 px-3 border border-[#CEC2D84D] "
             >
-                {!type && isBusiness && ( 
+                {!type && isBusiness && (
                     <div className=" absolute top-3 right-3 ">
                         <Popover
                             showArrow
@@ -105,9 +109,15 @@ export default function StaffCard({
                         )}
                     </div>
                 )}
-                <div className=" w-21 h-21 rounded-2xl border-2 border-brand ">
-                    <CustomImage src={item?.image} alt="staff" fillContainer />
-                </div>
+                {!isRefetching && (
+                    <div className=" w-21 h-21 rounded-2xl border-2 border-brand ">
+                        <CustomImage
+                            src={item?.image}
+                            alt="staff"
+                            fillContainer
+                        />
+                    </div>
+                )}
                 <p className=" font-semibold capitalize text-2xl ">
                     {item?.name}
                 </p>
@@ -137,7 +147,7 @@ export default function StaffCard({
                 <div className=" flex items-center gap-1 ">
                     <Star1 variant="Bold" color="#EFD414" />
                     <p className=" text-sm font-bold ">4.9</p>
-                </div> 
+                </div>
             </div>
 
             <ModalLayout
@@ -151,7 +161,7 @@ export default function StaffCard({
                     setIsOpen={setIsOpen}
                 />
             </ModalLayout>
- 
+
             <DeleteModal
                 isOpen={isShow}
                 onClose={setIsShow}

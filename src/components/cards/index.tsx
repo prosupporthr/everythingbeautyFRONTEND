@@ -16,3 +16,4 @@ export { default as MessageCard } from "./messageCard"
 
 export { default as PostCard } from "./postCard"
 export { default as StaffCard } from "./staffCard"
+export { default as CommentCard } from "./commentCard"

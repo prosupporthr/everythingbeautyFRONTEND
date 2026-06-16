@@ -85,9 +85,9 @@ export default function PostPage() {
         ));
 
     return (
-        <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
-            <div className=" flex-1 flex items-center flex-col p-6 pr-0 gap-4 overflow-auto ">
-                <div className=" max-w-[500px] w-full flex flex-col gap-4 ">
+        <div className=" w-full flex-1 lg:flex-row flex-col flex gap-6 lg:overflow-hidden ">
+            <div className=" w-full h-auto lg:flex-1 flex items-center flex-col p-4 lg:p-6 pr-0 gap-4 lg:overflow-auto ">
+                <div className=" lg:max-w-[500px] w-full flex flex-col gap-4 ">
                     <div className=" w-full flex flex-col gap-2 ">
                         <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center "> 
                             <input
@@ -133,7 +133,7 @@ export default function PostPage() {
                     </div>
                 </div>
             </div>
-            <div className=" max-w-[470px] w-full pl-0 p-6 flex flex-col gap-6 overflow-auto ">
+            <div className=" max-w-[470px] w-full pl-0 p-6 flex flex-col gap-6 lg:overflow-auto ">
                 <div
                     style={{ boxShadow: "0px 4px 20px -2px #8127CF14" }}
                     className=" border rounded-3xl p-6 w-full gap-4 flex flex-col "
