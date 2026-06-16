@@ -200,7 +200,7 @@ export default function PostCard({
                         </CustomButton>
                     </div>
                 )}
-                {item?.userId !== user?._id && (
+                {/* {item?.userId !== user?._id && (
                     <div className=" w-full flex gap-2 mt-6 ">
                         <div className=" w-fit mt-1 ">
                             <UserCard size="sm" item={user as IUserDetail} />
@@ -212,7 +212,7 @@ export default function PostCard({
                             textarea
                         />
                     </div>
-                )}
+                )} */}
             </div>
             <DeleteModal
                 isOpen={isOpen}
