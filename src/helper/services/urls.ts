@@ -49,7 +49,7 @@ export const URLS = {
     STAFFBYID: (item: string) => `/staff/${item}`,
     TRANSFERSTAFFBYID: (item: string) => `/booking/${item}/transfer`,
     POSTCOMMENTBYID: (item: string) => `/post/${item}/comment`, 
-    POSTCOMMENTREPLYBYID: (item: string) => `/post/${item}/comment`,
+    POSTCOMMENTREPLYBYID: (item: string) => `/post/comment/reply/${item}`,
     POSTCOMMENTLIKEBYID: (item: string) => `/post/comment/${item}/like`,
     POSTCOMMENTDELETEBYID: (item: string) => `/post/comment/${item}`,      
 }

@@ -74,18 +74,18 @@ export default function PostCard({
         >
             <div className=" w-full flex items-center justify-between pt-4 px-4 ">
                 <div className=" flex items-center gap-2 ">
-                    {item.business.pictures && (
+                    {item?.business?.pictures && (
                         <div className=" w-10 h-10 rounded-full bg-gray-400 ">
                             <Avatar
                                 size={"md"}
-                                src={item.business.pictures[0]}
+                                src={item?.business?.pictures[0]}
                                 name={item?.business.name}
                             />
                         </div>
                     )}
                     <div className=" flex flex-col ">
                         <p className=" text-sm font-bold capitalize ">
-                            {item?.business.name}
+                            {item?.business?.name}
                         </p>
                         <p className=" text-xs text-secondary ">
                             {textLimit(item?.business?.location, 20)}
@@ -200,7 +200,7 @@ export default function PostCard({
                         </CustomButton>
                     </div>
                 )}
-                {item?.userId !== user?._id && (
+                {/* {item?.userId !== user?._id && (
                     <div className=" w-full flex gap-2 mt-6 ">
                         <div className=" w-fit mt-1 ">
                             <UserCard size="sm" item={user as IUserDetail} />
@@ -212,7 +212,7 @@ export default function PostCard({
                             textarea
                         />
                     </div>
-                )}
+                )} */}
             </div>
             <DeleteModal
                 isOpen={isOpen}

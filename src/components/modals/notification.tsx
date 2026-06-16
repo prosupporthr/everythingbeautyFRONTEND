@@ -33,15 +33,21 @@ export default function Notification({
         enable: user?._id ? true : false,
     }); 
 
+    console.log(data);
+    
+
     useEffect(() => {
-        setIsRead(true)
-        data?.map((item) => {
-            if(!item?.readBy){
-                setIsRead(false)
-                setUnReadData((prev)=>  uniqBy([...prev, item?._id], ""))
-            }   
-        })
-    }, [data, isOpen])
+        if (!data) return;
+    
+        const unreadItems = data.filter((item) => !item?.isRead);
+    
+        setIsRead(unreadItems.length === 0);
+    
+        setUnReadData((prev) => {
+            const ids = unreadItems.map((item) => item._id);
+            return Array.from(new Set(prev.concat(ids)));
+        });
+    }, [data, isOpen]);
 
     console.log(unReadData);
     
