@@ -1,12 +1,12 @@
-"use client"
-import { Heart, Send } from "iconsax-reactjs"; 
+"use client";
+import { Heart, Send } from "iconsax-reactjs";
 import { CustomButton, CustomImage, CustomInput } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
 import { IUserDetail } from "@/helper/model/user";
-import { UserCard } from "../shared";
+import { ModalLayout, UserCard } from "../shared";
 import { useParams, useRouter } from "next/navigation";
 import { Avatar, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { textLimit } from "@/helper/utils/textlimit";
@@ -34,6 +34,7 @@ export default function PostCard({
     const [user] = useAtom(userAtom);
     const [show, setShow] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [isShow, setIsShow] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [liked, setLiked] = useState<IProps>();
     const param = useParams();
@@ -70,7 +71,7 @@ export default function PostCard({
     return (
         <div
             style={{ boxShadow: "0px 1px 2px 0px #0000000D" }}
-            className=" w-full border rounded-3xl h-fit flex flex-col gap-3 pb-4 "
+            className=" w-full border border-[#CFC2D6] rounded-3xl h-fit flex flex-col gap-3 pb-4 "
         >
             <div className=" w-full flex items-center justify-between pt-4 px-4 ">
                 <div className=" flex items-center gap-2 ">
@@ -138,9 +139,17 @@ export default function PostCard({
                 </div>
             )}
             <div className=" w-full flex flex-col px-4 ">
-                {!item?.images[0] && (
-                    <p className=" text-sm mb-3 ">{item?.body}</p>
-                )}
+                <p className=" text-sm mb-3 ">
+                    {textLimit(item?.body, 120)}
+                    {item?.body.length > 120 && (
+                        <span
+                            onClick={() => setIsShow(item?._id)}
+                            className=" text-xs font-semibold text-brand cursor-pointer "
+                        >
+                            show more
+                        </span>
+                    )}
+                </p>
                 <div className=" w-full flex justify-between items-center ">
                     <div className=" flex gap-3 items-center ">
                         <button
@@ -167,7 +176,7 @@ export default function PostCard({
                     </div>
                     <Send size={20} />
                 </div>
-                {item?.images[0] && <p className=" text-sm ">{item?.body}</p>}
+                {/* {item?.images[0] && <p className=" text-sm ">{item?.body}</p>} */}
                 {item?.product?.pictures && (
                     <div className=" w-full border border-[#8127CF1A] mt-4 bg-[#F0F3FF] rounded-2xl h-[82px] p-4 flex justify-between ">
                         <div className=" flex items-center gap-2 ">
@@ -221,6 +230,16 @@ export default function PostCard({
                 id={item?._id}
                 name={""}
             />
+            <ModalLayout
+                title="Post Content"
+                isOpen={item?._id === isShow}
+                onClose={() => setIsShow("")}
+                nospace
+            >
+                <div className=" mb-4 max-h-[60vh] overflow-auto px-4 ">
+                    <p className=" text-sm ">{item?.body}</p>
+                </div>
+            </ModalLayout>
         </div>
     );
 }

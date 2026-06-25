@@ -81,9 +81,9 @@ export default function CustomDayPicker(
                     <div className=" w-full flex  " >
                         <div className=" w-full flex flex-col gap-3 p-4 " >
                             <CheckboxGroup onChange={handleChange} defaultValue={stringArray} >
-                                {dayOfTheWeek.map((item) => {
+                                {dayOfTheWeek.map((item, index) => {
                                     return (
-                                        <Checkbox value={item?.value + ""} >{item?.label}</Checkbox>
+                                        <Checkbox key={index} value={item?.value + ""} >{item?.label}</Checkbox>
                                     )
                                 })}
                             </CheckboxGroup>

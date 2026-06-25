@@ -3,13 +3,15 @@ import { IProductDetail } from "@/helper/model/business";
 import { CustomImage } from "../custom";
 import { textLimit } from "@/helper/utils/textlimit";
 import { useRouter } from "next/navigation";
-import { StarRating, Verified } from "../shared";
+import { ModalLayout, StarRating, Verified } from "../shared";
+import { useState } from "react";
 
 export default function ProductCard(
     { item }: { item: IProductDetail }
 ) {
 
     const router = useRouter()
+    const [ isOpen, setIsOpen ] = useState("")
 
     return (
         <button onClick={() => router.push(`/sales/${item?._id}/product`)} className=" w-full border rounded-lg shadow flex flex-col gap-3 " >
@@ -22,11 +24,16 @@ export default function ProductCard(
             </div>
             <div className=" w-full flex justify-between px-3 pb-3 " >
                 <div className=" flex flex-col items-start " >
-                    <p className=" font-bold capitalize " >{item?.name}</p>
+                    <p className=" font-bold capitalize " >{textLimit(item?.name, 20)}{item?.name.length > 20 && <span onClick={()=> setIsOpen(item?._id)} className=" font-semibold text-xs cursor-pointer text-brand " >show more</span>}</p>
                     <p className=" text-secondary text-sm " >{textLimit(item?.business?.location, 20)}</p>
                 </div>
                 <StarRating rating={Number(item?.business?.rating)} />
             </div>
+            <ModalLayout isOpen={item?._id === isOpen} onClose={()=> setIsOpen("")} >
+                <div className=" text-sm " >
+                    {item?.name}
+                </div>
+            </ModalLayout>
         </button>
     )
 }
