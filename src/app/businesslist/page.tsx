@@ -22,7 +22,7 @@ export default function BusinessListPage() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IBusinessDetails>({
-        queryKeyBase: "businessfilter",
+        queryKeyBaseArray: ["businessfilter"],
         endpoint: URLS.BUSINESSFILTER,
         limit: 10,
         params: { q: search },

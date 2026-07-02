@@ -32,7 +32,7 @@ export default function Staff() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IStaffDetail>({
-        queryKeyBase: "staff",
+        queryKeyBaseArray: ["staff"],
         endpoint: URLS.STAFFBYBUSINESSID(id),
         limit: 10,
     }); 
