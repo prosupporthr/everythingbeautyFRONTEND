@@ -1,6 +1,6 @@
 "use client"
 import { IProductDetail } from "@/helper/model/business"; 
-import { CustomImage } from "../custom";
+import { CustomImage, ImageCarousel } from "../custom";
 import { textLimit } from "@/helper/utils/textlimit";
 import { useRouter } from "next/navigation";
 import { ModalLayout, StarRating, Verified } from "../shared";
@@ -16,10 +16,11 @@ export default function ProductCard(
     return (
         <button onClick={() => router.push(`/sales/${item?._id}/product`)} className=" w-full border rounded-lg shadow flex flex-col gap-3 " >
             <div className=" rounded-t-lg w-full h-[266px] border-b bg-gray-200 relative " >
-                <CustomImage nopopup alt={item?.name} style={{
+                {/* <CustomImage nopopup alt={item?.name} style={{
                     borderTopLeftRadius: "8px",
                     borderTopRightRadius: "8px"
-                }} src={item?.pictures[0]} fillContainer />
+                }} src={item?.pictures[0]} fillContainer /> */}
+                <ImageCarousel images={item?.pictures} className="w-full h-[266px]" />
                 <Verified item={item?.business} />
             </div>
             <div className=" w-full flex justify-between px-3 pb-3 " >

@@ -1,12 +1,11 @@
 "use client";
-import { BusinessServiceCard, StaffCard } from "@/components/cards";
+import {  ServiceCard, StaffCard } from "@/components/cards";
 import { CustomButton, CustomImage } from "@/components/custom";
 import { StaffForm } from "@/components/forms";
 import { LoadingLayout, ModalLayout } from "@/components/shared";
 import {
     IBusinessDetails,
-    IServiceDetail,
-    IStaffDetail,
+    IServiceDetail, 
 } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
@@ -27,7 +26,7 @@ export default function Staff() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IServiceDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["servicefilter", id],   
         endpoint: URLS.SERVICEBUSINESSBYID(id),
         limit: 10,
     });
@@ -104,7 +103,7 @@ export default function Staff() {
                         <div className=" w-full grid lg:grid-cols-4 gap-4 ">
                             {items?.map((item) => {
                                 return (
-                                    <BusinessServiceCard
+                                    <ServiceCard
                                         item={item}
                                         option={true}
                                         key={item?._id}

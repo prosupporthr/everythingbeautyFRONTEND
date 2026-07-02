@@ -69,10 +69,7 @@ export default function MultipleImagePicker({
                 URL.createObjectURL(file),
             );
 
-            setLocalPreviewUrls((prev) => [
-                ...prev,
-                ...newPreviewUrls,
-            ]);
+            setLocalPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
         } catch (error) {
             console.error("Error converting images:", error);
 
@@ -89,18 +86,14 @@ export default function MultipleImagePicker({
 
     // remove existing backend image
     const removePreviewImage = (index: number) => {
-        const updatedPreviews = previews.filter(
-            (_, i) => i !== index,
-        );
+        const updatedPreviews = previews.filter((_, i) => i !== index);
 
         setPreviews(updatedPreviews);
     };
 
     // remove newly uploaded image
     const removeUploadedImage = (index: number) => {
-        const updatedFiles = imageFiles.filter(
-            (_, i) => i !== index,
-        );
+        const updatedFiles = imageFiles.filter((_, i) => i !== index);
 
         const removedPreview = localPreviewUrls[index];
 
@@ -146,26 +139,19 @@ export default function MultipleImagePicker({
                         </p>
 
                         <p className="max-w-[300px] text-xs font-medium text-violet-300 text-center">
-                            Share your latest beauty transformations,
-                            products, or studio vibes.
-                            Supports JPG and PNG.
+                            Share your latest beauty transformations, products,
+                            or studio vibes. Supports JPG and PNG.
                         </p>
                     </>
                 )}
             </button>
-
-            {/* Existing Preview Images */}
-            {previews.length > 0 && (
-                <div className="space-y-3">
-                    <p className="text-sm font-semibold">
-                        Existing Images
-                    </p>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {previews.map((image, index) => (
+            <div className="flex gap-3">
+                {previews?.length > 0 && (
+                    <div className="flex gap-3">
+                        {previews?.map((image, index) => (
                             <div
                                 key={`preview-${index}`}
-                                className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200"
+                                className="relative w-[100px] h-[100px] aspect-square rounded-xl overflow-hidden border border-gray-200"
                             >
                                 <CustomImage
                                     src={image}
@@ -178,9 +164,7 @@ export default function MultipleImagePicker({
 
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        removePreviewImage(index)
-                                    }
+                                    onClick={() => removePreviewImage(index)}
                                     className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow"
                                 >
                                     <RiCloseLine size={16} />
@@ -188,21 +172,15 @@ export default function MultipleImagePicker({
                             </div>
                         ))}
                     </div>
-                </div>
-            )}
+                )}
 
-            {/* Newly Uploaded Images */}
-            {localPreviewUrls.length > 0 && (
-                <div className="space-y-3">
-                    <p className="text-sm font-semibold">
-                        New Uploads
-                    </p>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {/* Newly Uploaded Images */}
+                {localPreviewUrls.length > 0 && (
+                    <div className="flex gap-3">
                         {localPreviewUrls.map((image, index) => (
                             <div
                                 key={`upload-${index}`}
-                                className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200"
+                                className="relative w-[100px] h-[100px] aspect-square rounded-xl overflow-hidden border border-gray-200"
                             >
                                 <CustomImage
                                     src={image}
@@ -215,9 +193,7 @@ export default function MultipleImagePicker({
 
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        removeUploadedImage(index)
-                                    }
+                                    onClick={() => removeUploadedImage(index)}
                                     className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow"
                                 >
                                     <RiCloseLine size={16} />
@@ -225,8 +201,8 @@ export default function MultipleImagePicker({
                             </div>
                         ))}
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* Hidden Input */}
             <input
@@ -234,9 +210,7 @@ export default function MultipleImagePicker({
                 type="file"
                 multiple
                 accept="image/*"
-                onChange={(e) =>
-                    handleMultipleImages(e.target.files)
-                }
+                onChange={(e) => handleMultipleImages(e.target.files)}
                 className="hidden"
             />
         </div>

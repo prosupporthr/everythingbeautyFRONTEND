@@ -3,6 +3,7 @@ import { CustomButton } from "../custom";
 import { ModalLayout } from "../shared";
 import useBusiness from "@/hooks/useBusiness";
 import useEditUser from "@/hooks/useEditUser";
+import usePost from "@/hooks/usePost";
 
 export default function DeleteModal({
     isOpen,
@@ -20,7 +21,9 @@ export default function DeleteModal({
         | "Bookmark"
         | "user"
         | "Post"
-        | "Staff";
+        | "Staff"
+        | "Comment"
+        | "Reply";
     id: string;
     name: string;
 }) {
@@ -31,6 +34,8 @@ export default function DeleteModal({
         postDeleteMutation,
         staffDeleteMutation,
     } = useBusiness({});
+
+    const { deleteCommentMutation } = usePost();
 
     const { deleteAddressMutation } = useEditUser();
 
@@ -45,6 +50,8 @@ export default function DeleteModal({
                   ? postDeleteMutation
                   : type === "Staff"
                     ? staffDeleteMutation
+                    :(type === "Comment" || type === "Reply")
+                    ? deleteCommentMutation
                     : servicesDeleteMutation;
 
     const clickHandler = () => {
@@ -66,7 +73,7 @@ export default function DeleteModal({
                     <p className="text-2xl font-bold">Delete {type}</p>
 
                     <p className="text-xs font-medium text-center text-secondary">
-                        Deleting this {type} named{" "}
+                        Deleting this {type}
                         <span className=" font-bold text-brand ">{name}</span>{" "}
                         will permanently delete it. This action cannot be
                         undone, so make sure you're certain before proceeding.

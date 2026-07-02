@@ -36,7 +36,7 @@ export default function BusinessHeader() {
                         ? "My Store"
                         : tab
                           ? tab
-                          : `Welcome, ${user?.firstName + " " + user?.lastName}`}
+                          : `Welcome, ${(user?.firstName ?? "") + " " + (user?.lastName ?? "")}`}
                 </p>
             </div>
             <div className=" flex items-center gap-3 lg:mr-20 ">

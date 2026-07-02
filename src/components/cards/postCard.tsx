@@ -1,18 +1,22 @@
 "use client";
 import { Heart, Send } from "iconsax-reactjs";
-import { CustomButton, CustomImage, CustomInput } from "../custom";
+import { CustomButton, CustomImage } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
-import { formatNumber } from "@/helper/utils/numberFormat";
-import { useAtom } from "jotai";
-import { userAtom } from "@/store/user";
-import { IUserDetail } from "@/helper/model/user";
-import { ModalLayout, UserCard } from "../shared";
-import { useParams, useRouter } from "next/navigation";
-import { Avatar, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { formatNumber } from "@/helper/utils/numberFormat"; 
+import { ModalLayout } from "../shared";
+import { useRouter } from "next/navigation";
+import {
+    Avatar,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Spinner,
+} from "@heroui/react";
 import { textLimit } from "@/helper/utils/textlimit";
 import { useEffect, useState } from "react";
 import { CommentModal, DeleteModal } from "../modals";
 import { IoIosMore } from "react-icons/io";
+import moment from "moment-timezone"; 
 
 interface IProps {
     postId: string;
@@ -31,21 +35,21 @@ export default function PostCard({
     isProfile?: boolean;
     click: (by: string) => void;
 }) {
-    const [user] = useAtom(userAtom);
     const [show, setShow] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isShow, setIsShow] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState("");
     const [liked, setLiked] = useState<IProps>();
-    const param = useParams();
-    const id = param.id as string;
+    const [activeId, setActiveId] = useState<string>("");
 
     const router = useRouter();
 
     const handleClick = (data: "edit" | "delete") => {
         setShow(false);
         if (data === "edit") {
-            router.push(`/business/${id}/edit/${item?._id}/post`);
+            router.push(
+                `/business/${item?.business?._id}/edit/${item?._id}/post`,
+            );
         } else {
             setIsOpen(true);
         }
@@ -62,10 +66,10 @@ export default function PostCard({
     }, []);
 
     const handleLikePost = async () => {
-        setIsLoading(true);
+        setIsLoading(item?._id);
         const like: IProps = (await click(item?._id)) as any;
         setLiked(like);
-        setIsLoading(false);
+        setIsLoading("");
     };
 
     return (
@@ -85,11 +89,16 @@ export default function PostCard({
                         </div>
                     )}
                     <div className=" flex flex-col ">
-                        <p className=" text-sm font-bold capitalize ">
-                            {item?.business?.name}
-                        </p>
-                        <p className=" text-xs text-secondary ">
+                        <div className=" flex gap-2 items-center ">
+                            <p className=" text-sm font-bold capitalize ">
+                                {item?.business?.name}
+                            </p>
+                        </div>
+                        {/* <p className=" text-xs text-secondary ">
                             {textLimit(item?.business?.location, 20)}
+                        </p> */}
+                        <p className=" text-xs text-secondary ">
+                            {moment(item?.createdAt).fromNow()}
                         </p>
                     </div>
                 </div>
@@ -103,9 +112,11 @@ export default function PostCard({
                         placement="top"
                     >
                         <PopoverTrigger>
-                            <button className=" w-8 h-8 rounded-full flex justify-center items-center bg-[#FCFCFC] ">
-                                <IoIosMore size={"20px"} />
-                            </button>
+                            <div>
+                                <button className=" w-8 h-8 rounded-full flex justify-center items-center bg-[#FCFCFC] ">
+                                    <IoIosMore size={"20px"} />
+                                </button>
+                            </div>
                         </PopoverTrigger>
 
                         <PopoverContent className="w-[100px]">
@@ -152,27 +163,32 @@ export default function PostCard({
                 </p>
                 <div className=" w-full flex justify-between items-center ">
                     <div className=" flex gap-3 items-center ">
-                        <button
-                            disabled={isLoading}
-                            onClick={handleLikePost}
-                            className=" gap-1 flex items-center "
-                        >
-                            <Heart
-                                color={
-                                    liked?.likeCount?.hasLiked ? "red" : "black"
-                                }
-                                variant={
-                                    liked?.likeCount?.hasLiked
-                                        ? "Bold"
-                                        : "Linear"
-                                }
-                                size={23}
-                            />
-                            <p className=" text-[10px] font-bold ">
-                                {liked?.likeCount?.likes}
-                            </p>
-                        </button>
-                        <CommentModal item={item} />
+                        {isLoading === item?._id && <Spinner size="sm" />}
+                        {isLoading !== item?._id && (
+                            <button
+                                disabled={isLoading === item?._id}
+                                onClick={handleLikePost}
+                                className=" gap-1 flex items-center "
+                            >
+                                <Heart
+                                    color={
+                                        liked?.likeCount?.hasLiked
+                                            ? "red"
+                                            : "black"
+                                    }
+                                    variant={
+                                        liked?.likeCount?.hasLiked
+                                            ? "Bold"
+                                            : "Linear"
+                                    }
+                                    size={23}
+                                />
+                                <p className=" text-[10px] font-bold ">
+                                    {liked?.likeCount?.likes}
+                                </p>
+                            </button>
+                        )}
+                        <CommentModal post={item} setActiveId={setActiveId} activeId={activeId} />
                     </div>
                     <Send size={20} />
                 </div>

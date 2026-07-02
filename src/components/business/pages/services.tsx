@@ -1,5 +1,5 @@
 "use client";
-import { BusinessServiceCard } from "@/components/cards";
+import { BusinessServiceCard, ServiceCard } from "@/components/cards";
 import { LoadingLayout } from "@/components/shared";
 import { IServiceDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
@@ -24,7 +24,7 @@ export default function Services({
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IServiceDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["services", effectiveBusinessId],
         endpoint: URLS.SERVICEBUSINESSBYID(effectiveBusinessId),
         limit: 10,
         enable: !isProfile ? true : businessId ? true : false,
@@ -40,7 +40,7 @@ export default function Services({
             <div className=" w-full grid lg:grid-cols-4 gap-4 ">
                 {items?.map((item) => {
                     return (
-                        <BusinessServiceCard
+                        <ServiceCard
                             item={item}
                             option={isProfile}
                             key={item?._id}

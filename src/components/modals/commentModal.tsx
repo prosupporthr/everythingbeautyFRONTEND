@@ -1,18 +1,29 @@
 "use client";
-import { Gallery, MessageText, Send } from "iconsax-reactjs";
+import { MessageText, Send } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import { LoadingLayout, ModalLayout } from "../shared";
 import { CommentCard } from "../cards";
 import usePost from "@/hooks/usePost";
-import { useFetchData } from "@/hooks/useFetchData";
 import { IPostDetail } from "@/helper/model/business";
 import { IComment } from "@/helper/model/post";
 import { textLimit } from "@/helper/utils/textlimit";
 import { Spinner } from "@heroui/react";
+import { useAtom, useAtomValue } from "jotai";
+import { commentData, commentDeleted, replyData } from "@/store/comment";
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
+import { uniqBy } from "lodash";
 
-export default function CommentModal({ item }: { item: IPostDetail }) {
+// LoadingLayout expects a "length" that reflects the merged/deduped list, but
+// there's a render where the freshly-fetched page hasn't been merged into
+// the atom yet. Falling back to 1 avoids a flash of the empty state during
+// that gap without lying about the real count once they're in sync. 
+
+export default function CommentModal({ post, setActiveId, activeId }: { post: IPostDetail, setActiveId: (id: string) => void, activeId: string }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [activeId, setActiveId] = useState("");
+    const [loadingLikeId, setLoadingLikeId] = useState("");
+    const deletedComments = useAtomValue(commentDeleted);
+    const [comments, setComments] = useAtom(commentData);
+    const [repliesData, setRepliesData] = useAtom(replyData);
 
     const {
         formikComment,
@@ -27,37 +38,39 @@ export default function CommentModal({ item }: { item: IPostDetail }) {
         likeCommentMutation,
     } = usePost();
 
-    const { data = [], isLoading: loading } = useFetchData<IComment[]>({
+    const {
+        items = [],
+        ref,
+        isLoading: loading,
+        isFetchingMore,
+    } = useInfiniteScroller<IComment>({
+        queryKeyBaseArray: [activeId, "comment"],
         endpoint: `/post/${activeId}/comments`,
-        name: ["comment", activeId],
-        enable: activeId ? true : false,
-        params: {
-            page: 1,
-            limit: 10,
-        },
+        enable: Boolean(activeId),
+        limit: 10,
+        noCache: true,
     });
 
     const {
-        data: replies = [],
+        items: repliesItems = [],
+        ref: repliesRef,
         isLoading: loadingReplies,
-        isRefetching,
-    } = useFetchData<IComment[]>({
+        isFetchingMore: isFetchingMoreReplies,
+    } = useInfiniteScroller<IComment>({
+        queryKeyBaseArray: [activeReply, "reply"],
         endpoint: `/post/comment/${activeReply}/replies`,
-        name: ["reply", activeReply],
-        enable: activeReply ? true : false,
-        params: {
-            page: 1,
-            limit: 10,
-        },
-    });
-
-    console.log(replies);
+        enable: Boolean(activeReply),
+        limit: 10,
+        noCache: true,
+    }); 
 
     useEffect(() => {
         setIndex(activeId);
         if (currentComment?.id) {
-            setCommentId(currentComment?.id);
-            formikComment.setFieldValue("commentId", currentComment?.id);
+            setRepliesData([]);
+            setCommentId(currentComment.id);
+            setActiveReply(currentComment.id);
+            formikComment.setFieldValue("commentId", currentComment.id);
             formikComment.setFieldValue("isReply", true);
         } else {
             formikComment.setFieldValue("commentId", "");
@@ -66,9 +79,39 @@ export default function CommentModal({ item }: { item: IPostDetail }) {
     }, [activeId, currentComment]);
 
     const handleClick = () => {
+        // Reset all thread state before switching posts — comments, the
+        // active reply thread, and the "replying to" target are otherwise
+        // shared global atoms and would leak in from whatever post was
+        // last viewed.
+        setComments([]);
+        setRepliesData([]);
+        setCurrentComment({ id: "", name: "", message: "" });
+        setActiveReply("");
+        formikComment.resetForm?.();
         setIsOpen(true);
-        setActiveId(item?._id);
+        setActiveId(post?._id);
     };
+
+    const handleClickReply = (comment: IComment) => {
+        setRepliesData([]);
+        setActiveReply(activeReply === comment?._id ? "" : comment?._id);
+    };
+
+    const handleLike = async (id: string) => {
+        setLoadingLikeId(id);
+        try {
+            await likeCommentMutation.mutateAsync(id);
+        } finally {
+            setLoadingLikeId("");
+        }
+    };
+
+    const visibleComments = uniqBy([...comments, ...items], "_id")?.filter(
+        (comment) => !deletedComments.includes(comment?._id),
+    );
+    const visibleReplies = uniqBy([...repliesData, ...repliesItems], "_id")?.filter(
+        (reply) => !deletedComments.includes(reply?._id),
+    );
 
     return (
         <div className=" pt-[6px] ">
@@ -83,91 +126,79 @@ export default function CommentModal({ item }: { item: IPostDetail }) {
                 onClose={() => setIsOpen(false)}
             >
                 <div className=" w-full flex flex-col gap-5 pb-4 max-h-[70vh] min-h-[50vh] px-4 py-4 overflow-y-auto ">
-                    <LoadingLayout loading={loading} length={data?.length}>
-                        {data?.map((item, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    className=" w-full flex flex-col gap-3 "
-                                >
-                                    <CommentCard
-                                        item={item}
-                                        setCommentId={setCurrentComment}
-                                        onLike={() =>
-                                            likeCommentMutation.mutate(
-                                                item?._id,
-                                            )
-                                        }
-                                        onDelete={() =>
-                                            deleteCommentMutation.mutate(
-                                                item?._id,
-                                            )
-                                        }
-                                    />
-                                    {activeReply === item?._id && (
-                                        <div className=" my-3 flex flex-col gap-5 ">
-                                            <LoadingLayout
-                                                loading={loadingReplies}
-                                                refetching={isRefetching}
-                                            >
-                                                {replies?.map(
-                                                    (subitem, index) => {
-                                                        return (
-                                                            <div
-                                                                key={index}
-                                                                className="  pl-10 w-full "
-                                                            >
-                                                                <CommentCard
-                                                                    item={
-                                                                        subitem
-                                                                    }
-                                                                    reply
-                                                                    onLike={() =>
-                                                                        likeCommentMutation.mutate(
-                                                                            subitem?._id,
-                                                                        )
-                                                                    }
-                                                                    onDelete={() =>
-                                                                        deleteCommentMutation.mutate(
-                                                                            subitem?._id,
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        );
-                                                    },
-                                                )}
-                                            </LoadingLayout>
-                                        </div>
-                                    )}
+                    <LoadingLayout
+                        loading={loading}
+                        length={items?.length}
+                        ref={ref}
+                        refetching={isFetchingMore}
+                    >
+                        {visibleComments?.map((comment) => (
+                            <div
+                                key={comment?._id}
+                                className=" w-full flex flex-col gap-3 "
+                            >
+                                <CommentCard
+                                    loadingLike={loadingLikeId}
+                                    item={comment}
+                                    setCommentId={setCurrentComment}
+                                    onLike={() => handleLike(comment?._id)}
+                                    newLikeData={likeCommentMutation.data?.data as IComment}
+                                    onDelete={() =>
+                                        deleteCommentMutation.mutate(comment?._id)
+                                    }
+                                />
+                                {activeReply === comment?._id && (
+                                    <div className=" my-3 flex flex-col gap-5 ">
+                                        <LoadingLayout
+                                            loading={loadingReplies}
+                                            refetching={isFetchingMoreReplies}
+                                            ref={repliesRef}
+                                            length={repliesItems?.length}
+                                        >
+                                            {visibleReplies?.map((reply) => (
+                                                <div
+                                                    key={reply?._id}
+                                                    className="  pl-10 w-full "
+                                                >
+                                                    <CommentCard
+                                                        loadingLike={loadingLikeId}
+                                                        item={reply}
+                                                        reply
+                                                        onLike={() =>
+                                                            handleLike(reply?._id)
+                                                        }
+                                                        newLikeData={likeCommentMutation.data?.data as IComment}
+                                                        onDelete={() =>
+                                                            deleteCommentMutation.mutate(
+                                                                reply?._id,
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                            ))}
+                                        </LoadingLayout>
+                                    </div>
+                                )}
 
-                                    {item?.replies > 0 && (
-                                        <div className=" w-full flex justify-center ">
-                                            <button
-                                                className=" text-secondary text-xs font-medium "
-                                                onClick={() =>
-                                                    setActiveReply(
-                                                        activeReply ===
-                                                            item?._id
-                                                            ? ""
-                                                            : item?._id,
-                                                    )
-                                                }
-                                            >
-                                                {activeReply === item?._id
-                                                    ? "Hide Replies"
-                                                    : "Show Replies"}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+                                {comment?.replies > 0 && (
+                                    <div className=" w-full flex justify-center ">
+                                        <button
+                                            className=" text-secondary text-xs font-medium "
+                                            onClick={() => handleClickReply(comment)}
+                                        >
+                                            {activeReply === comment?._id
+                                                ? "Hide Replies"
+                                                : "Show Replies"}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </LoadingLayout>
                 </div>
                 <div className=" bg-white w-full flex pt-3 pb-2 border-t flex-col gap-2 ">
                     {currentComment?.id && (
-                        <p className=" text-sm ">
+                        <p className=" text-sm px-4 ">
                             Reply to{" "}
                             <span className=" text-brand capitalize font-semibold ">
                                 {textLimit(currentComment?.name, 12)}
@@ -181,10 +212,7 @@ export default function CommentModal({ item }: { item: IPostDetail }) {
                     <div className=" w-full px-4 flex h-[40px] items-center gap-4">
                         <input
                             onChange={(e) =>
-                                formikComment.setFieldValue(
-                                    "body",
-                                    e.target.value,
-                                )
+                                formikComment.setFieldValue("body", e.target.value)
                             }
                             value={formikComment.values?.body}
                             className="flex-1 px-4 text-sm outline-none! h-[40px] ring-0! bg-[#F0F3FF] focus:outline-none! rounded focus:ring-0! focus:border-transparent"
@@ -193,14 +221,9 @@ export default function CommentModal({ item }: { item: IPostDetail }) {
                         <button
                             className=" disabled:opacity-25 "
                             onClick={() => formikComment.handleSubmit()}
-                            disabled={
-                                formikComment.values.body && !isLoading
-                                    ? false
-                                    : true
-                            }
+                            disabled={!formikComment.values.body || isLoading}
                         >
-                            {isLoading && <Spinner size="sm" />}
-                            {!isLoading && <Send size={20} />}
+                            {isLoading ? <Spinner size="sm" /> : <Send size={20} />}
                         </button>
                     </div>
                 </div>

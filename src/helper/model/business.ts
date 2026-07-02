@@ -22,7 +22,7 @@ export interface IBooking {
     serviceId: string;
     totalPrice: number;
     bookingDate: string;
-} 
+}
 
 export interface IOrder {
     userId: string;
@@ -33,7 +33,7 @@ export interface IOrder {
     totalPrice: number;
     paymentStatus: string;
     status: string;
-} 
+}
 
 export interface ISelectStaff {
     label: string;
@@ -285,6 +285,14 @@ export interface IPostDetail {
     updatedAt: string;
     __v: number;
     likeCount: number;
-    business: IBusiness;
+    business: {
+        _id: string;
+        name: string;
+        location: string;
+        pictures: string[];
+        rating: number;
+        approved: boolean;
+        enabled: boolean;
+    };
     product: IProduct;
 }

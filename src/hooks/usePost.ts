@@ -11,16 +11,22 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useState } from "react"; 
 import { IPostComment } from "@/helper/model/post";
+import { uniqBy } from "lodash";
+import { useAtom } from "jotai";
+import { commentData as commentDataAtom, commentDeleted, replyData as replyDataAtom } from "@/store/comment";
 
 const usePost = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
     const [index, setIndex] = useState<string>("") 
+
+    const [_, setOnDeleteComment] = useAtom(commentDeleted);
     const [commentId, setCommentId] = useState<string>("") 
     const [loading, setIsLoading] = useState(false);
     const [activeReply, setActiveReply] = useState("");
-
+    const [, setCommentData] = useAtom(commentDataAtom);
+    const [, setReplyData] = useAtom(replyDataAtom);
     const [currentComment, setCurrentComment] = useState({
         id: "",
         name: "",
@@ -83,10 +89,12 @@ const usePost = () => {
         mutationFn: (data: IPostComment) =>
             httpService.post(URLS.POSTCOMMENTBYID(index), data),
         onError: handleError,
-        onSuccess: () => { 
+        onSuccess: (data) => { 
+            console.log(data?.data?.data);
+            setCommentData((prevComments) => uniqBy([data?.data?.data, ...prevComments], "_id"));
             formikComment?.resetForm(); 
             queryClient.invalidateQueries({ queryKey: ["comment"] });
-            queryClient.invalidateQueries({ queryKey: ["reply"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] }); 
         },
     });
 
@@ -96,16 +104,17 @@ const usePost = () => {
         mutationFn: (data: IPostComment) =>
             httpService.post(URLS.POSTCOMMENTREPLYBYID(commentId), data),
         onError: handleError,
-        onSuccess: () => { 
+        onSuccess: (data) => { 
             setActiveReply(formikComment.values?.commentId)
             setCurrentComment({
                 id: "",
                 name: "",
                 message: "",
             })
+            setReplyData((prevReplies) => uniqBy([data?.data?.data, ...prevReplies], "_id"));
             formikComment?.resetForm(); 
             queryClient.invalidateQueries({ queryKey: ["comment"] });
-            queryClient.invalidateQueries({ queryKey: ["reply"] });
+            queryClient.invalidateQueries({ queryKey: ["reply"] }); 
         },
     });
 
@@ -126,13 +135,15 @@ const usePost = () => {
         mutationFn: (data: string) =>
             httpService.delete(URLS.POSTCOMMENTDELETEBYID(data)),
         onError: handleError,
-        onSuccess: () => {  
-            formikComment?.resetForm(); 
+        onSuccess: (data, variables) => {
+            console.log(data);
+            setOnDeleteComment((prevComments) => [...prevComments, variables]);
             queryClient.invalidateQueries({ queryKey: ["comment"] });
             queryClient.invalidateQueries({ queryKey: ["reply"] });
+            formikComment?.resetForm();  
         },
     });
-
+    
     /** 🔹 Business */
     const postCommentMutation = useMutation({
         mutationFn: (data: ISendChat) => httpService.post(URLS.SENDCHAT, data),

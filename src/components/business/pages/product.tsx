@@ -25,7 +25,7 @@ export default function Product({
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IProductDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["productfilter", id],
         endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
         limit: 10,
         enable: !isProfile ? true : businessId ? true : false,
