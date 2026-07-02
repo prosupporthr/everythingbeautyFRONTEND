@@ -1,9 +1,12 @@
 "use client";
-import { StaffCard } from "@/components/cards";
+import {  ServiceCard, StaffCard } from "@/components/cards";
 import { CustomButton, CustomImage } from "@/components/custom";
 import { StaffForm } from "@/components/forms";
 import { LoadingLayout, ModalLayout } from "@/components/shared";
-import { IBusinessDetails, IStaffDetail } from "@/helper/model/business";
+import {
+    IBusinessDetails,
+    IServiceDetail, 
+} from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
@@ -18,24 +21,24 @@ export default function Staff() {
     const router = useRouter();
 
     const {
+        items = [],
+        ref,
+        isLoading,
+        isFetchingMore,
+    } = useInfiniteScroller<IServiceDetail>({
+        queryKeyBaseArray: ["servicefilter", id],   
+        endpoint: URLS.SERVICEBUSINESSBYID(id),
+        limit: 10,
+    });
+
+    const {
         data,
         isLoading: loading,
         isRefetching,
     } = useFetchData<IBusinessDetails>({
         endpoint: URLS.BUSINESSBYID(id),
         name: ["business", id],
-    }); 
-    
-    const {
-        items = [],
-        ref,
-        isLoading,
-        isFetchingMore,
-    } = useInfiniteScroller<IStaffDetail>({
-        queryKeyBase: "staff",
-        endpoint: URLS.STAFFBYBUSINESSID(id),
-        limit: 10,
-    }); 
+    });
 
     return (
         <LoadingLayout loading={loading}>
@@ -71,63 +74,43 @@ export default function Staff() {
                             </CustomButton>
                             <CustomButton
                                 onClick={() =>
-                                    router.push(
-                                        `/business/${data?._id}/dashboard?tab=profile`,
-                                    )
+                                    router.push(`/business/${data?._id}/create/services`)
                                 }
                                 variant="outlinebrand"
                             >
-                                View Profile
+                                Add Services
                             </CustomButton>
                         </div>
                     </div>
                 </div>
-                <div className=" w-full flex gap-4 ">
-                    <div className=" w-[150px] ">
-                        <CustomButton
-                            fullWidth
-                            height="45px"
-                            className=" text-xs "
-                            variant="outlinebrand"
-                            onClick={() => setIsOpen(true)}
-                            startIcon={<ProfileAdd size={20} />}
-                        >
-                            Add stylist{" "}
-                        </CustomButton>
-                    </div>
-                    <div className=" flex flex-col border-l justify-center items-center pl-4 border-[#CFC2D6]  ">
-                        <p className=" text-[10px] text-[#4D4354] ">
-                            ACTIVE TEAM
-                        </p>
-                        <p className=" text-sm text-[#4D4354] font-semibold ">
-                            <span className=" text-brand mr-[2px] ">0</span>
-                            Stylists
-                        </p>
-                    </div>
-                </div>
                 <div className=" w-full flex flex-col gap-4 mt-5 ">
-                    <div className=" flex flex-col ">
-                        <p className=" text-2xl font-bold ">Grow Your Team</p>
+                    <div className=" flex flex-col gap-2 ">
+                        <p className=" text-2xl font-bold ">
+                            Check out our services
+                        </p>
                         <p className=" max-w-[646px] text-sm ">
                             Add your stylists and beauty professionals to get
                             started. You can also skip this for now and add them
                             later from your dashboard.
                         </p>
                     </div>
-
                     <LoadingLayout
                         loading={isLoading}
                         refetching={isFetchingMore}
                         length={items?.length}
                         ref={ref}
                     >
-                    <div className=" w-auto flex overflow-x-auto pb-5 gap-3 ">
-                        {items?.map((items, index) => {
-                            return (
-                                <StaffCard isBusiness item={items} key={index} />
-                            );
-                        })}
-                    </div>
+                        <div className=" w-full grid lg:grid-cols-4 gap-4 ">
+                            {items?.map((item) => {
+                                return (
+                                    <ServiceCard
+                                        item={item}
+                                        option={true}
+                                        key={item?._id}
+                                    />
+                                );
+                            })}
+                        </div>
                     </LoadingLayout>
                     <div className=" w-full flex flex-col py-7 border mt-6 items-center justify-center rounded-3xl bg-[#7D23E40D] border-[#7D23E41A] p-6 gap-4 ">
                         <p className=" font-semibold text-brand ">

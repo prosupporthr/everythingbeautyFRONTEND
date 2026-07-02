@@ -1,5 +1,5 @@
 "use client";
-import { CustomButton, CustomSearch } from "@/components/custom";
+import { CustomButton } from "@/components/custom";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -36,17 +36,29 @@ export default function BusinessHeader() {
                         ? "My Store"
                         : tab
                           ? tab
-                          : `Welcome, ${user?.firstName + " " + user?.lastName}`}
+                          : `Welcome, ${(user?.firstName ?? "") + " " + (user?.lastName ?? "")}`}
                 </p>
             </div>
             <div className=" flex items-center gap-3 lg:mr-20 ">
-                {(!tab || tab === "appointment") && (
+                {(!tab || tab === "staff") && (
                     <div className=" w-fit text-xs font-semibold ">
-                        <button onClick={()=> router.push(`/business/${id}/dashboard`)} className={` ${!tab ? " bg-[#EADFF8] " : ""} w-[100px] h-[40px] rounded-l-full text-brand shadow `}>
-                            My Staff
-                        </button>
-                        <button onClick={()=> router.push(`/business/${id}/dashboard?tab=appointment`)} className={` ${tab === "appointment" ? " bg-[#EADFF8] " : ""}  w-[100px] h-[40px] rounded-r-full text-brand shadow `}>
+                        <button
+                            onClick={() =>
+                                router.push(`/business/${id}/dashboard`)
+                            }
+                            className={` ${!tab ? " bg-[#EADFF8] " : ""} w-[100px] h-[40px] rounded-l-full text-brand shadow `}
+                        >
                             Appointment
+                        </button>
+                        <button
+                            onClick={() =>
+                                router.push(
+                                    `/business/${id}/dashboard?tab=staff`,
+                                )
+                            }
+                            className={` ${tab === "appointment" ? " bg-[#EADFF8] " : ""}  w-[100px] h-[40px] rounded-r-full text-brand shadow `}
+                        >
+                            My Staff
                         </button>
                     </div>
                 )}

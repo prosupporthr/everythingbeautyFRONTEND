@@ -8,6 +8,7 @@ export { default as SchedularList } from "./schedularList"
 // page
 export { default as BusinessServices } from "./pages/services" 
 export { default as BusinessOverview } from "./pages/overview"
+export { default as BusinessInfo } from "./pages/businessInfo"
 export { default as BusinessStaff } from "./pages/staff"
 export { default as BusinessProduct } from "./pages/product"
 export { default as BusinessPost } from "./pages/post"

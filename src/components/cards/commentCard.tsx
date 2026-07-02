@@ -3,6 +3,9 @@ import { Heart, Trash } from "iconsax-reactjs";
 import { HiReply } from "react-icons/hi";
 import { UserCard } from "../shared";
 import moment from "moment";
+import { Spinner } from "@heroui/react"; 
+import { useEffect, useState } from "react";
+import { DeleteModal } from "../modals";
 
 interface IProps {
     reply?: boolean;
@@ -10,15 +13,36 @@ interface IProps {
     setCommentId?: (by: { id: string; name: string; message: string }) => void;
     onLike: ()=> void;
     onDelete: ()=> void;
+    loadingLike?: string;
+    newLikeData?: IComment;
 }
 
 export default function CommentCard({
     reply,
     item, 
     setCommentId, 
-    onLike,
-    onDelete
-}: IProps) {
+    onLike, 
+    loadingLike,
+    newLikeData
+}: IProps) { 
+
+    const [ isLiked, setIsLiked ] = useState({ hasLiked: false, likeCount: 0 });
+
+    useEffect(() => {
+        if (newLikeData && newLikeData?._id === item?._id) {
+            setIsLiked({ hasLiked: newLikeData?.hasLiked, likeCount: newLikeData?.likeCount });
+        }
+    }, [newLikeData]);
+ 
+    console.log(newLikeData);
+    console.log(item);
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => { 
+        setIsLiked({ hasLiked: item?.hasLiked, likeCount: item?.likeCount }); 
+    }, []);
+
     return (
         <div className=" w-full flex flex-col gap-2 ">
             <div className=" w-full flex gap-2  ">
@@ -52,16 +76,24 @@ export default function CommentCard({
                                 <p className=" text-xs font-semibold ">Reply</p>
                             </button>
                         )}
-                        <button onClick={onLike} className=" flex gap-1 items-center ">
-                            <Heart size={15} />
-                            <p className=" text-xs font-semibold ">{item?.likes.length}</p>
+                        <button onClick={onLike} disabled={loadingLike === item?._id} className=" flex gap-1 items-center ">
+                            {loadingLike === item?._id ? <Spinner size="sm" /> : <Heart variant={isLiked?.hasLiked ? "Bold" : "Linear"} color={isLiked?.hasLiked ? "red" : "black"} size={15} />}
+                            <p className=" text-xs font-semibold ">{isLiked?.likeCount}</p>
                         </button>
-                        <button onClick={onDelete} className=" flex gap-1 text-red-500 items-center ">
+                        <button onClick={() => setIsOpen(true)} className=" flex gap-1 text-red-500 items-center ">
                             <Trash size={15} /> 
                         </button>
                     </div>
                 </div>
             </div>
+
+            <DeleteModal
+                isOpen={isOpen}
+                onClose={setIsOpen}
+                type={reply ? "Reply" : "Comment"}
+                id={item?._id}
+                name={""}
+            />
         </div>
     );
 }

@@ -9,8 +9,8 @@ import {
 import { useFetchData } from "@/hooks/useFetchData";
 import { Socket } from "@/helper/utils/socket-io";
 
-interface UseInfiniteScrollerOptions<T> {
-    queryKeyBase: string;
+interface UseInfiniteScrollerOptions<T> { 
+    queryKeyBaseArray: string[];
     endpoint: string;
     params?: Record<string, any>;
     limit?: number;
@@ -18,10 +18,11 @@ interface UseInfiniteScrollerOptions<T> {
     uniqueKey?: keyof T;
     socketEvent?: string;
     enableSocket?: boolean;
+    noCache?: boolean;
 }
 
-export function useInfiniteScroller<T>({
-    queryKeyBase,
+export function useInfiniteScroller<T>({ 
+    queryKeyBaseArray,
     endpoint,
     params = {},
     limit = 10,
@@ -29,6 +30,7 @@ export function useInfiniteScroller<T>({
     uniqueKey = "_id" as keyof T,
     socketEvent,
     enableSocket = false,
+    noCache = false,
 }: UseInfiniteScrollerOptions<T>) {
     /* ---------------- STATE ---------------- */
     const [page, setPage] = useState(1);
@@ -39,7 +41,6 @@ export function useInfiniteScroller<T>({
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const observerRef = useRef<IntersectionObserver | null>(null);
     const hasNextPageRef = useRef(hasNextPage);
-    hasNextPageRef.current = hasNextPage;
     const isFetchingRef = useRef(false);
 
     // Tracks the highest page the user has scrolled to
@@ -50,6 +51,24 @@ export function useInfiniteScroller<T>({
     const isReloadingRef = useRef(false);
     const reloadAccumulatorRef = useRef<T[]>([]);
 
+    // Set to true right before any setPage/state change *we* initiate
+    // (initial mount, pagination, param change, manual reset/refetch),
+    // so the "detect invalidation" effect below can tell the difference
+    // between "we did this on purpose" and "the cache was invalidated
+    // out from under us" — both surface as isLoading flipping to true.
+    // Starts true so the very first fetch on mount isn't misread as
+    // an invalidation.
+    const skipNextLoadingCheckRef = useRef(true);
+
+    // Used by refetch() when we're already on page 1, where setPage(1)
+    // won't change the queryKey and therefore won't auto-trigger a fetch.
+    const pendingManualRefetchRef = useRef(false);
+
+    /* ---------------- KEEP REFS IN SYNC (post-render, not during render) ---------------- */
+    useEffect(() => {
+        hasNextPageRef.current = hasNextPage;
+    }, [hasNextPage]);
+
     /* ---------------- QUERY KEY ---------------- */
     const serializedParams = useMemo(
         () => JSON.stringify(params),
@@ -58,8 +77,12 @@ export function useInfiniteScroller<T>({
     );
 
     const queryKey = useMemo(
-        () => [queryKeyBase, serializedParams, page],
-        [queryKeyBase, serializedParams, page],
+        () => [ 
+            serializedParams,
+            page,
+            ...queryKeyBaseArray,
+        ],
+        [serializedParams, page, ...queryKeyBaseArray],
     );
 
     /* ---------------- FETCH ---------------- */
@@ -78,9 +101,18 @@ export function useInfiniteScroller<T>({
         },
         pagination: true,
         enable,
+        noCache,
+        staleTime: noCache ? 0 : 5 * 60 * 1000,
+        gcTime: noCache ? 0 : 5 * 60 * 1000,
+    
+        refetchOnMount: noCache ? "always" : true,
+        refetchOnReconnect: noCache,
+        refetchOnWindowFocus: noCache,
     });
 
-    isFetchingRef.current = isFetching || isLoading;
+    useEffect(() => {
+        isFetchingRef.current = isFetching || isLoading;
+    }, [isFetching, isLoading]);
 
     /* ---------------- REMOVE DUPLICATES ---------------- */
     const uniqueKeyRef = useRef(uniqueKey);
@@ -88,10 +120,12 @@ export function useInfiniteScroller<T>({
 
     const removeDuplicates = useCallback((array: T[]) => {
         const map = new Map<any, T>();
-        array.forEach((item) => {
-            map.set(item[uniqueKeyRef.current], item);
+        array?.forEach((item) => {  
+            if(item){
+                map?.set(item[uniqueKeyRef.current], item);
+            }
         });
-        return Array.from(map.values());
+        return Array.from(map?.values() ?? []);
     }, []);
 
     /* ---------------- RESET WHEN PARAMS CHANGE ---------------- */
@@ -105,6 +139,7 @@ export function useInfiniteScroller<T>({
         reloadQueueRef.current = [];
         isReloadingRef.current = false;
         reloadAccumulatorRef.current = [];
+        skipNextLoadingCheckRef.current = true;
 
         setPage(1);
         setItems([]);
@@ -113,21 +148,29 @@ export function useInfiniteScroller<T>({
 
     /* ---------------- DETECT INVALIDATION & START RELOAD ---------------- */
     useEffect(() => {
-        // isLoading (not just isFetching) means the cache was invalidated/cleared
-        // isFetching alone means a background refetch — we don't want to reset for that
+        // isLoading (not just isFetching) means this query key has no
+        // cached data and is fetching for the first time — that's true
+        // both for "a page we haven't visited yet" (normal pagination)
+        // and "the cache for this key was invalidated" (what we actually
+        // want to catch here). Anything *we* triggered sets the skip
+        // flag beforehand so we only react to genuine external
+        // invalidations.
         if (!isLoading) return;
+
+        if (skipNextLoadingCheckRef.current) {
+            skipNextLoadingCheckRef.current = false;
+            return;
+        }
 
         const pagesToReload = Array.from(
             { length: maxPageRef.current },
             (_, i) => i + 1,
         );
 
-        // Queue all pages from 1 to maxPage for sequential reloading
         reloadQueueRef.current = pagesToReload;
         isReloadingRef.current = true;
         reloadAccumulatorRef.current = [];
 
-        // Start from page 1
         setPage(1);
         setItems([]);
         setHasNextPage(true);
@@ -152,6 +195,7 @@ export function useInfiniteScroller<T>({
 
             if (nextPage) {
                 // More pages to reload — advance
+                skipNextLoadingCheckRef.current = true;
                 setPage(nextPage);
             } else {
                 // All pages reloaded — flush accumulator to items
@@ -180,6 +224,14 @@ export function useInfiniteScroller<T>({
         }
     }, [data, isLoading, page, limit, removeDuplicates]);
 
+    /* ---------------- MANUAL REFETCH FOR "ALREADY ON PAGE 1" ---------------- */
+    useEffect(() => {
+        if (!pendingManualRefetchRef.current) return;
+        if (page !== 1) return;
+        pendingManualRefetchRef.current = false;
+        _refetch();
+    }, [page, _refetch]);
+
     /* ---------------- INTERSECTION OBSERVER ---------------- */
     const ref = useCallback((node: HTMLElement | null) => {
         if (observerRef.current) {
@@ -196,6 +248,7 @@ export function useInfiniteScroller<T>({
                     !isFetchingRef.current &&
                     !isReloadingRef.current // don't paginate during reload
                 ) {
+                    skipNextLoadingCheckRef.current = true;
                     setPage((prev) => prev + 1);
                 }
             },
@@ -234,12 +287,20 @@ export function useInfiniteScroller<T>({
         reloadQueueRef.current = pagesToReload;
         isReloadingRef.current = true;
         reloadAccumulatorRef.current = [];
+        skipNextLoadingCheckRef.current = true;
 
-        setPage(1);
         setItems([]);
         setHasNextPage(true);
-        _refetch();
-    }, [_refetch]);
+
+        if (page === 1) {
+            // setPage(1) wouldn't change the queryKey, so nothing would
+            // auto-fetch — force it directly.
+            _refetch();
+        } else {
+            pendingManualRefetchRef.current = true;
+            setPage(1);
+        }
+    }, [page, _refetch]);
 
     /* ---------------- RESET FUNCTION ---------------- */
     const reset = useCallback(() => {
@@ -247,6 +308,7 @@ export function useInfiniteScroller<T>({
         reloadQueueRef.current = [];
         isReloadingRef.current = false;
         reloadAccumulatorRef.current = [];
+        skipNextLoadingCheckRef.current = true;
 
         setItems([]);
         setPage(1);

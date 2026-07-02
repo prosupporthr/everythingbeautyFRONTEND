@@ -20,3 +20,4 @@ export { default as CustomEditor } from "./customEditor"
 
 export { default as CustomStarRating } from "./customStarRating" 
 export { default as ModalLayout } from "./modalLayout" 
+export { default as ImageCarousel } from "./carousel" 

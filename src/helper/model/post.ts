@@ -16,6 +16,8 @@ export interface IComment {
     images: [];
     userId: string;
     user: IUserDetail;
+    hasLiked: boolean;
+    likeCount: number;
     postId: string;
     likes: [];
     createdAt: string;

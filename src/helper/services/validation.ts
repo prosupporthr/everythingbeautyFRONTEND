@@ -53,11 +53,13 @@ export const serviceSchema = Yup.object().shape({
     name: Yup.string()
         .trim()
         .min(2, "Service name must be at least 2 characters")
+        .max(100, "Service name cannot exceed 100 characters")
         .required("Service name is required"),
 
     description: Yup.string()
         .trim()
         .min(10, "Description must be at least 10 characters")
+        .max(1000, "Description cannot exceed 1000 characters")
         .required("Description is required"),
 
     hourlyRate: Yup.number()
@@ -83,8 +85,16 @@ export const serviceSchema = Yup.object().shape({
 
 export const productSchema = Yup.object().shape({
     businessId: Yup.string().trim().required("Business ID is required"),
-    name: Yup.string().trim().required("Business name is required"),
-    description: Yup.string().trim().required("Description is required"),
+    name: Yup.string()
+        .trim()
+        .min(3, "Product name must be at least 3 characters")
+        .max(100, "Product name cannot exceed 100 characters")
+        .required("Product name is required"),
+    description: Yup.string()
+        .trim()
+        .min(10, "Description must be at least 10 characters")
+        .max(1000, "Description cannot exceed 1000 characters")
+        .required("Description is required"),
     quantity: Yup.number()
         .min(1, "Quantity must be greater than zero")
         .required("Quantity is required"),
@@ -101,8 +111,9 @@ export const reviewSchema = Yup.object().shape({
 
     description: Yup.string()
         .trim()
-        .required("Description is required")
-        .min(5, "Description must be at least 5 characters"),
+        .min(10, "Description must be at least 10 characters")
+        .max(1000, "Description cannot exceed 1000 characters")
+        .required("Description is required"),
 
     rating: Yup.number()
         .required("Rating is required")
@@ -127,9 +138,7 @@ export const staffSchema = Yup.object({
 
     address: Yup.string().trim().required("Address is required"),
 
-    porfolioLink: Yup.string()
-        .trim()
-        .url("Enter a valid portfolio URL"),
+    porfolioLink: Yup.string().trim().url("Enter a valid portfolio URL"),
 
     primarySpeciality: Yup.string()
         .trim()

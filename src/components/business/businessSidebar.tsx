@@ -15,9 +15,10 @@ export default function BusinessSidebar() {
 
     const tabs = [
         { label: "Overview", value: null },
+        { label: "Schedule", value: "schedule" },
         { label: "Post", value: "post" },
         { label: "Services", value: "services" },
-        { label: "My Store", value: "store" },
+        { label: "My Product", value: "store" },
         // { label: "Settings", value: "settings" },
         { label: "Profile", value: "profile" },
     ];

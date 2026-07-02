@@ -31,10 +31,10 @@ export default function ProductForm(
                         <CustomInput label="Price per unit" name="price" type="number" />
                         <CustomInput label="Quantity" name="quantity" type="number" />
                         <ColorSelector />
-                        <div className=" w-full flex items-center justify-between " >
+                        {/* <div className=" w-full flex items-center justify-between " >
                             <p className=" font-medium " >Allowed Customers Review</p>
                             <Switch checked={formik.values.allowReview} color="success" onChange={(e) => formik.setFieldValue("allowReview", e.target.checked)} />
-                        </div>
+                        </div> */}
                         <div className=" w-full mt-4 lg:max-w-[240px] " >
                             <CustomButton fullWidth isLoading={isLoading} onClick={() => formik.handleSubmit()} >{edit ? "Edit" : "Create"} Product</CustomButton>
                         </div>

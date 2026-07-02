@@ -59,7 +59,7 @@ const useBooking = ({ amount, type, userID }: IProps) => {
             transactionMutation.mutate({
                 userId: userID,
                 amount: amount,
-                source: "stripe",
+                source: paymentmethod,
                 type: type,
                 flow: "outbound",
                 typeId: res?.data?.data?._id,
@@ -83,7 +83,7 @@ const useBooking = ({ amount, type, userID }: IProps) => {
             transactionMutation.mutate({
                 userId: userID,
                 amount: amount,
-                source: "stripe",
+                source: paymentmethod,
                 type: type,
                 flow: "outbound",
                 typeId: res?.data?.data?._id,

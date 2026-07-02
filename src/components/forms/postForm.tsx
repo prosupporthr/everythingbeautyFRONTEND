@@ -44,7 +44,7 @@ export default function PostForm({
         isLoading: loading,
         isFetchingMore
     } = useInfiniteScroller<IProductDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["productfilter", effectiveBusinessId],
         endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
         limit: 10,
     });

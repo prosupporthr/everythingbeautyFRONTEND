@@ -1,101 +1,111 @@
-"use client"
-import { useFetchData } from "@/hooks/useFetchData";
-import { ModalLayout } from "../custom";
+"use client";
+
+import { useEffect, useMemo } from "react";
 import { useAtom } from "jotai";
-import { userAtom } from "@/store/user";
-import { INotification } from "@/helper/model/notification";
-import { LoadingLayout } from "../shared";
-import { dateFormat } from "@/helper/utils/dateFormat";
-import { useEffect, useState } from "react";
-import { URLS } from "@/helper/services/urls";
+
+import { useFetchData } from "@/hooks/useFetchData";
 import useMessage from "@/hooks/useMessage";
-import { uniqBy } from "lodash";
+
+import { ModalLayout } from "../custom";
+import { LoadingLayout } from "../shared";
+
+import { userAtom } from "@/store/user";
+import { URLS } from "@/helper/services/urls";
+import { dateFormat } from "@/helper/utils/dateFormat";
+import { INotification } from "@/helper/model/notification";
+
+interface NotificationProps {
+    isOpen: boolean;
+    onClose: (by: boolean) => void;
+    isRead: boolean;
+    setIsRead: (by: boolean) => void;
+}
 
 export default function Notification({
     isOpen,
     onClose,
     isRead,
-    setIsRead
-}: {
-    isOpen: boolean;
-    onClose: (by: boolean) => void;
-    isRead: boolean
-    setIsRead: (by: boolean) => void;
-}) {
+    setIsRead,
+}: NotificationProps) {
     const [user] = useAtom(userAtom);
 
-    const { updateNotificationStatus, isLoading: loading } = useMessage()
-    const [ unReadData, setUnReadData ] = useState<string[]>([])
+    const { updateNotificationStatus } = useMessage();
 
     const { data = [], isLoading } = useFetchData<INotification[]>({
         endpoint: URLS.NOTIFICATIONBYUSER(user?._id as string),
         name: ["notification", user?._id as string],
-        enable: user?._id ? true : false,
-    }); 
+        enable: !!user?._id,
+    });
 
-    console.log(data);
-    
+    const unreadNotifications = useMemo(
+        () => data.filter((item) => !item.isRead),
+        [data]
+    );
+
+    const unreadIds = useMemo(
+        () => unreadNotifications.map((item) => item._id),
+        [unreadNotifications]
+    );
 
     useEffect(() => {
-        if (!data) return;
-    
-        const unreadItems = data.filter((item) => !item?.isRead);
-    
-        setIsRead(unreadItems.length === 0);
-    
-        setUnReadData((prev) => {
-            const ids = unreadItems.map((item) => item._id);
-            return Array.from(new Set(prev.concat(ids)));
-        });
-    }, [data, isOpen]);
+        setIsRead(unreadNotifications.length === 0);
+    }, [unreadNotifications, setIsRead]);
 
-    console.log(unReadData);
-    
-    useEffect(()=>{
-        if(isOpen && !isRead){ 
-            updateNotificationStatus.mutate({
-                ids: unReadData,
-                userType: "user"
-            })
+    useEffect(() => {
+        if (
+            !isOpen ||
+            unreadIds.length === 0 ||
+            updateNotificationStatus.isPending
+        ) {
+            return;
         }
-    }, [isRead, isOpen])
 
-    
+        updateNotificationStatus.mutate({
+            ids: unreadIds,
+            userType: "user",
+        });
+    }, [isOpen, unreadIds, updateNotificationStatus]);
+
     return (
         <ModalLayout
             isOpen={isOpen}
-            size={"full"}
+            size="full"
             onClose={() => onClose(false)}
         >
-            <div className=" w-full h-full relative ">
-                <div className=" w-full h-[80px] top-0 sticky px-4 lg:px-6 bg-white z-10 border-b border-bordercolor flex items-center ">
-                    <p className=" text-2xl font-bold ">Notification</p>
+            <div className="relative h-full w-full">
+                <div className="sticky top-0 z-10 flex h-[80px] items-center border-b border-bordercolor bg-white px-4 lg:px-6">
+                    <p className="text-2xl font-bold">Notification</p>
                 </div>
-                <div className=" w-full h-fit flex flex-col gap-4 items-center py-10 ">
-                    <LoadingLayout loading={isLoading} length={data?.length}>
-                        {data?.map((item) => {
-                            return (
-                                <div
-                                    key={item?._id}
-                                    className=" w-full! max-w-[740px] h-fit relative flex gap-4 py-4 p-4 lg:p-6 rounded-2xl shadow "
-                                >
-                                    <div className=" flex flex-col ">
-                                        <p className=" lg:not-only:text-lg font-semibold ">
-                                            {item?.title}
-                                        </p>
-                                        <p className=" text-sm text-[#444444] -mt-1 ">
-                                            {item?.description}
-                                        </p>
-                                        <p className=" text-xs mt-2 text-[#747474] ">
-                                            {dateFormat(item?.createdAt)}
-                                        </p>
-                                    </div>
-                                    {!item?.isRead && (
-                                        <div className=" w-2 h-2 rounded-full bg-brand absolute top-4 right-4 " />
-                                    )}
+
+                <div className="flex w-full flex-col items-center gap-4 py-10">
+                    <LoadingLayout
+                        loading={isLoading}
+                        length={data.length}
+                    >
+                        {data.map((item) => (
+                            <div
+                                key={item._id}
+                                className="relative flex h-fit w-full max-w-[740px] gap-4 rounded-2xl p-4 shadow lg:p-6"
+                            >
+                                <div className="flex flex-col">
+                                    <p className="font-semibold lg:text-lg">
+                                        {item.title}
+                                    </p>
+
+                                    <p className="-mt-1 text-sm text-[#444444]">
+                                        {item.description}
+                                    </p>
+
+                                    <p className="mt-2 text-xs text-[#747474]">
+                                        {dateFormat(item.createdAt)}
+                                    </p>
                                 </div>
-                            );
-                        })}
+
+                                {!item.isRead && (
+                                    <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-brand" />
+                                )}
+                            </div>
+                        ))}
                     </LoadingLayout>
                 </div>
             </div>

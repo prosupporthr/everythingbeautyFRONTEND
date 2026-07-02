@@ -151,9 +151,7 @@ export default function PaymentBtn({
 
     useEffect(() => {
         setPaymentMethod("stripe");
-    }, []);
-
-    console.log(address);
+    }, []); 
 
     return (
         <div className={` w-full ${fullWidth ? "" : "lg:w-[300px]"} `}>
