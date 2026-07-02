@@ -19,7 +19,7 @@ export default function BusinessListPage() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IProductDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["productfilter"],
         endpoint: URLS.PRODUCTFILTER,
         limit: 10,
         params: { q: search },
