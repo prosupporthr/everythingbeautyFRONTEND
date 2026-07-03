@@ -165,17 +165,17 @@ export default function SaleServicePage() {
             return;
         }
 
-        if(!selectedStaff.label){
-            addToast({
-                title: "Warning",
-                description: `Please select a staff.`,
-                color: "warning",
-            });
-            return;
-        }
+        // if(!selectedStaff.label){
+        //     addToast({
+        //         title: "Warning",
+        //         description: `Please select a staff.`,
+        //         color: "warning",
+        //     });
+        //     return;
+        // }
 
         router.push(
-            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}&staff=${selectedStaff?.value}`,
+            `/sales/${id}/booking/${selectedOption.service}?date=${selectedDate}${selectedStaff?.value ? `&staff=${selectedStaff?.value}` : ""}`,
         );
     };
 

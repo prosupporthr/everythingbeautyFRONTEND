@@ -61,6 +61,7 @@ export default function BookingPage() {
                 selectedStaff?.value ? selectedStaff?.value : staffId,
             ),
             name: ["staff", staffId, selectedStaff?.value],
+            enable: !!staffId,
         },
     );
 
@@ -215,24 +216,28 @@ export default function BookingPage() {
                             staffId={staffId}
                             bookingDate={date}
                         />
-                        <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
-                            <div className=" w-full flex justify-between items-center ">
-                                <p className=" font-bold ">Selected Staff:</p>
-                            </div>
-                            <LoadingLayout loading={loadingstaff}>
-                                <StaffCard item={staff as IStaffDetail} />
-                            </LoadingLayout>
+                        {staffId && (
+                            <div className=" w-full flex-col flex gap-3 pb-3 border-b ">
+                                <div className=" w-full flex justify-between items-center ">
+                                    <p className=" font-bold ">
+                                        Selected Staff:
+                                    </p>
+                                </div>
+                                <LoadingLayout loading={loadingstaff}>
+                                    <StaffCard item={staff as IStaffDetail} />
+                                </LoadingLayout>
 
-                            <div className={` w-full lg:w-[300px] `}>
-                                <CustomButton
-                                    fullWidth
-                                    onClick={() => setIsOpen(true)}
-                                    isLoading={isLoading}
-                                >
-                                    {"Change Staff"}
-                                </CustomButton>
+                                <div className={` w-full lg:w-[300px] `}>
+                                    <CustomButton
+                                        fullWidth
+                                        onClick={() => setIsOpen(true)}
+                                        isLoading={isLoading}
+                                    >
+                                        {"Change Staff"}
+                                    </CustomButton>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                     <div className=" w-full lg:w-fit ">
                         <div className=" w-full lg:w-[480px] flex flex-col gap-3 rounded-2xl border p-6 ">
