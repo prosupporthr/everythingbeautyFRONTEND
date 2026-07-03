@@ -96,7 +96,7 @@ export default function SaleProductPage() {
                 color: "warning",
             });
             return;
-        }
+        } 
         router.push(
             `/sales/${data?.businessId}/order/${id}?qty=${qty}&color=${color?.label}`,
         );
