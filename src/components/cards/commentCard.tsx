@@ -6,6 +6,8 @@ import moment from "moment";
 import { Spinner } from "@heroui/react"; 
 import { useEffect, useState } from "react";
 import { DeleteModal } from "../modals";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/user";
 
 interface IProps {
     reply?: boolean;
@@ -28,14 +30,13 @@ export default function CommentCard({
 
     const [ isLiked, setIsLiked ] = useState({ hasLiked: false, likeCount: 0 });
 
+    const [user] = useAtom(userAtom);
+
     useEffect(() => {
         if (newLikeData && newLikeData?._id === item?._id) {
             setIsLiked({ hasLiked: newLikeData?.hasLiked, likeCount: newLikeData?.likeCount });
         }
-    }, [newLikeData]);
- 
-    console.log(newLikeData);
-    console.log(item);
+    }, [newLikeData]); 
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -80,9 +81,11 @@ export default function CommentCard({
                             {loadingLike === item?._id ? <Spinner size="sm" /> : <Heart variant={isLiked?.hasLiked ? "Bold" : "Linear"} color={isLiked?.hasLiked ? "red" : "black"} size={15} />}
                             <p className=" text-xs font-semibold ">{isLiked?.likeCount}</p>
                         </button>
-                        <button onClick={() => setIsOpen(true)} className=" flex gap-1 text-red-500 items-center ">
-                            <Trash size={15} /> 
-                        </button>
+                        {item?.userId === user?._id && (
+                            <button onClick={() => setIsOpen(true)} className=" flex gap-1 text-red-500 items-center ">
+                                <Trash size={15} /> 
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
