@@ -24,6 +24,8 @@ import {
     IStaff,
 } from "@/helper/model/business";
 import { useUserStore } from "./user"; 
+import { useAtom } from "jotai";
+import { itemDeleted, postData, postDeleted } from "@/store/post";
 
 interface IProps {
     services?: boolean;
@@ -33,21 +35,26 @@ interface IProps {
     staff?: boolean;
     edit?: boolean;
     staffId?: string; 
+    noredirect?: boolean 
 }
 
-const useBusiness = ({ services, product, business, post, staff, edit, staffId}: IProps) => {
+const useBusiness = ({ services, product, business, post, staff, edit, staffId, noredirect}: IProps) => {
     const router = useRouter();
-    const userId = localStorage.getItem("userid") as string;
+    const userId = (localStorage as any).getItem("userid") as string;
     const [imageFile, setImageFile] = useState<File | string | null>("");
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+
 
     const { refetch } = useUserStore();
 
     const param = useParams();
     const id = param.id as string;
     const slug = param.slug as string; 
+    const [ postdata, setPost ] = useAtom(postData);
+    const [ deletedPost, setDeletedPost ] = useAtom(postDeleted);
+    const [ deletedItem, setDeletedItem ] = useAtom(itemDeleted);
     
 
     const queryClient = useQueryClient();
@@ -98,6 +105,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 router.push(`/business/${id}/dashboard?tab=services`);
             }
             setIsOpen(false);
+            queryClient.invalidateQueries({ queryKey: ["services"] });
         },
     });
 
@@ -113,7 +121,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 color: "success",
             });
 
-            queryClient.invalidateQueries({ queryKey: ["service"] });
+            queryClient.invalidateQueries({ queryKey: ["services"] });
             router.push(`/business/${id}/dashboard?tab=services`);
         },
     });
@@ -128,8 +136,20 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 description: res?.data?.message,
                 color: "success",
             });
+
+            console.log(res?.data?.data);
+
+            formikPost.resetForm()
+
+            const clone = [res?.data?.data, ...postdata]  
+            
+            setPost(clone)
+            setIsOpen(false)
+            
             queryClient.invalidateQueries({ queryKey: ["post"] });
-            router.push(`/business/${id}/dashboard?tab=post`);
+            if(!noredirect) {
+                router.push(`/business/${id}/dashboard?tab=post`);
+            }
         },
     });
 
@@ -146,6 +166,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
             });
 
             queryClient.invalidateQueries({ queryKey: ["post"] });
+            router.push(`/business/${id}/dashboard?tab=post`);
         },
     });
 
@@ -158,9 +179,9 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            });
-
-            console.log("post");
+            }); 
+            console.log(res?.data?.data);
+            setDeletedPost([...deletedPost, res?.data?.data?.id]);
             queryClient.invalidateQueries({ queryKey: ["post"], exact: false });
         },
     });
@@ -176,6 +197,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 description: res?.data?.message,
                 color: "success",
             });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
             queryClient.invalidateQueries({ queryKey: ["service"] });
         },
     });
@@ -190,6 +212,8 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 description: res?.data?.message,
                 color: "success",
             });
+            console.log(queryClient.getQueryCache().getAll().map(q => q.queryKey));
+            queryClient.invalidateQueries({ queryKey: ["product"] });
             router.push(`/business/${id}/dashboard?tab=store`);
         },
     });
@@ -255,7 +279,24 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 description: res?.data?.message,
                 color: "success",
             });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
             queryClient.invalidateQueries({ queryKey: ["product"] });
+        },
+    });
+
+    /** 🔹 Product */
+    const staffDeleteMutation = useMutation({
+        mutationFn: (data: string) =>
+            httpService.delete(URLS.STAFFBYID(data)),
+        onError: handleError,
+        onSuccess: (res) => {
+            addToast({
+                title: "Success",
+                description: res?.data?.message,
+                color: "success",
+            });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
     });
 
@@ -303,6 +344,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
                 color: "success",
             }); 
             queryClient.invalidateQueries({ queryKey: ["booking"] });
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
     });
 
@@ -311,15 +353,15 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
 
         const payloadservices = {
             ...formikService.values,
-            pictures: res,
+            pictures: [...previews, ...res],
         };
         const payloadproduct = {
             ...formikProduct.values,
-            pictures: res,
+            pictures: [...previews, ...res],
         };
         const payloadpost = {
             ...formikPost.values,
-            images: res,
+            images: [...previews, ...res],
         };
  
         const payloadstaff = {
@@ -406,11 +448,16 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         },
         validationSchema: serviceSchema,
         onSubmit: (data) => {
-            if (slug && !imageFile) {
-                servicesEditMutation.mutate(data);
-            } else if (imageFile) {
+            if (slug && imageFiles.length === 0) {
+                servicesEditMutation.mutate({
+                    ...data,
+                    pictures: [...previews],
+                });
+            } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                formdata.append("file", imageFile);
+                imageFiles.forEach(file => {
+                    formdata.append("file", file);
+                });
                 uploadMutation.mutate(formdata);
             } else {
                 addToast({
@@ -429,11 +476,16 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         },
         validationSchema: postSchema,
         onSubmit: (data) => {
-            if (slug && !imageFiles) {
-                postEditMutation.mutate(data);
+            if (slug && imageFiles.length === 0) {
+                postEditMutation.mutate({
+                    ...data,
+                    images: [...previews],
+                });
             } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                formdata.append("file", imageFiles[0]);
+                imageFiles.forEach(file => {
+                    formdata.append("file", file);
+                });
                 uploadMutation.mutate(formdata);
             } else { 
                 postMutation.mutate(data);
@@ -482,11 +534,16 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         },
         validationSchema: productSchema,
         onSubmit: (data) => {
-            if (slug && !imageFile) {
-                productEditMutation.mutate(data);
-            } else if (imageFile) {
+            if (slug && imageFiles.length === 0) {
+                productEditMutation.mutate({
+                    ...data,
+                    pictures: [...previews],
+                });
+            } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                formdata.append("file", imageFile);
+                imageFiles.forEach(file => {
+                    formdata.append("file", file);
+                }); 
                 uploadMutation.mutate(formdata);
             } else {
                 addToast({
@@ -513,7 +570,8 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         bookmarkdeleteMutation.isPending ||
         postDeleteMutation.isPending ||
         staffMutation.isPending ||
-        staffEditMutation.isPending;
+        staffEditMutation.isPending ||
+        staffDeleteMutation.isPending;
 
     return {
         formik,
@@ -530,6 +588,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId}:
         staffEditMutation,
         bookmarkdeleteMutation,
         changeStaffMutation,
+        staffDeleteMutation,
         userId,
         setImageFile,
         imageFile,

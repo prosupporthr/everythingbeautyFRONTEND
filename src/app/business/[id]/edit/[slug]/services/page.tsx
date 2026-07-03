@@ -11,7 +11,7 @@ import { useEffect } from "react";
 export default function BusinessService() {
 
 
-    const { formikService: formik, imageFile, setImageFile, isLoading } = useBusiness({
+    const { formikService: formik, imageFiles, setImageFiles, isLoading, previews, setPreviews } = useBusiness({
         services: true
     })
 
@@ -20,11 +20,9 @@ export default function BusinessService() {
 
 
     const { data, isLoading: loading } = useFetchData<IServiceDetail>({
-        endpoint: `/service/${id}`, name: ["service", id as string]
-    })
-
-    console.log(data);
-
+        endpoint: `/service/${id}`, name: ["service", id as string],
+        noCache: true,
+    });
 
     useEffect(() => {
         if (!formik.values?.businessId && data?.businessId && !loading) {
@@ -37,12 +35,13 @@ export default function BusinessService() {
                 acceptsInitialDeposit: data?.acceptsInitialDeposit,
                 initialDepositPercentage: data?.initialDepositPercentage
             });
+            setPreviews(data?.pictures);
         }
     }, [data]);
 
     return (
         <LoadingLayout loading={loading} >
-            <ServicesForm formik={formik} imageFile={imageFile} setImageFile={setImageFile} isLoading={isLoading} preview={data?.pictures[0]} edit={true} />
+            <ServicesForm formik={formik} imageFiles={imageFiles} setImageFiles={setImageFiles} isLoading={isLoading} preview={previews} setPreviews={setPreviews} edit={true} />
         </LoadingLayout>
     )
 }

@@ -3,9 +3,10 @@ import { BusinessProductCard } from "@/components/cards";
 import { LoadingLayout } from "@/components/shared";
 import { IProductDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
-import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller"; 
+import { itemDeleted } from "@/store/post";
 import { useParams } from "next/navigation"; 
+import { useAtom } from "jotai";
 
 export default function Product({
     isProfile,
@@ -16,7 +17,7 @@ export default function Product({
 }) {
     const param = useParams();
     const id = param.id as string;
-
+    const [deletedItem] = useAtom(itemDeleted);
     const effectiveBusinessId = businessId ?? id ?? "";
 
     const {
@@ -25,21 +26,22 @@ export default function Product({
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IProductDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["product", effectiveBusinessId],
         endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
         limit: 10,
         enable: !isProfile ? true : businessId ? true : false,
+        noCache: true,
     });
 
     return (
         <LoadingLayout
             loading={isLoading}
             refetching={isFetchingMore}
-            length={items?.length}
+            length={items?.filter((item) => !deletedItem.includes(item?._id))?.length}
             ref={ref}
         >
             <div className=" w-full grid lg:grid-cols-4 gap-4 ">
-                {items?.map((item) => {
+                {items?.filter((item) => !deletedItem.includes(item?._id)).map((item) => {
                     return (
                         <BusinessProductCard
                             isProfile={isProfile}

@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export default function BusinessProduct() {
 
-    const { formikProduct: formik, imageFile, setImageFile, isLoading } = useBusiness({
+    const { formikProduct: formik, imageFiles, setImageFiles, isLoading, previews, setPreviews } = useBusiness({
         product: true
     })
 
@@ -32,13 +32,14 @@ export default function BusinessProduct() {
                 quantity: data.quantity || "",
                 colors: data?.colors || []
             });
+            setPreviews(data?.pictures || []);
         }
-    }, [data, loading]); 
+    }, [data, loading]);    
     
 
     return (
         <LoadingLayout loading={loading} >
-            <ProductForm formik={formik} imageFile={imageFile} setImageFile={setImageFile} isLoading={isLoading} edit={true} preview={data?.pictures[0]} />
+            <ProductForm formik={formik} imageFiles={imageFiles} setImageFiles={setImageFiles} isLoading={isLoading} edit={true} previews={previews} setPreviews={setPreviews} />
         </LoadingLayout>
     )
 }

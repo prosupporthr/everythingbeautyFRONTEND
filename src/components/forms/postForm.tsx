@@ -44,13 +44,12 @@ export default function PostForm({
         isLoading: loading,
         isFetchingMore
     } = useInfiniteScroller<IProductDetail>({
-        queryKeyBase: "productfilter",
+        queryKeyBaseArray: ["productfilter", effectiveBusinessId],
         endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
         limit: 10,
     });
-    const router = useRouter(); 
-
-    console.log(formik.errors);
+    
+    const router = useRouter();  
     
 
     return (
@@ -89,6 +88,7 @@ export default function PostForm({
                                 </div>
                                 <div className=" w-full px-4 ">
                                     <CustomInput
+                                        type="search"
                                         notform
                                         name=""
                                         placeholder="Search product..."

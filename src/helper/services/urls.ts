@@ -14,6 +14,7 @@ export const URLS = {
     CANCELLATION: `/transactions/subscription/cancel`,
     NOTIFICATIONBYUSER:(item: string) => `/notifications/user/${item}`,
     NOTIFICATIONSTATUS: `/notifications/bulk-read`,
+    NOTIFICATIONCOUNT: (item: string) => `/notifications/user/${item}/unread`,
     CONNECTACCOUNT: (item: string) =>  `/transactions/connect/${item}`,
     ADDACCOUNT: (item: string) =>  `/transactions/connect/onboard/${item}`,
     WALLETBYUSERID: (item: string) =>  `/transactions/wallet/${item}`,
@@ -47,7 +48,10 @@ export const URLS = {
     STAFFBYBUSINESSID: (item: string) => `/staff/business/${item}`,
     STAFFBYID: (item: string) => `/staff/${item}`,
     TRANSFERSTAFFBYID: (item: string) => `/booking/${item}/transfer`,
-    
+    POSTCOMMENTBYID: (item: string) => `/post/${item}/comment`, 
+    POSTCOMMENTREPLYBYID: (item: string) => `/post/comment/reply/${item}`,
+    POSTCOMMENTLIKEBYID: (item: string) => `/post/comment/${item}/like`,
+    POSTCOMMENTDELETEBYID: (item: string) => `/post/comment/${item}`,      
 }
 
 // export const IMAGE_URL = process.env.NEXT_PUBLIC_RESOURCE_URL as string; 

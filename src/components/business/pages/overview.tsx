@@ -18,7 +18,7 @@ export default function Overview() {
 
     return (
         <div className=" w-full flex-col flex gap-6 " >
-            <div className=" border-b flex overflow-x-auto lg:justify-center gap-6  " >
+            {/* <div className=" border-b flex overflow-x-auto lg:justify-center gap-6  " >
                <div className=" w-fit flex gap-4 items-end " >
                <div className=" py-2 px-5 w-fit  bg-[#F5EEFF] text-brand rounded-t-2xl " >
                     <p className=" text-sm font-medium " >Dashboard</p>
@@ -36,10 +36,7 @@ export default function Overview() {
                     <p className=" text-sm font-semibold " >Booking Completed</p>
                 </div>
                </div>
-            </div>
-            <div className=" w-full flex items-center justify-between " >
-                <p className=" text-2xl font-medium " >Schedule</p> 
-            </div>
+            </div>  */}
             <SchedularList />
             <div className=" w-full flex flex-col gap-4 mt-4 " >
                 <p className=" text-2xl font-medium " >Bookings</p>

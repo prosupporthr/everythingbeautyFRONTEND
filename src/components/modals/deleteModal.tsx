@@ -3,72 +3,100 @@ import { CustomButton } from "../custom";
 import { ModalLayout } from "../shared";
 import useBusiness from "@/hooks/useBusiness";
 import useEditUser from "@/hooks/useEditUser";
+import usePost from "@/hooks/usePost";
 
 export default function DeleteModal({
-  isOpen,
-  onClose,
-  type,
-  id,
-  name,
+    isOpen,
+    onClose,
+    type,
+    id,
+    name,
 }: {
-  isOpen: boolean;
-  onClose: (by: boolean) => void;
-  type: "Store" | "Service" | "Address" | "Bookmark" | "user" | "Post";
-  id: string;
-  name: string;
+    isOpen: boolean;
+    onClose: (by: boolean) => void;
+    type:
+        | "Store"
+        | "Service"
+        | "Address"
+        | "Bookmark"
+        | "user"
+        | "Post"
+        | "Staff"
+        | "Comment"
+        | "Reply";
+    id: string;
+    name: string;
 }) {
+    const {
+        productDeleteMutation,
+        servicesDeleteMutation,
+        bookmarkdeleteMutation,
+        postDeleteMutation,
+        staffDeleteMutation,
+    } = useBusiness({});
 
-  const {
-    productDeleteMutation,
-    servicesDeleteMutation,
-    bookmarkdeleteMutation,
-    postDeleteMutation
-  } = useBusiness({});
+    const { deleteCommentMutation } = usePost();
 
-  const {
-    deleteAddressMutation
-  } = useEditUser()
+    const { deleteAddressMutation } = useEditUser();
 
-  const currentMutation =
-    type === "Store" ? productDeleteMutation : type === "Address" ? deleteAddressMutation : type === "Bookmark" ? bookmarkdeleteMutation : type === "Post"  ? postDeleteMutation : servicesDeleteMutation;
+    const currentMutation =
+        type === "Store"
+            ? productDeleteMutation
+            : type === "Address"
+              ? deleteAddressMutation
+              : type === "Bookmark"
+                ? bookmarkdeleteMutation
+                : type === "Post"
+                  ? postDeleteMutation
+                  : type === "Staff"
+                    ? staffDeleteMutation
+                    :(type === "Comment" || type === "Reply")
+                    ? deleteCommentMutation
+                    : servicesDeleteMutation;
 
-  const clickHandler = () => {
-    currentMutation.mutate(id, {
-      onSuccess: () => onClose(false),
-    });
-  };
+    const clickHandler = () => {
+        currentMutation.mutate(id, {
+            onSuccess: () => onClose(false),
+        });
+    };
 
-  const loading = currentMutation.isPending;
+    const loading = currentMutation.isPending;
 
-  return (
-    <ModalLayout size="sm" isOpen={isOpen} onClose={() => onClose(false)}>
-      <div className="flex flex-col gap-4 w-full">
-        <div className="w-full flex flex-col gap-2 items-center">
-          <div className="w-20 h-20 rounded-full border-8 bg-red-300 border-red-100 flex justify-center items-center">
-            <IoTrashBinOutline size={30} className="text-red-600" />
-          </div>
+    return (
+        <ModalLayout size="sm" isOpen={isOpen} onClose={() => onClose(false)}>
+            <div className="flex flex-col gap-4 w-full">
+                <div className="w-full flex flex-col gap-2 items-center">
+                    <div className="w-20 h-20 rounded-full border-8 bg-red-300 border-red-100 flex justify-center items-center">
+                        <IoTrashBinOutline size={30} className="text-red-600" />
+                    </div>
 
-          <p className="text-2xl font-bold">Delete {type}</p>
+                    <p className="text-2xl font-bold">Delete {type}</p>
 
-          <p className="text-xs font-medium text-center text-secondary">
-            Deleting this {type} named <span className=" font-bold text-brand " >{name}</span> will permanently delete it. This action cannot be undone, so make sure you're certain before proceeding.
-          </p>
-        </div>
+                    <p className="text-xs font-medium text-center text-secondary">
+                        Deleting this {type}
+                        <span className=" font-bold text-brand ">{name}</span>{" "}
+                        will permanently delete it. This action cannot be
+                        undone, so make sure you're certain before proceeding.
+                    </p>
+                </div>
 
-        <div className="flex flex-col gap-2 w-full">
-          <CustomButton
-            onClick={clickHandler}
-            isLoading={loading}
-            variant="customDanger"
-          >
-            Delete {type}
-          </CustomButton>
+                <div className="flex flex-col gap-2 w-full">
+                    <CustomButton
+                        onClick={clickHandler}
+                        isLoading={loading}
+                        variant="customDanger"
+                    >
+                        Delete {type}
+                    </CustomButton>
 
-          <CustomButton onClick={() => onClose(false)} variant="outline">
-            Cancel
-          </CustomButton>
-        </div>
-      </div>
-    </ModalLayout>
-  );
+                    <CustomButton
+                        onClick={() => onClose(false)}
+                        variant="outline"
+                    >
+                        Cancel
+                    </CustomButton>
+                </div>
+            </div>
+        </ModalLayout>
+    );
 }

@@ -2,63 +2,58 @@
 import { PostCard } from "@/components/cards";
 import { LoadingLayout } from "@/components/shared";
 import { IPostDetail } from "@/helper/model/business";
-import { URLS } from "@/helper/services/urls";
-import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";  
+import { URLS } from "@/helper/services/urls"; 
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
 import usePost from "@/hooks/usePost";
+import { postDeleted } from "@/store/post";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
-// import { useParams } from "next/navigation"; 
+// import { useParams } from "next/navigation";
 
-export default function PostPage({
-    isProfile,
-    businessId,
+export default function PostPage({ 
 }: {
     isProfile?: boolean;
     businessId?: string;
-}) {
-    // const param = useParams();
-    // const id = param.id as string;
+}) { 
 
-    const [user] = useAtom(userAtom);
-
-    // const {
-    //     items = [],
-    //     ref,
-    //     isLoading,
-    //     isFetchingMore,
-    // } = useInfiniteScroller<IPostDetail>({
-    //     queryKeyBase: "post",
-    //     endpoint: URLS.POSTBYUSERID(user?._id+""),
-    //     limit: 10, 
-    // }); 
-
-
+    const [user] = useAtom(userAtom); 
+    const [deletedItem] = useAtom(postDeleted);
     const {
-        data: items,
-        isLoading
-        // isRefetching,
-    } = useFetchData<IPostDetail[]>({
-        endpoint: URLS.POSTBYUSERID(user?._id+""),
-        name: ["post", user?._id+""],
+        items = [],
+        ref,
+        isLoading,
+        isFetchingMore,
+    } = useInfiniteScroller<IPostDetail>({
+        queryKeyBaseArray: ["post", user?._id + ""],
+        endpoint: URLS.POSTBYUSERID(user?._id + ""),
+        limit: 10,
+        noCache: true,
     });
 
-    const { handleLikePost } = usePost()
+    const { handleLikePost } = usePost();
 
     return (
-        <LoadingLayout
-            loading={isLoading}
-            // refetching={isFetchingMore}
-            length={items?.length}
-            // ref={ref}
-        >
-            <div className={` w-full grid lg:grid-cols-3 gap-4 `}>
-                {items?.map((item, index) => {
-                    return (
-                        <PostCard click={handleLikePost} key={index} isProfile={true} item={item} />
-                    );
-                })}
-            </div>
-        </LoadingLayout>
+        <div className=" w-full flex justify-center items-center ">
+            <LoadingLayout
+                loading={isLoading}
+                refetching={isFetchingMore}
+                length={items?.filter((item) => !deletedItem.includes(item?._id))?.length}
+                ref={ref}
+            >
+                <div className=" lg:max-w-[500px] w-full flex flex-col gap-4 ">
+                    {items?.filter((item) => !deletedItem.includes(item?._id)).map((item, index) => {
+                        return (
+                            <PostCard
+                                click={handleLikePost}
+                                key={index}
+                                isProfile={true}
+                                item={item}
+                            />
+                        );
+                    })}
+                </div>
+            </LoadingLayout>
+        </div>
     );
 }

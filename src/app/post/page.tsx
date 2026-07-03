@@ -10,13 +10,28 @@ import useBusiness from "@/hooks/useBusiness";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
 import { useFetchData } from "@/hooks/useFetchData";
 import usePost from "@/hooks/usePost";
+import { postData, postDeleted } from "@/store/post";
 import { userAtom } from "@/store/user";
 import { Spinner } from "@heroui/spinner";
 import { addToast } from "@heroui/toast";
 import { Gallery, People, Send } from "iconsax-reactjs";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { uniqBy } from "lodash";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
+
+const DISCOVERY_LIMIT = 4;
+
+const PROMO_GRADIENT = {
+    background:
+        "linear-gradient(135deg, rgba(129, 39, 207, 0.05) 0%, rgba(129, 39, 207, 0) 100%)",
+};
+
+const STYLIST_ONLY_WARNING = {
+    title: "Warning",
+    description: "Join as a Stylist to create post",
+    color: "warning" as const,
+};
 
 export default function PostPage() {
     const {
@@ -25,12 +40,14 @@ export default function PostPage() {
         isLoading,
         isFetchingMore,
     } = useInfiniteScroller<IPostDetail>({
-        queryKeyBase: "post",
+        queryKeyBaseArray: ["post"],
         endpoint: URLS.POST,
         limit: 10,
     });
 
-    const { data, isLoading: loading } = useFetchData<IBusinessDetails[]>({
+    const { data: businesses, isLoading: loadingBusinesses } = useFetchData<
+        IBusinessDetails[]
+    >({
         endpoint: `/business/filter`,
         name: ["business"],
     });
@@ -38,58 +55,53 @@ export default function PostPage() {
     const { handleLikePost } = usePost();
 
     const [user] = useAtom(userAtom);
-    const router = useRouter();
+    const [posts, setPosts] = useAtom(postData);
+    const deletedPosts = useAtomValue(postDeleted);
 
-    const [open, setOpen] = useState(false);
+    const router = useRouter();
 
     const {
         formikPost,
         imageFiles,
+        isOpen,
+        setIsOpen,
         setImageFiles,
         setPreviews,
         isLoading: loadingPost,
     } = useBusiness({
         post: true,
+        noredirect: true,
     });
 
-    const handleClick = () => {
+    // Gate stylist-only actions (creating/submitting a post) behind a single check
+    const requireStylistAccess = (action: () => void) => {
         if (user?.business?._id) {
-            setOpen(true);
+            action();
         } else {
-            addToast({
-                title: "Warning",
-                description: "Join as a Stylist to create post",
-                color: "warning",
-            });
+            addToast(STYLIST_ONLY_WARNING);
         }
     };
 
-    const handleSubmit = () => {
-        if (user?.business?._id) {
-            formikPost.handleSubmit()
-        } else {
-            addToast({
-                title: "Warning",
-                description: "Join as a Stylist to create post",
-                color: "warning",
-            });
-        }
-    };
+    const handleOpenComposer = () => requireStylistAccess(() => setIsOpen(true));
+    const handleSubmitPost = () =>
+        requireStylistAccess(() => formikPost.handleSubmit());
 
-    const business = data
-        ?.filter((_, index) => index < 4)
-        ?.map((item) => (
-            <div key={item?._id}>
-                <LandingBusinessCard small item={item} />
-            </div>
-        ));
+    useEffect(() => {
+        if (items.length > 0) {
+            setPosts((prev) => uniqBy([...prev, ...items], "_id"));
+        }
+    }, [items, setPosts]);
+
+    const visiblePosts = posts?.filter(
+        (item) => !deletedPosts.includes(item?._id),
+    );
 
     return (
-        <div className=" w-full flex-1 flex gap-6 overflow-hidden ">
-            <div className=" flex-1 flex items-center flex-col p-6 pr-0 gap-4 overflow-auto ">
-                <div className=" max-w-[500px] w-full flex flex-col gap-4 ">
-                    <div className=" w-full flex flex-col gap-2 ">
-                        <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center "> 
+        <div className=" w-full flex-1 lg:flex-row flex-col flex gap-6 lg:overflow-hidden ">
+            <div className=" w-full h-auto lg:flex-1 flex items-center flex-col p-4 lg:p-6 lg:pr-0 gap-4 lg:overflow-auto ">
+                <div className=" lg:max-w-[500px] w-full flex flex-col gap-4 ">
+                    <div className=" w-full flex flex-col gap-2 items-center ">
+                        <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center ">
                             <input
                                 value={formikPost.values?.body}
                                 onChange={(e) =>
@@ -101,14 +113,24 @@ export default function PostPage() {
                                 className="w-full h-full border-0 rounded-r-full text-sm px-3 outline-none focus:outline-none focus:ring-0"
                                 placeholder="What is on your mind today?"
                             />
-                            <button onClick={handleSubmit} className=" w-fit px-3 h-full flex justify-center items-center ">
-                                {loadingPost ? 
-                                <Spinner size="sm" /> : 
-                                <Send size={"25px"} className=" text-brand " />
-                                }
+                            <button
+                                onClick={handleSubmitPost}
+                                className=" w-fit px-3 h-full flex justify-center items-center "
+                            >
+                                {loadingPost ? (
+                                    <Spinner size="sm" />
+                                ) : (
+                                    <Send
+                                        size={"25px"}
+                                        className=" text-brand "
+                                    />
+                                )}
                             </button>
                         </div>
-                        <button onClick={()=> handleClick()} className=" flex justify-center items-center gap-2 ">
+                        <button
+                            onClick={handleOpenComposer}
+                            className=" flex justify-center items-center w-fit rounded-2xl gap-2 px-3 py-[6px] bg-[#E0B0FF] text-black "
+                        >
                             <Gallery size={25} />
                             <p>Add Photos/Video in your post</p>
                         </button>
@@ -117,78 +139,22 @@ export default function PostPage() {
                         <LoadingLayout
                             loading={isLoading}
                             refetching={isFetchingMore}
-                            length={items?.length}
+                            length={visiblePosts?.length}
                             ref={ref}
                         >
-                            {items?.map((item, index) => {
-                                return (
-                                    <PostCard
-                                        click={handleLikePost}
-                                        key={index}
-                                        item={item}
-                                    />
-                                );
-                            })}
+                            {visiblePosts?.map((item) => (
+                                <PostCard
+                                    click={handleLikePost}
+                                    key={item?._id}
+                                    item={item}
+                                    isProfile={user?._id === item?.userId}
+                                />
+                            ))}
                         </LoadingLayout>
                     </div>
                 </div>
             </div>
-            <div className=" max-w-[470px] w-full pl-0 p-6 flex flex-col gap-6 overflow-auto ">
-                <div
-                    style={{ boxShadow: "0px 4px 20px -2px #8127CF14" }}
-                    className=" border rounded-3xl p-6 w-full gap-4 flex flex-col "
-                >
-                    <div className=" w-full flex justify-between items-center ">
-                        <p className=" font-bold ">Trending Stylists</p>
-                        <p className=" font-bold text-xs ">View All</p>
-                    </div>
-                    <div className=" w-full flex items-center justify-between ">
-                        <div className=" flex gap-2 items-center ">
-                            <div className=" w-11 h-11 rounded-full bg-green-300 " />
-                            <div className=" flex flex-col ">
-                                <p className=" text-sm font-bold ">
-                                    Alex Rivera
-                                </p>
-                                <p className=" text-secondary text-[11px] ">
-                                    Barbering Expert
-                                </p>
-                            </div>
-                        </div>
-                        <CustomButton height="35px" variant="outlinebrand">
-                            Follow
-                        </CustomButton>
-                    </div>
-                    <div className=" w-full flex items-center justify-between ">
-                        <div className=" flex gap-2 items-center ">
-                            <div className=" w-11 h-11 rounded-full bg-green-300 " />
-                            <div className=" flex flex-col ">
-                                <p className=" text-sm font-bold ">
-                                    Alex Rivera
-                                </p>
-                                <p className=" text-secondary text-[11px] ">
-                                    Barbering Expert
-                                </p>
-                            </div>
-                        </div>
-                        <CustomButton height="35px">Following</CustomButton>
-                    </div>
-                    <div className=" w-full flex items-center justify-between ">
-                        <div className=" flex gap-2 items-center ">
-                            <div className=" w-11 h-11 rounded-full bg-green-300 " />
-                            <div className=" flex flex-col ">
-                                <p className=" text-sm font-bold ">
-                                    Alex Rivera
-                                </p>
-                                <p className=" text-secondary text-[11px] ">
-                                    Barbering Expert
-                                </p>
-                            </div>
-                        </div>
-                        <CustomButton height="35px" variant="outlinebrand">
-                            Follow
-                        </CustomButton>
-                    </div>
-                </div>
+            <div className=" max-w-[470px] w-full lg:flex hidden pl-0 p-6 flex-col gap-6 lg:overflow-auto ">
                 <div className=" flex w-full flex-col gap-4 ">
                     <div className=" w-full flex justify-between items-center ">
                         <p className=" font-bold ">Discovery</p>
@@ -199,17 +165,26 @@ export default function PostPage() {
                             View All
                         </button>
                     </div>
-                    <LoadingLayout loading={loading} length={data?.length}>
+                    <LoadingLayout
+                        loading={loadingBusinesses}
+                        length={businesses?.length}
+                    >
                         <div className=" w-full grid grid-cols-2 gap-4 text-white ">
-                            {business}
+                            {businesses
+                                ?.slice(0, DISCOVERY_LIMIT)
+                                ?.map((item) => (
+                                    <div key={item?._id}>
+                                        <LandingBusinessCard
+                                            small
+                                            item={item}
+                                        />
+                                    </div>
+                                ))}
                         </div>
                     </LoadingLayout>
                 </div>
                 <div
-                    style={{
-                        background:
-                            "linear-gradient(135deg, rgba(129, 39, 207, 0.05) 0%, rgba(129, 39, 207, 0) 100%)",
-                    }}
+                    style={PROMO_GRADIENT}
                     className=" w-full flex flex-col shadow p-6 gap-3 rounded-3xl justify-center items-center "
                 >
                     <div className=" w-14 h-14 rounded-2xl bg-white text-brand flex justify-center items-center ">
@@ -230,7 +205,7 @@ export default function PostPage() {
                     </CustomButton>
                 </div>
             </div>
-            <ModalLayout isOpen={open} onClose={() => setOpen(false)}>
+            <ModalLayout isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <PostForm
                     modal
                     setPreviews={setPreviews}

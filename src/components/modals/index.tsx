@@ -14,3 +14,5 @@ export { default as GetAccountNumber } from "./getAccountNumber"
 export { default as SuccessModal } from "./successModal"
 
 export { default as SelectStaffModal } from "./selectStaffModal"
+
+export { default as CommentModal } from "./commentModal"
