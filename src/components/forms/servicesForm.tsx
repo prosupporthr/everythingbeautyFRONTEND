@@ -31,7 +31,7 @@ export default function ServicesForm(
                         <CustomInput name="name" label="Tell us what services you offering" />
                         <CustomInput textarea label="Describe your service to make it stand out" name="description" />
                         <CustomInput label="Price per Hour" name="hourlyRate" type="number" />
-                        <CustomInput name="initialDepositPercentage" label="Set Initial Deposit" hasBackIcon iconback={
+                        <CustomInput name="initialDepositPercentage" type="number" label="Set Initial Deposit" hasBackIcon iconback={
                             <div className=" font-bold text-sm " >
                                 %
                             </div>

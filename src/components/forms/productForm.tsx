@@ -1,15 +1,14 @@
 "use client"
-import { IProduct } from "@/helper/model/business";
-import { Switch } from "@heroui/switch";
+import { IProduct } from "@/helper/model/business"; 
 import { FormikProps, FormikProvider } from "formik"; 
 import { CustomInput, CustomButton } from "../custom";
-import { ImagePicker } from "../shared";
+import { MultipleImagePicker } from "../shared";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import ColorSelector from "../custom/customColorPicker";
 
 export default function ProductForm(
-    { formik, imageFile, setImageFile, isLoading, edit, preview } : { formik: FormikProps<IProduct>, imageFile: File | string | null, setImageFile: (by: File | string | null) => void, isLoading: boolean, edit?: boolean, preview?: string }
+    { formik, imageFiles, setImageFiles, isLoading, edit, previews, setPreviews } : { formik: FormikProps<IProduct>, imageFiles: File[], setImageFiles: (files: File[]) => void, isLoading: boolean, edit?: boolean, previews: string[], setPreviews: (previews: string[]) => void }
 ) {
 
     const router = useRouter()
@@ -25,7 +24,9 @@ export default function ProductForm(
                 <div className=" w-full flex justify-center mb-8 " >
                     <div className=" max-w-[520px] w-full gap-6 flex flex-col " >
                         <p className=" text-2xl font-semibold text-center " >Share pictures of your Product</p>
-                        <ImagePicker setImageFile={setImageFile} imageFile={imageFile} preview={preview} />
+                        <div className={` w-full h-fit `}>
+                            <MultipleImagePicker imageFiles={imageFiles} setImageFiles={setImageFiles} previews={previews} setPreviews={setPreviews} />
+                        </div>
                         <CustomInput name="name" label="Tell us about your Product" />
                         <CustomInput textarea label="Describe your Product to make it stand out" name="description" />
                         <CustomInput label="Price per unit" name="price" type="number" />

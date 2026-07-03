@@ -4,7 +4,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { useState } from "react";
 import { IoIosMore } from "react-icons/io";
 import { useParams, useRouter } from "next/navigation";
-import { CustomImage } from "../custom";
+import { CustomImage, ImageCarousel } from "../custom";
 import { DeleteModal } from "../modals";
 import { formatNumber } from "@/helper/utils/numberFormat";
 
@@ -28,9 +28,9 @@ export default function BusinessProductCard(
     }
 
     return (
-        <div className=" w-full flex flex-col rounded-[10px] border " >
-            <div className=" w-full h-[180px] relative rounded-lg rounded-bl-lg bg-gray-200 " >
-                <CustomImage style={{ borderTopRightRadius: "10px", borderTopLeftRadius: "10px" }} src={item?.pictures[0]} fillContainer alt={item?.name} />
+        <div className=" w-full flex flex-col rounded-2xl p-2 border " >
+            <div className=" w-full h-[180px] relative " >
+                <ImageCarousel images={item?.pictures} className="w-full h-[180px]" />
                 {isProfile && (
                     <Popover showArrow isOpen={show} onOpenChange={setShow} backdrop={"opaque"} offset={10} placement="top">
 
@@ -54,7 +54,7 @@ export default function BusinessProductCard(
                 )}
 
             </div>
-            <div className=" w-full flex flex-col gap-1 px-2 py-2 " >
+            <div className=" w-full flex flex-col gap-1 py-2 " >
                 <div className=" w-full flex font-bold items-center justify-between " >
                     <p className=" capitalize " >{item?.name}</p>
                     <p>{formatNumber(item?.price)}</p>

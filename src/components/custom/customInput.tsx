@@ -81,38 +81,50 @@ export default function CustomInput({
 
             {/* Default input */}
             {textarea ? (
-                <Textarea
-                    disabled={disabled}
-                    placeholder={placeholder}
-                    maxLength={maxLength ?? 1000}
-                    labelPlacement={placement}
-                    classNames={{
-                        inputWrapper: `bg-[#FDFDFD] border border-[#EAEBEDCC] rounded-xl p-3 min-h-[${height ?? "100px"}]`,
-                        input: "text-gray-900",
-                    }}
-                    value={value}
-                    onValueChange={changeHandler}
-                />
+                <div className="w-full flex flex-col gap-1">
+                    <Textarea
+                        disabled={disabled}
+                        placeholder={placeholder}
+                        maxLength={maxLength ?? 1000}
+                        labelPlacement={placement}
+                        classNames={{
+                            inputWrapper: `bg-[#FDFDFD] border border-[#EAEBEDCC] rounded-xl p-3 min-h-[${height ?? "100px"}]`,
+                            input: "text-gray-900",
+                        }}
+                        value={value}
+                        onValueChange={changeHandler}
+                    />
+                    <p className="text-xs text-gray-500 font-medium">
+                        {value?.length}/{maxLength ?? 1000}
+                    </p>
+                </div>
             ) : (
                 <>
                     {type !== "number" && (
-                        <Input
-                            disabled={disabled}
-                            placeholder={placeholder}
-                            labelPlacement={placement}
-                            type={type}
-                            maxLength={maxLength ?? 100}
-                            startContent={startContent}
-                            endContent={endContent}
-                            classNames={{
-                                inputWrapper: rounded
-                                    ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm "
-                                    : " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
-                                input: "text-gray-900 h-full w-full text-sm  outline-none ",
-                            }}
-                            value={value}
-                            onValueChange={changeHandler}
-                        />
+                        <div className="w-full flex flex-col gap-1">
+                            <Input
+                                disabled={disabled}
+                                placeholder={placeholder}
+                                labelPlacement={placement}
+                                type={type}
+                                maxLength={maxLength ?? 100}
+                                startContent={startContent}
+                                endContent={endContent}
+                                classNames={{
+                                    inputWrapper: rounded
+                                        ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm "
+                                        : " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
+                                    input: "text-gray-900 h-full w-full text-sm  outline-none ",
+                                }}
+                                value={value}
+                                onValueChange={changeHandler}
+                            />
+                            {type !== "search" && 
+                            <p className="text-xs text-gray-500 font-medium">
+                                {value?.length}/{maxLength ?? 100}
+                            </p>
+                            }
+                        </div>
                     )}
 
                     {/* Number-only input */}

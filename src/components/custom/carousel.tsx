@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { StaticImageData } from "next/image";
 import CustomImage from "./customImage"; // adjust path to wherever CustomImage lives
+import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 
 type CarouselImage = string | StaticImageData;
 
@@ -122,6 +123,7 @@ export default function ImageCarousel({
         {images.map((img, i) => (
           <div key={i} className="relative w-full h-full flex-shrink-0">
             <CustomImage
+            post
               src={img}
               alt={getAlt(i)}
               fillContainer
@@ -144,7 +146,7 @@ export default function ImageCarousel({
             }}
             className="absolute left-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 transition"
           >
-            ‹
+            <IoArrowBackOutline size={"16px"} />
           </button>
           <button
             type="button"
@@ -155,7 +157,7 @@ export default function ImageCarousel({
             }}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 transition"
           >
-            ›
+            <IoArrowForwardOutline size={"16px"} />
           </button>
         </>
       )}

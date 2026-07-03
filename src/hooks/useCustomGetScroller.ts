@@ -78,9 +78,9 @@ export function useInfiniteScroller<T>({
 
     const queryKey = useMemo(
         () => [ 
+            ...queryKeyBaseArray,
             serializedParams,
             page,
-            ...queryKeyBaseArray,
         ],
         [serializedParams, page, ...queryKeyBaseArray],
     );

@@ -20,11 +20,9 @@ export default function BusinessService() {
 
 
     const { data, isLoading: loading } = useFetchData<IServiceDetail>({
-        endpoint: `/service/${id}`, name: ["service", id as string]
-    })
-
-    console.log(data);
-
+        endpoint: `/service/${id}`, name: ["service", id as string],
+        noCache: true,
+    });
 
     useEffect(() => {
         if (!formik.values?.businessId && data?.businessId && !loading) {

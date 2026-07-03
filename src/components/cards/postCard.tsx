@@ -1,6 +1,6 @@
 "use client";
 import { Heart, Send } from "iconsax-reactjs";
-import { CustomButton, CustomImage } from "../custom";
+import { CustomButton, CustomImage, ImageCarousel } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
 import { formatNumber } from "@/helper/utils/numberFormat"; 
 import { ModalLayout } from "../shared";
@@ -144,9 +144,13 @@ export default function PostCard({
             </div>
             {item?.images[0] && (
                 <div
-                    className={` {${isProfile ? " lg:h-[250px] " : "  lg:h-[478px]  "} } w-full h-[200px] flex `}
+                    className={` {${isProfile ? " lg:h-[250px] " : "  lg:h-[478px]  "} } w-full h-[200px] flex px-2 `}
                 >
-                    <CustomImage post src={item?.images[0]} alt="post" />
+                    {/* <CustomImage post src={item?.images[0]} alt="post" /> */}
+
+                <ImageCarousel
+                    images={item?.images} 
+                />
                 </div>
             )}
             <div className=" w-full flex flex-col px-4 ">
