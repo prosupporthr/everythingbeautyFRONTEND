@@ -128,7 +128,7 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                 <div className=" w-full flex flex-col gap-5 pb-4 max-h-[70vh] min-h-[50vh] px-4 py-4 overflow-y-auto ">
                     <LoadingLayout
                         loading={loading}
-                        length={items?.length}
+                        length={visibleComments?.length}
                         ref={ref}
                         refetching={isFetchingMore}
                     >
@@ -153,7 +153,7 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                                             loading={loadingReplies}
                                             refetching={isFetchingMoreReplies}
                                             ref={repliesRef}
-                                            length={repliesItems?.length}
+                                            length={visibleReplies?.length}
                                         >
                                             {visibleReplies?.map((reply) => (
                                                 <div
