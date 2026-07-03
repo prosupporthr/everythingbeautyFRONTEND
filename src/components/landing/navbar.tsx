@@ -43,8 +43,8 @@ export default function Navbar() {
 
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
-        name: ["review"],
-        enable: data?._id ? true : false,
+        name: ["review", user?._id as string],
+        enable: user?._id ? true : false,
     });
 
     const { data: count, isLoading: loadingNotification } =
@@ -52,9 +52,7 @@ export default function Navbar() {
             endpoint: URLS.NOTIFICATIONCOUNT(user?._id as string),
             name: ["notificationcount", user?._id as string],
             enable: user?._id ? true : false,
-        });
-
-    console.log(count);
+        }); 
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
