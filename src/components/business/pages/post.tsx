@@ -27,7 +27,8 @@ export default function PostPage({
     } = useInfiniteScroller<IPostDetail>({
         queryKeyBaseArray: ["post", user?._id + ""],
         endpoint: URLS.POSTBYUSERID(user?._id + ""),
-        limit: 10
+        limit: 10,
+        noCache: true,
     });
 
     const { handleLikePost } = usePost();
