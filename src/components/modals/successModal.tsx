@@ -20,7 +20,7 @@ interface IProps {
 }
 
 export default function SuccessModal({
-    // isloading,
+    isOpen,
     setIsOpen,
     isSuccess,
     errorMessage,
@@ -56,7 +56,7 @@ export default function SuccessModal({
     };
 
     return (
-        <ModalLayout size="sm" isOpen={true} onClose={handleContinue}>
+        <ModalLayout size="sm" isOpen={isOpen} onClose={handleContinue}>
             <div className="w-full flex flex-col items-center gap-4 pb-4 text-center">
                 {(!isSuccess && !isError) && (
                     <>
