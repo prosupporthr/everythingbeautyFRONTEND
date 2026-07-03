@@ -75,10 +75,7 @@ export function useChatScroller(chatId: string, limit = 20) {
 
     if (!chatId) return;
 
-    const messageEvent = `chat:${chatId}`;
-
-    console.log(messageEvent);
-
+    const messageEvent = `chat:${chatId}`; 
 
     const handleNewMessage = (msg: IChatMessage) => {
       setMessages((prev) =>

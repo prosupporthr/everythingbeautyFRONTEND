@@ -19,7 +19,8 @@ import { IRating } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
 import { RiNotification2Fill } from "react-icons/ri";
-import { Spinner } from "@heroui/spinner";
+import { Spinner } from "@heroui/spinner"; 
+import { Image } from "@heroui/react";
 
 export default function Navbar() {
     const router = useRouter();
@@ -52,7 +53,7 @@ export default function Navbar() {
             endpoint: URLS.NOTIFICATIONCOUNT(user?._id as string),
             name: ["notificationcount", user?._id as string],
             enable: user?._id ? true : false,
-        }); 
+        });
 
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
@@ -61,7 +62,8 @@ export default function Navbar() {
             setUser(data);
         } else if (
             data === null &&
-            (!pathname.includes("sale") || !pathname.includes("profile"))
+            !pathname.includes("sale") &&
+            !pathname.includes("profile")
         ) {
             router.push("/");
         }
@@ -115,13 +117,11 @@ export default function Navbar() {
                     className=" flex flex-col "
                     onClick={() => router.push(user?._id ? "/post" : "/")}
                 >
-                    <CustomImage
-                        nopopup
-                        src={"/images/logo.png"}
-                        alt="logo"
-                        width={92}
-                        height={43}
-                    />
+                    <Image
+              src={"/images/logo.png"}
+              alt="logo"
+              className=" w-[92px] "  
+            /> 
                 </button>
                 {isLoading && (
                     <div className=" flex h-full justify-center items-center ">
@@ -171,12 +171,12 @@ export default function Navbar() {
                                     <RiNotification2Fill size={"25px"} />
                                 </div>
                                 {/* {isRead && ( */}
-                                    <div className=" absolute flex justify-center items-center -top-1 text-white text-[10px] font-bold -right-1 bg-red-500 w-4 h-4 rounded-full ">
-                                        {!loadingNotification && <>{count}</>}
-                                        {loadingNotification && (
-                                            <Spinner size="sm" color="danger" />
-                                        )}
-                                    </div>
+                                <div className=" absolute flex justify-center items-center -top-1 text-white text-[10px] font-bold -right-1 bg-red-500 w-4 h-4 rounded-full ">
+                                    {!loadingNotification && <>{count}</>}
+                                    {loadingNotification && (
+                                        <Spinner size="sm" color="danger" />
+                                    )}
+                                </div>
                                 {/* )} */}
                             </button>
                         )}
