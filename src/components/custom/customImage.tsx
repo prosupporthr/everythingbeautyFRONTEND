@@ -13,7 +13,6 @@ type Props = Omit<ImageProps, "src"> & {
   aspectRatio?: number; // optional aspect ratio (width/height)
   overlayer?: boolean;
   nopopup?: boolean;
-  priority?: boolean; // opt-in eager loading, default false — only use for above-the-fold images
 };
 
 export default function CustomImage({
@@ -27,7 +26,6 @@ export default function CustomImage({
   overlayer,
   post,
   nopopup = true,
-  priority = false,
   ...rest
 }: Props) {
   const [imgSrc, setImgSrc] = React.useState<string | StaticImageData>(src);
@@ -36,22 +34,18 @@ export default function CustomImage({
   // Keep imgSrc in sync whenever the parent passes a new src
   React.useEffect(() => {
     setImgSrc(src);
-  }, []);
+  }, [src]);
 
   function handleError() {
     if (imgSrc !== fallbackSrc) setImgSrc(fallbackSrc);
   }
 
   const FullImageModal = () => {
-    // Don't mount the modal's <Image> at all when there's nothing to show —
-    // avoids passing an invalid empty src on every render of every instance.
-    if (!isOpen) return null;
-
     return (
       <ModalLayout
         size="lg"
         title="Preview Image"
-        isOpen={true}
+        isOpen={isOpen ? true : false}
         onClose={() => setIsOpen("")}
       >
         <div className=" w-full relative h-[400px] mb-4 rounded-2xl bg-gray-300 ">
@@ -62,7 +56,7 @@ export default function CustomImage({
               fill
               className="w-full h-auto object-contain rounded-2xl " // ✅ tailwind classes
               sizes="100vw" // ✅ responsive loading
-              priority // modal preview is user-initiated and above-the-fold — fine to keep eager
+              priority
               {...rest}
             />
           </div>
@@ -83,7 +77,7 @@ export default function CustomImage({
           fill
           className={` ${className} w-full h-full object-cover rounded-2xl `} // ✅ tailwind classes
           sizes="100vw" // ✅ responsive loading
-          priority={priority} // ✅ only eager-load when explicitly requested
+          priority // (optional) load immediately if above the fold
           {...rest}
         />
         {overlayer && (
@@ -106,7 +100,7 @@ export default function CustomImage({
           fill
           className="w-auto h-full object-contain " // ✅ tailwind classes
           sizes="100vw" // ✅ responsive loading
-          priority={priority} // ✅ only eager-load when explicitly requested
+          priority // (optional) load immediately if above the fold
           {...rest}
         />
         {overlayer && (
@@ -130,7 +124,6 @@ export default function CustomImage({
           alt={alt}
           onError={handleError}
           fill
-          priority={priority} // ✅ only eager-load when explicitly requested
           style={{ objectFit: rest.style?.objectFit ?? "cover" }}
           {...rest}
         />
@@ -150,7 +143,6 @@ export default function CustomImage({
         alt={alt}
         onError={handleError}
         className={className}
-        priority={priority} // ✅ only eager-load when explicitly requested
         {...rest}
       />
       {overlayer && (
