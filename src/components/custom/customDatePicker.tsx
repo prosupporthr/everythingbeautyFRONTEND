@@ -10,7 +10,6 @@ import {
   CalendarDateTime,
   parseDate,
   parseDateTime,
-  CalendarDate,
 } from "@internationalized/date";
 
 interface IProps {
@@ -29,7 +28,7 @@ interface IProps {
   onChange?: (value: string) => void;
 
   /** NEW — Date of Birth mode (18+ only) */
-  isDOB?: boolean;
+  isDOB?: boolean; 
 }
 
 export default function CustomDateTimePicker({
@@ -43,7 +42,7 @@ export default function CustomDateTimePicker({
   useFormik = true,
   value,
   onChange,
-  isDOB = false,
+  isDOB = false, 
 }: IProps) {
   // If DOB mode is enabled, disable time selection
   if (isDOB) {
@@ -153,14 +152,14 @@ export default function CustomDateTimePicker({
   const minDOB = parseDate("1900-01-01"); // Earliest allowed DOB
 
   /** ---------- NORMAL MODE RESTRICTIONS ---------- */
-  const minNormal = today(localTZ); // Cannot pick past days for normal mode
+  const minNormal = todayDate; // Cannot pick past days for normal mode
 
   return (
     <div className="w-full flex flex-col gap-0.5">
       {label && <p className="text-sm text-gray-700 font-medium">{label}</p>}
 
       <DatePicker
-        isDisabled={disabled} 
+        isDisabled={disabled}  
         // @ts-expect-error — HeroUI + internationalized date type mismatch is safe here
         value={dateValue}
         granularity={withTime && !isDOB ? "minute" : "day"}

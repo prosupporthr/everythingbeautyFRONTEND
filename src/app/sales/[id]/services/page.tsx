@@ -440,7 +440,7 @@ export default function SaleServicePage() {
                                     >
                                         <div className=" w-full border-r px-4 ">
                                             <CustomDateTimePicker
-                                                borderWidth="0px"
+                                                borderWidth="0px" 
                                                 withTime={false}
                                                 label="Service Date"
                                                 useFormik={false}

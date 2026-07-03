@@ -285,33 +285,34 @@ export default function BookedServicesPage() {
                                         </div>
                                     )}
                                 </div>
-
-                                <div className=" w-fit flex-col flex gap-3 pb-3 border-b ">
-                                    <div className=" flex justify-between items-center ">
-                                        <p className=" font-bold ">
-                                            Selected Staff:
-                                        </p>
-                                    </div>
-                                    <LoadingLayout
-                                        loading={loadingstaff}
-                                        refetching={isRefetching}
-                                    >
-                                        <StaffCard
-                                            isRefetching={isRefetching}
-                                            item={staff as IStaffDetail}
-                                        />
-                                    </LoadingLayout>
-
-                                    <div className={` `}>
-                                        <CustomButton
-                                            fullWidth
-                                            onClick={() => setIsShow(true)}
-                                            isLoading={isLoading}
+                                {data?.staffId && (
+                                    <div className=" w-fit flex-col flex gap-3 pb-3 border-b ">
+                                        <div className=" flex justify-between items-center ">
+                                            <p className=" font-bold ">
+                                                Selected Staff:
+                                            </p>
+                                        </div>
+                                        <LoadingLayout
+                                            loading={loadingstaff}
+                                            refetching={isRefetching}
                                         >
-                                            {"Change Staff"}
-                                        </CustomButton>
+                                            <StaffCard
+                                                isRefetching={isRefetching}
+                                                item={staff as IStaffDetail}
+                                            />
+                                        </LoadingLayout>
+
+                                        <div className={` `}>
+                                            <CustomButton
+                                                fullWidth
+                                                onClick={() => setIsShow(true)}
+                                                isLoading={isLoading}
+                                            >
+                                                {"Change Staff"}
+                                            </CustomButton>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
