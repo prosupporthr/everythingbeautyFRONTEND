@@ -100,32 +100,56 @@ export default function CustomInput({
                 </div>
             ) : (
                 <>
-                    {type !== "number" && (
-                        <div className="w-full flex flex-col gap-1">
-                            <Input
-                                disabled={disabled}
-                                placeholder={placeholder}
-                                labelPlacement={placement}
-                                type={type}
-                                maxLength={maxLength ?? 100}
-                                startContent={startContent}
-                                endContent={endContent}
-                                classNames={{
-                                    inputWrapper: rounded
-                                        ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm "
-                                        : " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
-                                    input: "text-gray-900 h-full w-full text-sm  outline-none ",
-                                }}
-                                value={value}
-                                onValueChange={changeHandler}
-                            />
-                            {type !== "search" && 
-                            <p className="text-xs text-gray-500 font-medium">
-                                {value?.length}/{maxLength ?? 100}
-                            </p>
-                            }
-                        </div>
-                    )}
+                    {type === "search" ||
+                        (type === "email" && (
+                            <div className="w-full flex flex-col gap-1">
+                                <Input
+                                    disabled={disabled}
+                                    placeholder={placeholder}
+                                    labelPlacement={placement}
+                                    type={type}
+                                    startContent={startContent}
+                                    endContent={endContent}
+                                    classNames={{
+                                        inputWrapper: rounded
+                                            ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm "
+                                            : " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
+                                        input: "text-gray-900 h-full w-full text-sm  outline-none ",
+                                    }}
+                                    value={value}
+                                    onValueChange={changeHandler}
+                                />
+                            </div>
+                        ))}
+
+                    {type !== "number" &&
+                        type !== "search" &&
+                        type !== "email" && (
+                            <div className="w-full flex flex-col gap-1">
+                                <Input
+                                    disabled={disabled}
+                                    placeholder={placeholder}
+                                    labelPlacement={placement}
+                                    type={type}
+                                    maxLength={(name === "firstName" || name === "lastName") ? (maxLength ?? 100) : undefined}
+                                    startContent={startContent}
+                                    endContent={endContent}
+                                    classNames={{
+                                        inputWrapper: rounded
+                                            ? "bg-white rounded-full border border-gray-300 h-[45px] outline-none text-sm "
+                                            : " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
+                                        input: "text-gray-900 h-full w-full text-sm  outline-none ",
+                                    }}
+                                    value={value}
+                                    onValueChange={changeHandler}
+                                />
+                                {name !== "firstName" && name !== "lastName" && (
+                                    <p className="text-xs text-gray-500 font-medium">
+                                        {value?.length}/{maxLength ?? 100}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                     {/* Number-only input */}
                     {type === "number" && (
