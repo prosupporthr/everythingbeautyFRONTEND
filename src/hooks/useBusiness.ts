@@ -25,7 +25,7 @@ import {
 } from "@/helper/model/business";
 import { useUserStore } from "./user"; 
 import { useAtom } from "jotai";
-import { postData, postDeleted } from "@/store/post";
+import { itemDeleted, postData, postDeleted } from "@/store/post";
 
 interface IProps {
     services?: boolean;
@@ -54,6 +54,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
     const slug = param.slug as string; 
     const [ postdata, setPost ] = useAtom(postData);
     const [ deletedPost, setDeletedPost ] = useAtom(postDeleted);
+    const [ deletedItem, setDeletedItem ] = useAtom(itemDeleted);
     
 
     const queryClient = useQueryClient();
@@ -140,9 +141,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
 
             formikPost.resetForm()
 
-            const clone = [res?.data?.data, ...postdata] 
-
-            console.log(clone);
+            const clone = [res?.data?.data, ...postdata]  
             
             setPost(clone)
             setIsOpen(false)
@@ -167,6 +166,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
             });
 
             queryClient.invalidateQueries({ queryKey: ["post"] });
+            router.push(`/business/${id}/dashboard?tab=post`);
         },
     });
 
@@ -197,6 +197,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 description: res?.data?.message,
                 color: "success",
             });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
             queryClient.invalidateQueries({ queryKey: ["service"] });
         },
     });
@@ -211,6 +212,8 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 description: res?.data?.message,
                 color: "success",
             });
+            console.log(queryClient.getQueryCache().getAll().map(q => q.queryKey));
+            queryClient.invalidateQueries({ queryKey: ["product"] });
             router.push(`/business/${id}/dashboard?tab=store`);
         },
     });
@@ -276,6 +279,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 description: res?.data?.message,
                 color: "success",
             });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
             queryClient.invalidateQueries({ queryKey: ["product"] });
         },
     });
@@ -291,6 +295,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 description: res?.data?.message,
                 color: "success",
             });
+            setDeletedItem([...deletedItem, res?.data?.data?._id]);
             queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
     });

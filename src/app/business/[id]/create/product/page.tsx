@@ -4,11 +4,11 @@ import useBusiness from "@/hooks/useBusiness"
 
 export default function BusinessProduct() {
   
-    const { formikProduct: formik, imageFile, setImageFile, isLoading } = useBusiness({
+    const { formikProduct: formik, imageFiles, setImageFiles, isLoading, previews, setPreviews } = useBusiness({
         product: true
     }) 
 
     return (
-        <ProductForm formik={formik} imageFile={imageFile} setImageFile={setImageFile} isLoading={isLoading} />
+        <ProductForm formik={formik} imageFiles={imageFiles} setImageFiles={setImageFiles} isLoading={isLoading} previews={previews} setPreviews={setPreviews} />
     )
 }
