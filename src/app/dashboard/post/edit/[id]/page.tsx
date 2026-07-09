@@ -8,7 +8,7 @@ import { useFetchData } from "@/hooks/useFetchData";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
-export default function CreatePost() {
+export default function EditPost() {
     const {
         formikPost,
         imageFiles,
@@ -18,10 +18,11 @@ export default function CreatePost() {
         setPreviews,
     } = useBusiness({
         post: true,
+        edit: true
     });
 
     const param = useParams();
-    const id = param.slug as string;
+    const id = param.id as string;
 
     const { data, isLoading: loading } = useFetchData<IPostDetail>({
         endpoint: URLS.POSTBYID(id),
@@ -42,6 +43,7 @@ export default function CreatePost() {
     return (
         <LoadingLayout loading={loading}>
             <PostForm
+                client
                 edit
                 imageFiles={imageFiles}
                 preview={previews}

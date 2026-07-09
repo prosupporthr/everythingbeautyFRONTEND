@@ -7,12 +7,16 @@ import { Button, Card } from "@heroui/react";
 import MapSearch from "./mapSearch";
 import LoadingLayout from "../shared/loadingLayout";
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
 const LIBRARIES: ("places")[] = ["places"];
 
 const DEFAULT_CENTER: google.maps.LatLngLiteral = {
     lat: 9.082,
     lng: 8.6753,
 };
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Props {
     hidesearch?: boolean;
@@ -36,6 +40,8 @@ interface Props {
     setOpen?: (state: boolean) => void;
 }
 
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function MapView({
     hidesearch = false,
     height = "47vh",
@@ -53,46 +59,48 @@ export default function MapView({
     setMyLocat,
     setOtherAddress,
 }: Props) {
-    const [center, setCenter] =
-        useState<google.maps.LatLngLiteral>(DEFAULT_CENTER);
-
-    const [myLocation, setMyLocation] =
-        useState<google.maps.LatLngLiteral | null>(null);
+    const [center, setCenter] = useState<google.maps.LatLngLiteral>(DEFAULT_CENTER);
+    const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
     const mapRef = useRef<google.maps.Map | null>(null);
 
+    // ── Stable ref copies of callbacks to avoid stale closures in geocoder ──
+    const setAddressRef = useRef(setAddress);
+    const setStateRef = useRef(setState);
+    const setOtherAddressRef = useRef(setOtherAddress);
+
+    useEffect(() => {
+        setAddressRef.current = setAddress;
+        setStateRef.current = setState;
+        setOtherAddressRef.current = setOtherAddress;
+    });
+
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey:
-            process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ??
-            "AIzaSyCk55j_rxvh2Xwau4ifeyzl2uSv4W6nbw0",
+        // Never hardcode a fallback API key — fail visibly instead
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "",
         libraries: LIBRARIES,
     });
 
-    const panTo = useCallback(
-        (location: google.maps.LatLngLiteral) => {
-            mapRef.current?.panTo(location);
-            mapRef.current?.setZoom(14);
-        },
-        []
-    );
+    const panTo = useCallback((location: google.maps.LatLngLiteral) => {
+        mapRef.current?.panTo(location);
+        mapRef.current?.setZoom(14);
+    }, []);
 
     const extractAddressData = useCallback(
         (components: google.maps.GeocoderAddressComponent[]) => {
             const getValue = (type: string) =>
-                components.find((item) => item.types.includes(type))
-                    ?.long_name ?? "";
+                components.find((c) => c.types.includes(type))?.long_name ?? "";
 
             return {
                 country: getValue("country"),
                 state: getValue("administrative_area_level_1"),
-                city:
-                    getValue("locality") ||
-                    getValue("administrative_area_level_2"),
+                city: getValue("locality") || getValue("administrative_area_level_2"),
             };
         },
         []
     );
 
+    // Uses refs so it never needs to be recreated when callbacks change
     const reverseGeocode = useCallback(
         (location: google.maps.LatLngLiteral) => {
             if (!window.google) return;
@@ -103,30 +111,17 @@ export default function MapView({
                 if (status !== "OK" || !results?.[0]) return;
 
                 const result = results[0];
+                const { country, state, city } = extractAddressData(result.address_components);
 
-                const { country, state, city } = extractAddressData(
-                    result.address_components
-                );
-
-                setAddress?.(result.formatted_address);
-                setState?.(state);
+                setAddressRef.current?.(result.formatted_address);
+                setStateRef.current?.(state);
 
                 if (other) {
-                    setOtherAddress?.({
-                        country,
-                        state,
-                        city,
-                    });
+                    setOtherAddressRef.current?.({ country, state, city });
                 }
             });
         },
-        [
-            extractAddressData,
-            other,
-            setAddress,
-            setState,
-            setOtherAddress,
-        ]
+        [extractAddressData, other]
     );
 
     const onMapClick = useCallback(
@@ -152,6 +147,7 @@ export default function MapView({
         reverseGeocode(myLocation);
     }, [myLocation, panTo, reverseGeocode, setMarker]);
 
+    // ── Initialise map center + geolocation ─────────────────────────────────
     useEffect(() => {
         if (latlng) {
             setCenter(latlng);
@@ -160,13 +156,9 @@ export default function MapView({
 
         if (!navigator.geolocation) return;
 
-        navigator.geolocation.getCurrentPosition(
+        const id = navigator.geolocation.watchPosition(
             ({ coords }) => {
-                const location = {
-                    lat: coords.latitude,
-                    lng: coords.longitude,
-                };
-
+                const location = { lat: coords.latitude, lng: coords.longitude };
                 setMyLocation(location);
 
                 if (!latlng) {
@@ -175,25 +167,31 @@ export default function MapView({
                 }
             },
             () => setCenter(DEFAULT_CENTER),
-            {
-                enableHighAccuracy: true,
-            }
+            { enableHighAccuracy: true }
         );
-    }, [latlng, setMarker, setMyLocat]);
 
+        return () => navigator.geolocation.clearWatch(id);
+
+        // latlng intentionally excluded: we only want this to run on mount
+        // to avoid resetting the map center on every render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Pan to external marker when outclick mode is on ──────────────────────
     useEffect(() => {
-        if (outclick && marker) {
-            panTo(marker);
-        }
+        if (outclick && marker) panTo(marker);
     }, [outclick, marker, panTo]);
 
+    // ── Error state ───────────────────────────────────────────────────────────
     if (loadError) {
         return (
             <div className="p-4 text-center text-red-500">
-                Failed to load Google Maps
+                Failed to load Google Maps. Check your API key.
             </div>
         );
     }
+
+    const showDoneButton = !view && !!setOpen;
 
     return (
         <Card
@@ -201,53 +199,42 @@ export default function MapView({
             style={{ height }}
         >
             <LoadingLayout loading={!isLoaded}>
-                {isLoaded && (
-                    <GoogleMap
-                        mapContainerStyle={{
-                            width: "100%",
-                            height,
-                        }}
-                        center={outclick ? latlng : center}
-                        zoom={zoom}
-                        options={{
-                            disableDefaultUI: true,
-                        }}
-                        onLoad={(map) => {
-                            mapRef.current = map;
-                        }}
-                        onUnmount={() => {
-                            mapRef.current = null;
-                        }}
-                        onClick={onMapClick}
-                    >
-                        {!hidesearch && (
-                            <MapSearch
-                                center={center}
-                                panTo={panTo}
-                                setMarker={setMarker!}
-                                setAddress={setAddress!}
-                                setState={setState!}
-                            />
-                        )}
+                <GoogleMap
+                    mapContainerStyle={{ width: "100%", height }}
+                    center={outclick ? latlng : center}
+                    zoom={zoom}
+                    options={{ disableDefaultUI: true }}
+                    onLoad={(map) => { mapRef.current = map; }}
+                    onUnmount={() => { mapRef.current = null; }}
+                    onClick={onMapClick}
+                >
+                    {!hidesearch && (
+                        <MapSearch
+                            center={center}
+                            panTo={panTo}
+                            setMarker={setMarker!}
+                            setAddress={setAddress!}
+                            setState={setState!}
+                        />
+                    )}
 
-                        {marker && <Marker position={marker} />}
+                    {marker && <Marker position={marker} />}
 
-                        {myLocation && (
-                            <Marker
-                                position={myLocation}
-                                onClick={selectMyLocation}
-                                icon={{
-                                    path: google.maps.SymbolPath.CIRCLE,
-                                    scale: 8,
-                                    fillColor: "#1A73E8",
-                                    fillOpacity: 1,
-                                    strokeColor: "#FFFFFF",
-                                    strokeWeight: 2,
-                                }}
-                            />
-                        )}
-                    </GoogleMap>
-                )}
+                    {(isLoaded && myLocation) && (
+                        <Marker
+                            position={myLocation}
+                            onClick={selectMyLocation}
+                            icon={{
+                                path: google?.maps?.SymbolPath?.CIRCLE,
+                                scale: 8,
+                                fillColor: "#1A73E8",
+                                fillOpacity: 1,
+                                strokeColor: "#FFFFFF",
+                                strokeWeight: 2,
+                            }}
+                        />
+                    )}
+                </GoogleMap>
             </LoadingLayout>
 
             <div className="absolute right-3 bottom-3 flex gap-2">
@@ -267,16 +254,13 @@ export default function MapView({
                     >
                         Save
                     </Button>
-                ) : (
-                    !view &&
-                    setOpen && (
-                        <Button
-                            className="h-[40px] w-[80px] rounded-full text-[14px]"
-                            onPress={() => setOpen(false)}
-                        >
-                            Done
-                        </Button>
-                    )
+                ) : showDoneButton && (
+                    <Button
+                        className="h-[40px] w-[80px] rounded-full text-[14px]"
+                        onPress={() => setOpen!(false)}
+                    >
+                        Done
+                    </Button>
                 )}
             </div>
         </Card>

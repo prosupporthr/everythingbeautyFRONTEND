@@ -1,34 +1,43 @@
 "use client";
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios"; 
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
+import axios, {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
-export const httpService = axios.create({
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
+
+const axiosConfig = {
   baseURL: BASE_URL,
-});
+};
 
-export const unsecureHttpService = axios.create({
-  baseURL: BASE_URL,
-});
+export const httpService = axios.create(axiosConfig);
+export const unsecureHttpService = axios.create(axiosConfig);
 
-// ✅ Interceptor for unsecure requests
-unsecureHttpService.interceptors.response.use(
-  (response: AxiosResponse): AxiosResponse => response,
-  (error: AxiosError<unknown>): Promise<never> => Promise.reject(error)
-);
+const onResponse = (response: AxiosResponse) => response;
 
-// ✅ Interceptor for secure requests (adds token)
-httpService.interceptors.request.use(
-  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+const onError = (error: AxiosError) => Promise.reject(error);
+
+const addAuthHeaders = (
+  config: InternalAxiosRequestConfig
+): InternalAxiosRequestConfig => {
+  if (typeof window !== "undefined") {
     const token = localStorage.getItem("accesstoken");
 
-    config.headers.set("user-type", "USER") 
+    config.headers.set("user-type", "USER");
+
     if (token) {
       config.headers.set("Authorization", `Bearer ${token}`);
     }
-    return config;
-  },
-  (error: AxiosError<unknown>): Promise<never> => Promise.reject(error)
-);
+  }
+
+  return config;
+};
+
+httpService.interceptors.request.use(addAuthHeaders, onError);
+
+httpService.interceptors.response.use(onResponse, onError);
+unsecureHttpService.interceptors.response.use(onResponse, onError);
 
 export default httpService;

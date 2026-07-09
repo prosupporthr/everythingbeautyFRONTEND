@@ -4,7 +4,7 @@ import httpService from "@/helper/services/httpService";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useUploadMutation } from "./useUpload";
 import { URLS } from "@/helper/services/urls";
 import { useState } from "react";
@@ -23,9 +23,10 @@ import {
     IServices,
     IStaff,
 } from "@/helper/model/business";
-import { useUserStore } from "./user"; 
+import { useUserStore } from "./user";
 import { useAtom } from "jotai";
 import { itemDeleted, postData, postDeleted } from "@/store/post";
+import { userAtom } from "@/store/user";
 
 interface IProps {
     services?: boolean;
@@ -34,32 +35,50 @@ interface IProps {
     post?: boolean;
     staff?: boolean;
     edit?: boolean;
-    staffId?: string; 
-    noredirect?: boolean 
+    staffId?: string;
+    noredirect?: boolean;
 }
 
-const useBusiness = ({ services, product, business, post, staff, edit, staffId, noredirect}: IProps) => {
+// SSR-safe localStorage read. Client components in the App Router still
+// execute once on the server for the initial HTML — `localStorage` isn't
+// defined there, so reading it unguarded throws during SSR.
+function getUserId(): string {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("userid") ?? "";
+}
+
+const useBusiness = ({
+    services,
+    product,
+    business,
+    post,
+    staff,
+    edit,
+    staffId,
+    noredirect,
+}: IProps) => {
     const router = useRouter();
-    const userId = (localStorage as any).getItem("userid") as string;
+    const [user] = useAtom(userAtom);
     const [imageFile, setImageFile] = useState<File | string | null>("");
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
+    const userId = user?._id as string;
 
     const { refetch } = useUserStore();
 
     const param = useParams();
     const id = param.id as string;
-    const slug = param.slug as string; 
-    const [ postdata, setPost ] = useAtom(postData);
-    const [ deletedPost, setDeletedPost ] = useAtom(postDeleted);
-    const [ deletedItem, setDeletedItem ] = useAtom(itemDeleted);
-    
+    const slug = param.slug as string;
+    const [postdata, setPost] = useAtom(postData);
+    const [deletedPost, setDeletedPost] = useAtom(postDeleted);
+    const [deletedItem, setDeletedItem] = useAtom(itemDeleted);
+    const pathname = usePathname();
 
     const queryClient = useQueryClient();
 
-    /** 🔹 Business */
+    /** 🔹 Business: create */
     const businessMutation = useMutation({
         mutationFn: (data: IBusiness) => httpService.post(URLS.BUSINESS, data),
         onError: handleError,
@@ -75,7 +94,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Business */
+    /** 🔹 Business: edit */
     const businessEditMutation = useMutation({
         mutationFn: (data: IBusiness) =>
             httpService.patch(URLS.BUSINESSBYID(id), data),
@@ -91,7 +110,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Service: create */
     const servicesMutation = useMutation({
         mutationFn: (data: IServices) => httpService.post(URLS.SERVICE, data),
         onError: handleError,
@@ -109,7 +128,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Service: edit */
     const servicesEditMutation = useMutation({
         mutationFn: (data: IServices) =>
             httpService.patch(URLS.SERVICEBYID(slug), data),
@@ -126,7 +145,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Post: create */
     const postMutation = useMutation({
         mutationFn: (data: IPost) => httpService.post(URLS.POST, data),
         onError: handleError,
@@ -137,26 +156,28 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 color: "success",
             });
 
-            console.log(res?.data?.data);
+            formikPost.resetForm();
 
-            formikPost.resetForm()
+            const clone = [res?.data?.data, ...postdata];
 
-            const clone = [res?.data?.data, ...postdata]  
-            
-            setPost(clone)
-            setIsOpen(false)
-            
+            setPost(clone);
+            setIsOpen(false);
+
             queryClient.invalidateQueries({ queryKey: ["post"] });
-            if(!noredirect) {
-                router.push(`/business/${id}/dashboard?tab=post`);
+            if (!noredirect) {
+                if (pathname.includes("business")) {
+                    router.push(`/business/${id}/dashboard?tab=post`);
+                } else {
+                    router.push(`/dashboard/${userId}?tab=post`);
+                }
             }
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Post: edit */
     const postEditMutation = useMutation({
         mutationFn: (data: IPost) =>
-            httpService.patch(URLS.POSTBYID(slug), data),
+            httpService.patch(URLS.POSTBYID(slug ? slug : id), data),
         onError: handleError,
         onSuccess: (res) => {
             addToast({
@@ -166,11 +187,15 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
             });
 
             queryClient.invalidateQueries({ queryKey: ["post"] });
-            router.push(`/business/${id}/dashboard?tab=post`);
+            if (pathname.includes("business")) {
+                router.push(`/business/${id}/dashboard?tab=post`);
+            } else {
+                router.push(`/dashboard/${userId}?tab=post`);
+            }
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Post: delete */
     const postDeleteMutation = useMutation({
         mutationFn: (data: string) => httpService.delete(URLS.POSTBYID(data)),
         onError: handleError,
@@ -179,14 +204,13 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }); 
-            console.log(res?.data?.data);
+            });
             setDeletedPost([...deletedPost, res?.data?.data?.id]);
             queryClient.invalidateQueries({ queryKey: ["post"], exact: false });
         },
     });
 
-    /** 🔹 Service */
+    /** 🔹 Service: delete */
     const servicesDeleteMutation = useMutation({
         mutationFn: (data: string) =>
             httpService.delete(URLS.SERVICEBYID(data)),
@@ -202,7 +226,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Product: create */
     const productMutation = useMutation({
         mutationFn: (data: IProduct) => httpService.post(URLS.PRODUCT, data),
         onError: handleError,
@@ -212,13 +236,12 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 description: res?.data?.message,
                 color: "success",
             });
-            console.log(queryClient.getQueryCache().getAll().map(q => q.queryKey));
             queryClient.invalidateQueries({ queryKey: ["product"] });
             router.push(`/business/${id}/dashboard?tab=store`);
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Bookmark: create */
     const bookmarkMutation = useMutation({
         mutationFn: (data: IBookingmark) =>
             httpService.post(URLS.BOOKMARK, data),
@@ -236,7 +259,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Bookmark: delete */
     const bookmarkdeleteMutation = useMutation({
         mutationFn: (data: string) =>
             httpService.delete(URLS.BOOKMARKBYID(data)),
@@ -251,7 +274,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Product: edit */
     const productEditMutation = useMutation({
         mutationFn: (data: IProduct) =>
             httpService.patch(URLS.PRODUCTBYID(slug), data),
@@ -268,7 +291,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Product: delete */
     const productDeleteMutation = useMutation({
         mutationFn: (data: string) =>
             httpService.delete(URLS.PRODUCTBYID(data)),
@@ -284,10 +307,9 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Product */
+    /** 🔹 Staff: delete */
     const staffDeleteMutation = useMutation({
-        mutationFn: (data: string) =>
-            httpService.delete(URLS.STAFFBYID(data)),
+        mutationFn: (data: string) => httpService.delete(URLS.STAFFBYID(data)),
         onError: handleError,
         onSuccess: (res) => {
             addToast({
@@ -300,10 +322,10 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Staff */
+    /** 🔹 Staff: create */
     const staffMutation = useMutation({
         mutationFn: (data: IStaff) =>
-            httpService.post(URLS.STAFFBYBUSINESSID(id+""), data),
+            httpService.post(URLS.STAFFBYBUSINESSID(id + ""), data),
         onError: handleError,
         onSuccess: (res) => {
             addToast({
@@ -315,26 +337,24 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
     });
 
-    /** 🔹 Staff */
+    /** 🔹 Staff: edit */
     const staffEditMutation = useMutation({
         mutationFn: (data: IStaff) =>
-            httpService.patch(URLS.STAFFBYID(staffId+""), data),
+            httpService.patch(URLS.STAFFBYID(staffId + ""), data),
         onError: handleError,
         onSuccess: (res) => {
             addToast({
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }); 
+            });
             queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
     });
 
-    /** 🔹 Staff */
+    /** 🔹 Staff: transfer */
     const changeStaffMutation = useMutation({
-        mutationFn: (data: {
-            newStaffId: string
-        }) =>
+        mutationFn: (data: { newStaffId: string }) =>
             httpService.patch(URLS.TRANSFERSTAFFBYID(id), data),
         onError: handleError,
         onSuccess: (res) => {
@@ -342,7 +362,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 title: "Success",
                 description: res?.data?.message,
                 color: "success",
-            }); 
+            });
             queryClient.invalidateQueries({ queryKey: ["booking"] });
             queryClient.invalidateQueries({ queryKey: ["staff"] });
         },
@@ -363,7 +383,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
             ...formikPost.values,
             images: [...previews, ...res],
         };
- 
+
         const payloadstaff = {
             ...formikStaff.values,
             image: res[0],
@@ -455,7 +475,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 });
             } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                imageFiles.forEach(file => {
+                imageFiles.forEach((file) => {
                     formdata.append("file", file);
                 });
                 uploadMutation.mutate(formdata);
@@ -476,18 +496,18 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         },
         validationSchema: postSchema,
         onSubmit: (data) => {
-            if (slug && imageFiles.length === 0) {
+            if ((slug || edit) && imageFiles.length === 0) {
                 postEditMutation.mutate({
                     ...data,
                     images: [...previews],
                 });
             } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                imageFiles.forEach(file => {
+                imageFiles.forEach((file) => {
                     formdata.append("file", file);
                 });
                 uploadMutation.mutate(formdata);
-            } else { 
+            } else {
                 postMutation.mutate(data);
             }
         },
@@ -502,7 +522,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
             porfolioLink: "",
             primarySpeciality: "",
             yearsOfExperience: "",
-            skills: [], 
+            skills: [],
         },
         validationSchema: staffSchema,
         onSubmit: (data) => {
@@ -541,9 +561,9 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
                 });
             } else if (imageFiles.length > 0) {
                 const formdata = new FormData();
-                imageFiles.forEach(file => {
+                imageFiles.forEach((file) => {
                     formdata.append("file", file);
-                }); 
+                });
                 uploadMutation.mutate(formdata);
             } else {
                 addToast({
@@ -560,6 +580,7 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         postMutation.isPending ||
         postEditMutation.isPending ||
         businessMutation.isPending ||
+        businessEditMutation.isPending ||
         servicesMutation.isPending ||
         servicesEditMutation.isPending ||
         servicesDeleteMutation.isPending ||
@@ -571,11 +592,12 @@ const useBusiness = ({ services, product, business, post, staff, edit, staffId, 
         postDeleteMutation.isPending ||
         staffMutation.isPending ||
         staffEditMutation.isPending ||
-        staffDeleteMutation.isPending;
+        staffDeleteMutation.isPending ||
+        changeStaffMutation.isPending;
 
     return {
         formik,
-        formikPost, 
+        formikPost,
         formikService,
         formikProduct,
         formikStaff,
