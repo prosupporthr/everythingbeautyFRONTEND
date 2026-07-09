@@ -34,6 +34,7 @@ const usePost = () => {
     });
 
     const handleLikePost = async (postId: string) => {
+        Socket.connect()
         const res = await Socket.emitWithAck("post:like", { postId });
         return res;
     }; 

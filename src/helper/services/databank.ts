@@ -4,7 +4,7 @@ import { BsPersonCircle, BsShop } from "react-icons/bs";
 import { IoChatboxOutline, IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 
-export const menulist = [
+export const menulistBusiness = [
     {
         title: "My Profile",
         icon: BsPersonCircle,
@@ -40,6 +40,49 @@ export const menulist = [
         icon: BsShop,
         link: "/myorder"
     },
+    {
+        title: "Logout",
+        icon: TbLogout2,
+        link: ""
+    }
+]
+
+export const menulistClient = [
+    {
+        title: "Overview",
+        icon: BsPersonCircle,
+        link: "/dashboard"
+    },
+    {
+        title: "Message",
+        icon: BiMessageDetail,
+        link: "/message"
+    },
+    // {
+    //     title: "Settings",
+    //     icon: IoSettingsOutline,
+    //     link: "/settings"
+    // },
+    {
+        title: "Wallet",
+        icon: IoWalletOutline,
+        link: "/wallet"
+    },
+    // {
+    //     title: "Favourite",
+    //     icon: IoHeartOutline,
+    //     link: "/bookmark"
+    // },
+    {
+        title: "Post",
+        icon: IoChatboxOutline,
+        link: "/post"
+    },
+    // {
+    //     title: "My Order",
+    //     icon: BsShop,
+    //     link: "/myorder"
+    // },
     {
         title: "Logout",
         icon: TbLogout2,

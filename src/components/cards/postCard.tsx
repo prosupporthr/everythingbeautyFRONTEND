@@ -2,9 +2,9 @@
 import { Heart, Send } from "iconsax-reactjs";
 import { CustomButton, CustomImage, ImageCarousel } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
-import { formatNumber } from "@/helper/utils/numberFormat"; 
+import { formatNumber } from "@/helper/utils/numberFormat";
 import { ModalLayout } from "../shared";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     Avatar,
     Popover,
@@ -16,7 +16,7 @@ import { textLimit } from "@/helper/utils/textlimit";
 import { useEffect, useState } from "react";
 import { CommentModal, DeleteModal } from "../modals";
 import { IoIosMore } from "react-icons/io";
-import moment from "moment-timezone"; 
+import moment from "moment-timezone";
 
 interface IProps {
     postId: string;
@@ -40,16 +40,22 @@ export default function PostCard({
     const [isShow, setIsShow] = useState("");
     const [isLoading, setIsLoading] = useState("");
     const [liked, setLiked] = useState<IProps>();
-    const [activeId, setActiveId] = useState<string>("");
+    const [activeId, setActiveId] = useState<string>(""); 
 
     const router = useRouter();
 
     const handleClick = (data: "edit" | "delete") => {
         setShow(false);
         if (data === "edit") {
-            router.push(
-                `/business/${item?.business?._id}/edit/${item?._id}/post`,
-            );
+            if (!item?.business?._id) {
+                router.push(
+                    `/dashboard/post/edit/${item?._id}`,
+                );
+            } else {
+                router.push(
+                    `/business/${item?.business?._id}/edit/${item?._id}/post`,
+                );
+            }
         } else {
             setIsOpen(true);
         }
@@ -144,13 +150,11 @@ export default function PostCard({
             </div>
             {item?.images[0] && (
                 <div
-                    className={` {${isProfile ? " lg:h-[250px] " : "  lg:h-[478px]  "} } w-full h-[200px] flex px-2 `}
+                    className={` {${isProfile ? " lg:h-[250px] " : "  lg:h-[300px]  "} } w-full h-[200px] flex px-2 `}
                 >
                     {/* <CustomImage post src={item?.images[0]} alt="post" /> */}
 
-                <ImageCarousel
-                    images={item?.images} 
-                />
+                    <ImageCarousel images={item?.images} />
                 </div>
             )}
             <div className=" w-full flex flex-col px-4 ">
@@ -192,9 +196,13 @@ export default function PostCard({
                                 </p>
                             </button>
                         )}
-                        <CommentModal post={item} setActiveId={setActiveId} activeId={activeId} />
+                        <CommentModal
+                            post={item}
+                            setActiveId={setActiveId}
+                            activeId={activeId}
+                        />
                     </div>
-                    <Send size={20} />
+                    {/* <Send size={20} /> */}
                 </div>
                 {/* {item?.images[0] && <p className=" text-sm ">{item?.body}</p>} */}
                 {item?.product?.pictures && (
@@ -211,7 +219,7 @@ export default function PostCard({
                             </div>
                             <div className=" flex flex-col ">
                                 <p className=" text-sm font-bold ">
-                                    {item?.product?.name}
+                                    {textLimit(item?.product?.name, 40)}
                                 </p>
                                 <p className=" text-xs text-secondary ">
                                     60 mins •{" "}

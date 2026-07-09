@@ -101,7 +101,7 @@ export default function CustomInput({
             ) : (
                 <>
                     {type === "search" ||
-                        (type === "email" && (
+                        ((type === "email" || name === "message" )&& (
                             <div className="w-full flex flex-col gap-1">
                                 <Input
                                     disabled={disabled}
@@ -124,7 +124,7 @@ export default function CustomInput({
 
                     {type !== "number" &&
                         type !== "search" &&
-                        type !== "email" && (
+                        type !== "email" && name !== "message" && (
                             <div className="w-full flex flex-col gap-1">
                                 <Input
                                     disabled={disabled}

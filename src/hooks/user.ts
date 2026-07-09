@@ -11,10 +11,7 @@ import { useAtom } from "jotai";
 async function fetchUser(): Promise<IUserDetail | null> { 
 
     try {
-        const res = await httpService.get<{ data: IUserDetail }>(`/user/me`);
-
-        console.log(res);
-
+        const res = await httpService.get<{ data: IUserDetail }>(`/user/me`); 
         return res.data.data;
     } catch (error) {
         console.log("error");
