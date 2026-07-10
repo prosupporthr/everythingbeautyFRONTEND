@@ -17,8 +17,12 @@ interface IBookmark {
     isDeleted: boolean;
     userId: string;
     productId?: IProductDetail;
-    product?: IProductDetail;
-    service: IServiceDetail;
+    product?: {
+        data: IProductDetail
+    };
+    service: {
+        data: IServiceDetail
+    };
     serviceId: IServiceDetail;
     type: "product" | "service";
     createdAt: string;
@@ -61,7 +65,7 @@ export default function BookmarkList() {
                                     <div className=" w-full flex h-[170px] bg-gray-400 rounded-md ">
                                         <ImageCarousel
                                             images={
-                                                item?.product?.pictures ?? []
+                                                item?.product?.data?.pictures ?? []
                                             }
                                             className="w-full h-full"
                                         />
@@ -69,9 +73,9 @@ export default function BookmarkList() {
                                     <div className=" flex flex-col w-full gap-1 ">
                                         <div className=" w-full flex items-center justify-between ">
                                             <p className=" text-sm font-bold capitalize ">
-                                                {item?.product?.name}
+                                                {item?.product?.data?.name}
                                             </p>
-                                            {item?.product?.allowReview && (
+                                            {item?.product?.data?.allowReview && (
                                                 <div className=" flex items-center gap-1 ">
                                                     <HiStar
                                                         size={"16px"}
@@ -85,12 +89,12 @@ export default function BookmarkList() {
                                         </div>
                                         <p className=" text-xs ">
                                             {formatNumber(
-                                                Number(item?.product?.price),
+                                                Number(item?.product?.data?.price),
                                             )}
                                         </p>
                                         <p className=" text-xs text-secondary ">
                                             {formatNumber(
-                                                Number(item?.product?.quantity),
+                                                Number(item?.product?.data?.quantity),
                                                 "",
                                             )}{" "}
                                             left
@@ -100,7 +104,7 @@ export default function BookmarkList() {
                                         <CustomButton
                                             onClick={() =>
                                                 router.push(
-                                                    `/sales/${item?.product?._id}/product`,
+                                                    `/sales/${item?.product?.data?._id}/product`,
                                                 )
                                             }
                                             height="45px"
@@ -112,8 +116,7 @@ export default function BookmarkList() {
                                             height="45px"
                                             onClick={() =>
                                                 deleteHandler(
-                                                    item?.product
-                                                        ?.name as string,
+                                                    item?.product?.data?.name as string,
                                                     item?._id,
                                                 )
                                             }
@@ -131,7 +134,7 @@ export default function BookmarkList() {
                                     <div className=" w-full flex h-[170px] ">
                                         <ImageCarousel
                                             images={
-                                                item?.service?.pictures ?? []
+                                                item?.service?.data?.pictures ?? []
                                             }
                                             className="w-full h-full"
                                         />
@@ -139,9 +142,9 @@ export default function BookmarkList() {
                                     <div className=" flex flex-col w-full gap-1 ">
                                         <div className=" w-full flex items-center justify-between ">
                                             <p className=" text-sm font-bold capitalize ">
-                                                {item?.service?.name}
+                                                {item?.service?.data?.name}
                                             </p>
-                                            {item?.service?.allowReview && (
+                                            {item?.service?.data?.allowReview && (
                                                 <div className=" flex items-center gap-1 ">
                                                     <HiStar
                                                         size={"16px"}
@@ -156,7 +159,7 @@ export default function BookmarkList() {
                                         <p className=" text-xs ">
                                             {formatNumber(
                                                 Number(
-                                                    item?.service?.hourlyRate,
+                                                    item?.service?.data?.hourlyRate,
                                                 ),
                                             )}
                                         </p>
@@ -166,7 +169,7 @@ export default function BookmarkList() {
                                             height="45px"
                                             onClick={() =>
                                                 router.push(
-                                                    `/sales/${item?.service?.businessId}/services`,
+                                                    `/sales/${item?.service?.data?.businessId}/services`,
                                                 )
                                             }
                                             fullWidth
@@ -177,7 +180,7 @@ export default function BookmarkList() {
                                             height="45px"
                                             onClick={() =>
                                                 deleteHandler(
-                                                    item?.service?.name,
+                                                    item?.service?.data?.name,
                                                     item?._id,
                                                 )
                                             }

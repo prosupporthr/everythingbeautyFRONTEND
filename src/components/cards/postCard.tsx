@@ -85,19 +85,19 @@ export default function PostCard({
         >
             <div className=" w-full flex items-center justify-between pt-4 px-4 ">
                 <div className=" flex items-center gap-2 ">
-                    {item?.business?.pictures && (
+                    {item?.creator?.data?.profilePicture && (
                         <div className=" w-10 h-10 rounded-full bg-gray-400 ">
                             <Avatar
                                 size={"md"}
-                                src={item?.business?.pictures[0]}
-                                name={item?.business.name}
+                                src={item?.creator?.data?.profilePicture}
+                                name={item?.creator?.data?.firstName}
                             />
                         </div>
                     )}
                     <div className=" flex flex-col ">
                         <div className=" flex gap-2 items-center ">
                             <p className=" text-sm font-bold capitalize ">
-                                {item?.business?.name}
+                                {item?.creator?.data?.firstName+" "+item?.creator?.data?.lastName}
                             </p>
                         </div>
                         {/* <p className=" text-xs text-secondary ">

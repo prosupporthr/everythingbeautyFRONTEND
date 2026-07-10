@@ -73,8 +73,8 @@ export default function DeleteModal({
                     <p className="text-2xl font-bold">Delete {type}</p>
 
                     <p className="text-xs font-medium text-center text-secondary">
-                        Deleting this {type}
-                        <span className=" font-bold text-brand ">{name}</span>{" "}
+                        Deleting this {type}{" "}
+                        <span className=" font-bold text-brand capitalize ">{name}</span>{" "}
                         will permanently delete it. This action cannot be
                         undone, so make sure you're certain before proceeding.
                     </p>

@@ -277,6 +277,9 @@ export interface IPostDetail {
     _id: string;
     isDeleted: boolean;
     body: string;
+    creator: {
+        data: IUserDetail
+    }
     images: string[];
     userId: string;
     productId: string;
