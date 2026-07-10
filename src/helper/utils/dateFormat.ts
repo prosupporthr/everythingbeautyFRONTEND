@@ -5,7 +5,7 @@ export function dateFormat(date: string) {
 } 
 
 export function dateChatFormat(date: string) {
-  return moment(date).format(" DD/MM/YY, h:mm A")
+  return moment(date).format(" DD/MMM/YY, h:mm A")
 } 
 
 
