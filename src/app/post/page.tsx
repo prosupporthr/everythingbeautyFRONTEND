@@ -22,7 +22,7 @@ import { Gallery, People, Send } from "iconsax-reactjs";
 import { useAtom, useAtomValue } from "jotai";
 import { uniqBy } from "lodash";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DISCOVERY_LIMIT = 4;
 
@@ -71,6 +71,7 @@ export default function PostPage() {
     const [user] = useAtom(userAtom);
     const [posts, setPosts] = useAtom(postData);
     const deletedPosts = useAtomValue(postDeleted);
+    const [ loading, setLoading ] = useState(false)
 
     const router = useRouter();
 
@@ -102,13 +103,17 @@ export default function PostPage() {
         requireStylistAccess(() => formikPost.handleSubmit());
 
     useEffect(() => {
+
+        setLoading(true)
         if (items.length === 0) return;
 
         setPosts((prev) => {
             const merged = uniqBy([...prev, ...items], "_id");
             return merged.length === prev.length ? prev : merged;
         });
-    }, [items, setPosts]);
+
+        setLoading(false)
+    }, [items, setPosts, setLoading]);
 
     const visiblePosts = posts?.filter(
         (item) => !deletedPosts.includes(item?._id),
@@ -155,7 +160,7 @@ export default function PostPage() {
                     </div>
                     <div className=" w-full flex flex-col gap-4 ">
                         <LoadingLayout
-                            loading={isLoading}
+                            loading={isLoading || loading}
                             refetching={isFetchingMore}
                             length={visiblePosts?.length}
                             ref={ref}
