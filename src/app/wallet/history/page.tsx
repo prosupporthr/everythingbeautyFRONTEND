@@ -2,7 +2,7 @@
 import { LoadingLayout } from "@/components/shared";
 import { ITransaction } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
-import { dateFormat } from "@/helper/utils/dateFormat";
+import { dateChatFormat, dateFormat, timeFormat } from "@/helper/utils/dateFormat";
 import { formatNumber } from "@/helper/utils/numberFormat";
 import { useFetchData } from "@/hooks/useFetchData";
 import { userAtom } from "@/store/user";
@@ -37,14 +37,14 @@ export default function WalletPage() {
                                     <p className=" text-sm ">{formatNumber(item?.amount)}</p>
                                 </div>
                             </div>
-                            <div className=" flex flex-col items-center ">
+                            <div className=" flex flex-col items-end ">
                                 <div
                                     className={` w-[90px] rounded-3xl flex justify-center items-center h-[35px] ${item?.status === "success" ? " bg-[#CCFFDA] text-[#00B71DFC] " : " bg-[#F6E6D180] text-[#F78401] "} font-semibold text-[10px] `}
                                 >
                                     <p>{item?.status === "success" ? "COMPLETE" : "IN-COMPLETE"}</p>
                                 </div>
                                 <p className=" text-xs text-right ">
-                                    {dateFormat(item?.createdAt)}
+                                    {dateChatFormat(item?.createdAt)}
                                 </p>
                             </div>
                         </div>
