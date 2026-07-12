@@ -1,10 +1,14 @@
 "use client";
-import { PostCard } from "@/components/cards";
+import { PostCard, ProductCard } from "@/components/cards";
 import LandingBusinessCard from "@/components/cards/landingBusinessCard";
 import { CustomButton } from "@/components/custom";
 import { PostForm } from "@/components/forms";
 import { LoadingLayout, ModalLayout } from "@/components/shared";
-import { IBusinessDetails, IPostDetail } from "@/helper/model/business";
+import {
+    IBusinessDetails,
+    IPostDetail,
+    IProductDetail,
+} from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import useBusiness from "@/hooks/useBusiness";
 import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
@@ -18,14 +22,14 @@ import { Gallery, People, Send } from "iconsax-reactjs";
 import { useAtom, useAtomValue } from "jotai";
 import { uniqBy } from "lodash";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DISCOVERY_LIMIT = 4;
 
-const PROMO_GRADIENT = {
-    background:
-        "linear-gradient(135deg, rgba(129, 39, 207, 0.05) 0%, rgba(129, 39, 207, 0) 100%)",
-};
+// const PROMO_GRADIENT = {
+//     background:
+//         "linear-gradient(135deg, rgba(129, 39, 207, 0.05) 0%, rgba(129, 39, 207, 0) 100%)",
+// };
 
 const STYLIST_ONLY_WARNING = {
     title: "Warning",
@@ -52,11 +56,22 @@ export default function PostPage() {
         name: ["business"],
     });
 
+    const { data: product = [], isLoading: loadingProduct } = useFetchData<
+        IProductDetail[]
+    >({
+        endpoint: `/product/filter`,
+        name: ["product"],
+        params: {
+            limit: 4,
+        },
+    });
+
     const { handleLikePost } = usePost();
 
     const [user] = useAtom(userAtom);
     const [posts, setPosts] = useAtom(postData);
     const deletedPosts = useAtomValue(postDeleted);
+    const [ loading, setLoading ] = useState(false)
 
     const router = useRouter();
 
@@ -75,22 +90,30 @@ export default function PostPage() {
 
     // Gate stylist-only actions (creating/submitting a post) behind a single check
     const requireStylistAccess = (action: () => void) => {
-        if (user?.business?._id) {
+        // if (user?.business?._id) {
             action();
-        } else {
-            addToast(STYLIST_ONLY_WARNING);
-        }
+        // } else {
+            // addToast(STYLIST_ONLY_WARNING);
+        // }
     };
 
-    const handleOpenComposer = () => requireStylistAccess(() => setIsOpen(true));
+    const handleOpenComposer = () =>
+        requireStylistAccess(() => setIsOpen(true));
     const handleSubmitPost = () =>
         requireStylistAccess(() => formikPost.handleSubmit());
 
     useEffect(() => {
-        if (items.length > 0) {
-            setPosts((prev) => uniqBy([...prev, ...items], "_id"));
-        }
-    }, [items, setPosts]);
+
+        setLoading(true)
+        if (items.length === 0) return;
+
+        setPosts((prev) => {
+            const merged = uniqBy([...prev, ...items], "_id");
+            return merged.length === prev.length ? prev : merged;
+        });
+
+        setLoading(false)
+    }, [items, setPosts, setLoading]);
 
     const visiblePosts = posts?.filter(
         (item) => !deletedPosts.includes(item?._id),
@@ -137,7 +160,7 @@ export default function PostPage() {
                     </div>
                     <div className=" w-full flex flex-col gap-4 ">
                         <LoadingLayout
-                            loading={isLoading}
+                            loading={isLoading || loading}
                             refetching={isFetchingMore}
                             length={visiblePosts?.length}
                             ref={ref}
@@ -183,7 +206,30 @@ export default function PostPage() {
                         </div>
                     </LoadingLayout>
                 </div>
-                <div
+                <div className=" flex w-full flex-col gap-4 ">
+                    <div className=" w-full flex justify-between items-center ">
+                        <p className=" font-bold ">Products</p>
+                        <button
+                            onClick={() => router.push("/productlist")}
+                            className=" font-bold text-xs "
+                        >
+                            View All
+                        </button>
+                    </div>
+                    <LoadingLayout
+                        loading={loadingBusinesses}
+                        length={businesses?.length}
+                    >
+                        <div className=" w-full grid grid-cols-2 gap-4 text-white ">
+                            {product?.slice(0, DISCOVERY_LIMIT)?.map((item) => (
+                                <div key={item?._id}>
+                                    <ProductCard item={item} post key={item?._id} />
+                                </div>
+                            ))}
+                        </div>
+                    </LoadingLayout>
+                </div>
+                {/* <div
                     style={PROMO_GRADIENT}
                     className=" w-full flex flex-col shadow p-6 gap-3 rounded-3xl justify-center items-center "
                 >
@@ -203,7 +249,7 @@ export default function PostPage() {
                     >
                         follow
                     </CustomButton>
-                </div>
+                </div> */}
             </div>
             <ModalLayout isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <PostForm

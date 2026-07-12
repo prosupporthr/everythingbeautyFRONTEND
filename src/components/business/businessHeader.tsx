@@ -2,7 +2,12 @@
 import { CustomButton } from "@/components/custom";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+    useParams,
+    usePathname,
+    useRouter,
+    useSearchParams,
+} from "next/navigation";
 import { IoMdAdd } from "react-icons/io";
 
 export default function BusinessHeader() {
@@ -12,6 +17,8 @@ export default function BusinessHeader() {
     const param = useParams();
     const id = param.id;
 
+    const pathname = usePathname();
+
     const [user] = useAtom(userAtom);
 
     const handleClick = () => {
@@ -20,7 +27,11 @@ export default function BusinessHeader() {
         } else if (tab === "store") {
             router.push(`/business/${id}/create/product`);
         } else if (tab === "post") {
-            router.push(`/business/${id}/create/post`);
+            if (!pathname.includes("business")) {
+                router.push(`/dashboard/post/create`);
+            } else {
+                router.push(`/business/${id}/create/post`);
+            }
         } else {
             router.push(`/business/${id}/edit`);
         }
@@ -40,7 +51,7 @@ export default function BusinessHeader() {
                 </p>
             </div>
             <div className=" flex items-center gap-3 lg:mr-20 ">
-                {(!tab || tab === "staff") && (
+                {(!tab || tab === "staff") && pathname.includes("business") && (
                     <div className=" w-fit text-xs font-semibold ">
                         <button
                             onClick={() =>

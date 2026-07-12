@@ -123,7 +123,7 @@ export default function ImageCarousel({
         {images.map((img, i) => (
           <div key={i} className="relative w-full h-full flex-shrink-0">
             <CustomImage
-            post
+              post={true}
               src={img}
               alt={getAlt(i)}
               fillContainer

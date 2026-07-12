@@ -12,8 +12,8 @@ export default function BusinessCard(
     const router = useRouter()
 
     return (
-        <button onClick={()=> router.push(`/sales/${item?._id}/services`)} className=" w-full flex flex-col gap-3 " >
-            <div className=" rounded-tl-2xl w-full h-[266px] bg-gray-200 relative " >
+        <div role="button" onClick={()=> router.push(`/sales/${item?._id}/services`)} className=" w-full flex flex-col gap-3 border p-3 rounded-2xl " >
+            <div className=" rounded-tl-2xl w-full h-[266px] relative " >
                 <CustomImage nopopup alt={item?.name} style={{
                     borderTopLeftRadius: "16px"  
                 }} src={item?.pictures[0]} fillContainer />
@@ -26,6 +26,6 @@ export default function BusinessCard(
                 </div>
                 <StarRating rating={Number(item?.rating)} />
             </div>
-        </button>
+        </div>
     )
 }

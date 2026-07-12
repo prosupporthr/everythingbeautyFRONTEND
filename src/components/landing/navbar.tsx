@@ -5,7 +5,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { menulist } from "@/helper/services/databank";
+import { menulistBusiness, menulistClient } from "@/helper/services/databank";
 import { textLimit } from "@/helper/utils/textlimit";
 import { IoChevronDown } from "react-icons/io5";
 import UserCard from "../shared/userCard";
@@ -19,17 +19,18 @@ import { IRating } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls";
 import { IUserDetail } from "@/helper/model/user";
 import { RiNotification2Fill } from "react-icons/ri";
-import { Spinner } from "@heroui/spinner"; 
+import { Spinner } from "@heroui/spinner";
 import { Image } from "@heroui/react";
 
 export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
     const param = useParams();
-    // const query = useSearchParams();
-    // const userId = query?.get("tab") as string | null;
+
     const id = param.id;
     const [show, setShow] = useState(false);
+    const { data, isLoading, refetch } = useUserStore();
+    const [user, setUser] = useAtom(userAtom);
     const queryClient = useQueryClient();
 
     const [showNotification, setShowNotification] = useState(false);
@@ -37,10 +38,6 @@ export default function Navbar() {
 
     const showreview =
         typeof window !== "undefined" ? sessionStorage.getItem("show") : null;
-
-    const { data, isLoading, refetch } = useUserStore();
-
-    const [user, setUser] = useAtom(userAtom);
 
     const { data: review = [] } = useFetchData<IRating[]>({
         endpoint: URLS.REVIEWBYUSERID(user?._id as string),
@@ -87,7 +84,11 @@ export default function Navbar() {
     };
 
     const HandleRouter = (item: string) => {
-        router.push(item);
+        if(item === "/dashboard") {
+            router.push(item+"/"+user?._id)
+        } else {
+            router.push(item);
+        }
         setShow(false);
     };
 
@@ -118,10 +119,10 @@ export default function Navbar() {
                     onClick={() => router.push(user?._id ? "/post" : "/")}
                 >
                     <Image
-              src={"/images/logo.png"}
-              alt="logo"
-              className=" w-[92px] "  
-            /> 
+                        src={"/images/logo.png"}
+                        alt="logo"
+                        className=" w-[92px] "
+                    />
                 </button>
                 {isLoading && (
                     <div className=" flex h-full justify-center items-center ">
@@ -170,14 +171,12 @@ export default function Navbar() {
                                 >
                                     <RiNotification2Fill size={"25px"} />
                                 </div>
-                                {/* {isRead && ( */}
                                 <div className=" absolute flex justify-center items-center -top-1 text-white text-[10px] font-bold -right-1 bg-red-500 w-4 h-4 rounded-full ">
                                     {!loadingNotification && <>{count}</>}
                                     {loadingNotification && (
                                         <Spinner size="sm" color="danger" />
                                     )}
                                 </div>
-                                {/* )} */}
                             </button>
                         )}
 
@@ -266,7 +265,7 @@ export default function Navbar() {
                                             </button>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 px-6 ">
-                                            {menulist.map((item, index) => {
+                                            {(user?.business?._id ? menulistBusiness : menulistClient).map((item, index) => {
                                                 if (item?.title === "Logout") {
                                                     return (
                                                         <button
@@ -359,6 +358,7 @@ export default function Navbar() {
                     </div>
                 )}
             </div>
+
             <RatingBusinessModal
                 tab={tab}
                 open={isOpen}

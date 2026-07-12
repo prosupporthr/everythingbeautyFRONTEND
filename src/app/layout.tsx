@@ -24,9 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={dmSans.className}>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning >
         <Provider>
-          <div className=" w-full h-screen flex flex-col overflow-y-auto bg-white " >
+          <div className=" w-full h-screen flex flex-col overflow-y-auto overflow-x-hidden bg-white " >
             <Navbar />
             <ScreenData>
               {children}

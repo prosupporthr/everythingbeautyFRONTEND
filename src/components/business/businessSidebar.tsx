@@ -11,7 +11,7 @@ export default function BusinessSidebar() {
     const param = useParams();
     const id = param.id;
 
-    const visible = pathname?.includes(`business/${id}/dashboard`);
+    const visible = pathname?.includes(`business/${id}/dashboard`) || pathname?.includes(`dashboard/${id}`);
 
     const tabs = [
         { label: "Overview", value: null },
@@ -23,9 +23,24 @@ export default function BusinessSidebar() {
         { label: "Profile", value: "profile" },
     ];
 
+
+    const tabsClient = [
+        { label: "Schedule", value: null },
+        { label: "Post", value: "post" },
+        { label: "Bookmark", value: "favourite" },
+        { label: "Profile", value: "profile" }, 
+        // { label: "Settings", value: "settings" },
+        // { label: "Profile", value: "profile" },
+    ];
+
     const handleClick = (value: string | null) => {
-        if (!value) router.push(`/business/${id}/dashboard`);
-        else router.push(`/business/${id}/dashboard?tab=${value}`);
+        if(pathname?.includes("business")) {
+            if (!value) router.push(`/business/${id}/dashboard`);
+            else router.push(`/business/${id}/dashboard?tab=${value}`);
+        } else { 
+            if (!value) router.push(`/dashboard/${id}`);
+            else router.push(`/dashboard/${id}?tab=${value}`);
+        }
     };
 
     return (
@@ -42,7 +57,7 @@ export default function BusinessSidebar() {
                         style={{ boxShadow: "0px 4px 8px 3px #0000000F" }}
                         className="w-full flex flex-col bg-white border border-[#E7E7E7] rounded-l-2xl"
                     >
-                        {tabs.map(({ label, value }) => {
+                        {(pathname?.includes("business") ? tabs : tabsClient).map(({ label, value }) => {
                             const isActive = tab === value || (!tab && value === null);
 
                             return (

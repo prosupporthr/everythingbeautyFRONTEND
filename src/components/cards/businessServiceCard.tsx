@@ -3,13 +3,9 @@ import { IServiceDetail } from "@/helper/model/business";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { IoIosMore, IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
+import { IoIosMore } from "react-icons/io";
 import { CustomImage } from "../custom";
-import { DeleteModal } from "../modals";
-import useBusiness from "@/hooks/useBusiness";
-import { userAtom } from "@/store/user";
-import { useAtom } from "jotai";
-import { Spinner } from "@heroui/spinner";
+import { DeleteModal } from "../modals"; 
 import { BookmarkBtn } from "../shared";
 import { textLimit } from "@/helper/utils/textlimit";
 
