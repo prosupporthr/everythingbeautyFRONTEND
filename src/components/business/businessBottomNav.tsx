@@ -2,13 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-    Home,
-    Briefcase,
-    Shop,
-    Message,
-    User,
-} from "iconsax-reactjs";
+import { tabs, tabsClient } from "@/helper/utils/databank";
 
 export default function BusinessBottomNav() {
     const router = useRouter();
@@ -18,19 +12,16 @@ export default function BusinessBottomNav() {
     const param = useParams();
     const id = param.id;
 
-    const visible = pathname?.includes(`business/${id}/dashboard`);
-
-    const tabs = [
-        { label: "Overview", value: null, icon: Home },
-        { label: "Post", value: "post", icon: Message },
-        { label: "Services", value: "services", icon: Briefcase },
-        { label: "Store", value: "store", icon: Shop },
-        { label: "Profile", value: "profile", icon: User },
-    ];
+    const visible = pathname?.includes(`business/${id}/dashboard`) || pathname?.includes(`dashboard/${id}`);
 
     const handleClick = (value: string | null) => {
-        if (!value) router.push(`/business/${id}/dashboard`);
-        else router.push(`/business/${id}/dashboard?tab=${value}`);
+        if(pathname?.includes("business")) {
+            if (!value) router.push(`/business/${id}/dashboard`);
+            else router.push(`/business/${id}/dashboard?tab=${value}`);
+        } else { 
+            if (!value) router.push(`/dashboard/${id}`);
+            else router.push(`/dashboard/${id}?tab=${value}`);
+        }
     };
 
     return (
@@ -44,7 +35,7 @@ export default function BusinessBottomNav() {
                     className="fixed bottom-0 left-0 right-0 z-20 lg:hidden"
                 >
                     <div className="mx-3 mb-3 rounded-2xl bg-white/90 backdrop-blur-md border border-[#E7E7E7] shadow-md flex justify-between items-center px-2 py-2">
-                        {tabs.map(({ label, value, icon: Icon }) => {
+                        {(pathname?.includes("business") ? tabs : tabsClient).map(({ label, value, icon: Icon }) => {
                             const isActive = tab === value || (!tab && value === null);
 
                             return (
@@ -63,7 +54,7 @@ export default function BusinessBottomNav() {
                                         <Icon
                                             size={22}
                                             variant={isActive ? "Bold" : "Linear"}
-                                            color={isActive ? "#7C3AED" : "#6B7280"} // adjust to your brand color
+                                            color={isActive ? "#7C3AED" : "#6B7280"}
                                         />
                                     </motion.div>
 

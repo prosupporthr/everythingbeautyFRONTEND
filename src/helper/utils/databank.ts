@@ -1,5 +1,5 @@
 
-import { EmptyWalletTick, Receipt1, Wallet2, WalletAdd1 } from 'iconsax-reactjs';
+import { Briefcase, Shop, Message, Home, Receipt1, Wallet2, WalletAdd1, User, Heart, Calendar } from 'iconsax-reactjs';
 
 
 export const days = [
@@ -77,4 +77,32 @@ export const paginationLimit = [
         value: "70",
         label: "70",
     },
+]; 
+
+export const tabsClient = [
+    { label: "Schedule", value: null, icon: Home },
+    { label: "Post", value: "post", icon: Message },
+    { label: "Bookmark", value: "favourite", icon: Heart },
+    { label: "Profile", value: "profile", icon: User }, 
+    // { label: "Settings", value: "settings" },
+    // { label: "Profile", value: "profile" },
+];
+
+
+// const tabs = [
+//     { label: "Overview", value: null },
+//     { label: "Schedule", value: "schedule" },
+//     { label: "Post", value: "post" },
+//     { label: "Services", value: "services" },
+//     { label: "My Product", value: "store" },
+//     // { label: "Settings", value: "settings" },
+//     { label: "Profile", value: "profile" },
+// ];
+export const tabs = [
+    { label: "Overview", value: null, icon: Home },
+    { label: "Schedule", value: "schedule", icon: Calendar },
+    { label: "Post", value: "post", icon: Message },
+    { label: "Services", value: "services", icon: Briefcase },
+    { label: "My Product", value: "store", icon: Shop },
+    // { label: "Profile", value: "profile", icon: User },
 ];
