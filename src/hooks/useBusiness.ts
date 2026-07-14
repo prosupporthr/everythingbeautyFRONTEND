@@ -157,6 +157,8 @@ const useBusiness = ({
             });
 
             formikPost.resetForm();
+            setImageFiles([])
+            setImageFile("")
 
             const clone = [res?.data?.data, ...postdata];
 
@@ -186,11 +188,14 @@ const useBusiness = ({
                 color: "success",
             });
 
+            formikPost.resetForm();
+            setImageFiles([])
+            setImageFile("")
             queryClient.invalidateQueries({ queryKey: ["post"] });
             if (pathname.includes("business")) {
-                router.push(`/business/${id}/dashboard?tab=post`);
+                router.push(`/post`);
             } else {
-                router.push(`/dashboard/${userId}?tab=post`);
+                router.push(`/post`);
             }
         },
     });
@@ -494,7 +499,7 @@ const useBusiness = ({
         initialValues: {
             body: "",
         },
-        validationSchema: postSchema,
+        // validationSchema: postSchema,
         onSubmit: (data) => {
             if ((slug || edit) && imageFiles.length === 0) {
                 postEditMutation.mutate({

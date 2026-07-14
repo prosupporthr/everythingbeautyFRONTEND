@@ -103,7 +103,7 @@ export default function PostPage() {
         requireStylistAccess(() => formikPost.handleSubmit());
 
     useEffect(() => {
-
+        
         setLoading(true)
         if (items.length === 0) return;
 
