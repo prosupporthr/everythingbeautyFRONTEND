@@ -71,7 +71,7 @@ const useBusiness = ({
     const param = useParams();
     const id = param.id as string;
     const slug = param.slug as string;
-    const [postdata, setPost] = useAtom(postData);
+    const [postdata, setPost] = useAtom(postData); 
     const [deletedPost, setDeletedPost] = useAtom(postDeleted);
     const [deletedItem, setDeletedItem] = useAtom(itemDeleted);
     const pathname = usePathname();
@@ -157,8 +157,8 @@ const useBusiness = ({
             });
 
             formikPost.resetForm();
-            setImageFiles([])
-            setImageFile("")
+            setImageFiles([]);
+            setImageFile("");
 
             const clone = [res?.data?.data, ...postdata];
 
@@ -188,9 +188,18 @@ const useBusiness = ({
                 color: "success",
             });
 
+
+            const clone = [...postdata] 
+
+            const postIndex = clone.findIndex(post => post._id === slug ? slug : id);
+            
+            clone[postIndex] = res?.data?.data
+
+            setPost(clone) 
+
             formikPost.resetForm();
-            setImageFiles([])
-            setImageFile("")
+            setImageFiles([]);
+            setImageFile("");
             queryClient.invalidateQueries({ queryKey: ["post"] });
             if (pathname.includes("business")) {
                 router.push(`/post`);
@@ -413,7 +422,7 @@ const useBusiness = ({
                 productMutation.mutate(payloadproduct);
             }
         } else if (post) {
-            if (slug) {
+            if (slug || edit) {
                 postEditMutation.mutate(payloadpost);
             } else {
                 postMutation.mutate(payloadpost);

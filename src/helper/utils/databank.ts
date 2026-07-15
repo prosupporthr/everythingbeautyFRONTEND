@@ -103,6 +103,6 @@ export const tabs = [
     { label: "Schedule", value: "schedule", icon: Calendar },
     { label: "Post", value: "post", icon: Message },
     { label: "Services", value: "services", icon: Briefcase },
-    { label: "My Product", value: "store", icon: Shop },
+    { label: "Product", value: "store", icon: Shop },
     // { label: "Profile", value: "profile", icon: User },
 ];

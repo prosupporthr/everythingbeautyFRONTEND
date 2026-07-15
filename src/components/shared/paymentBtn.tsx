@@ -8,8 +8,8 @@ import { userAtom } from "@/store/user";
 import { paymentMethodAtom } from "@/store/paymentmethod";
 import { useEffect } from "react";
 import { SuccessModal } from "../modals";
-import { IAddressDetail } from "@/helper/model/auth"; 
-import { addToast } from "@heroui/toast"
+import { IAddressDetail } from "@/helper/model/auth";
+import { addToast } from "@heroui/toast";
 
 interface IProps {
     type:
@@ -84,7 +84,7 @@ export default function PaymentBtn({
                     userId: user?._id as string,
                     businessId: businessID as string,
                     productId: id,
-                    addressId: address?._id+"",
+                    addressId: address?._id + "",
                     quantity: qty as number,
                     totalPrice: amount ?? 0,
                     paymentStatus: "pending",
@@ -109,7 +109,7 @@ export default function PaymentBtn({
                     serviceId: id,
                     totalPrice: amount ?? 0,
                     bookingDate: bookingDate as string,
-                    staffId: staffId as string
+                    staffId: staffId as string,
                 });
             }
         } else if (
@@ -129,12 +129,6 @@ export default function PaymentBtn({
     };
 
     const checkMethod = () => {
-         if (paymentmethod === "stripe") {
-            setIsShow(false);
-        } else {
-            setIsShow(true);
-        }
-
         if (!address?._id && type === "product") {
             addToast({
                 title: "Warning",
@@ -142,8 +136,12 @@ export default function PaymentBtn({
                 color: "warning",
             });
             console.log("no address");
-
         } else {
+            if (paymentmethod === "stripe") {
+                setIsShow(false);
+            } else {
+                setIsShow(true);
+            }
             console.log("address");
             handleClick();
         }
@@ -151,7 +149,7 @@ export default function PaymentBtn({
 
     useEffect(() => {
         setPaymentMethod("stripe");
-    }, []); 
+    }, []);
 
     return (
         <div className={` w-full ${fullWidth ? "" : "lg:w-[300px]"} `}>
