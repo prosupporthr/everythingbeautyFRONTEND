@@ -228,7 +228,7 @@ export default function CustomDateTimePicker({
           onChange={handleChange}
           classNames={{
             inputWrapper: "bg-white border border-gray-300 rounded-xl h-[45px] cursor-pointer",
-            input: "text-gray-900 cursor-pointer select-none",
+            input: "text-gray-900 !text-base cursor-pointer select-none",
           }}
         />
       </div>
