@@ -6,6 +6,7 @@ import { URLS } from "../../helper/services/urls";
 import { StaffCard } from "@/components/cards";
 import { CustomButton } from "../custom";
 import useBusiness from "@/hooks/useBusiness";
+import { useEffect } from "react";
 
 interface IProps {
     id: string;
@@ -16,6 +17,8 @@ interface IProps {
     type: "user" | "admin";
     currentId?: string;
     order?: boolean;
+    detail?: boolean;
+    setHasStaff?: (by: boolean) => void
 }
 
 export default function SelectStaffModal({
@@ -26,6 +29,8 @@ export default function SelectStaffModal({
     setSelectStaff,
     currentId,
     order,
+    detail,
+    setHasStaff
 }: IProps) {
     const { data: staff, isLoading } = useFetchData<IStaffDetail[]>({
         endpoint: URLS.STAFFBYBUSINESSID(id),
@@ -33,6 +38,14 @@ export default function SelectStaffModal({
     });
 
     const { changeStaffMutation } = useBusiness({});
+
+    useEffect(() => {
+        if(staff) {
+            if(detail && staff?.length > 0) {
+                setHasStaff?.(true)
+            }
+        }
+    }, [staff])
 
     const handleClick = () => { 
         if (currentId !== selectStaff?.value) {
