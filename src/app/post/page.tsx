@@ -47,6 +47,7 @@ export default function PostPage() {
         queryKeyBaseArray: ["post"],
         endpoint: URLS.POST,
         limit: 10,
+        noCache: true
     });
 
     const { data: businesses, isLoading: loadingBusinesses } = useFetchData<

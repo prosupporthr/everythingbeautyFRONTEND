@@ -192,9 +192,9 @@ export default function PostForm({
                                     isLoading={isLoading}
                                     height="45px"
                                     type="submit"
-                                    isDisabled={imageFiles.length === 0 && !formik?.values?.body}
+                                    isDisabled={imageFiles.length === 0 && !formik?.values?.body && preview?.length === 0}
                                 >
-                                    Post
+                                   {edit ? "Edit" : ""} Post
                                 </CustomButton>
                             </div>
                         </div>

@@ -3,20 +3,25 @@ import { PostCard } from "@/components/cards";
 import { LoadingLayout } from "@/components/shared";
 import { IPostDetail } from "@/helper/model/business";
 import { URLS } from "@/helper/services/urls"; 
-import { useInfiniteScroller } from "@/hooks/useCustomGetScroller";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useInfiniteScroller } from "@/hooks/useCustomGetScroller"; 
 import usePost from "@/hooks/usePost";
 import { postDeleted } from "@/store/post";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
+import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 // import { useParams } from "next/navigation";
 
 export default function PostPage({ 
+    isProfile
 }: {
     isProfile?: boolean;
     businessId?: string;
 }) { 
 
+
+    const param = useParams(); 
+    const id = param.id as string;
     const [user] = useAtom(userAtom); 
     const [deletedItem] = useAtom(postDeleted);
     const {
@@ -26,7 +31,7 @@ export default function PostPage({
         isFetchingMore,
     } = useInfiniteScroller<IPostDetail>({
         queryKeyBaseArray: ["post", user?._id + ""],
-        endpoint: URLS.POSTBYUSERID(user?._id + ""),
+        endpoint: URLS.POSTBYUSERID(isProfile ? user?._id + "" : id+""),
         limit: 10,
         noCache: true,
     });

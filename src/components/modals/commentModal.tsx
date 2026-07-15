@@ -128,7 +128,7 @@ export default function CommentModal({
     )?.filter((reply) => !deletedComments.includes(reply?._id));
 
     return (
-        <div className=" pt-[6px] ">
+        <div className=" ">
             <button onClick={handleClick} className=" flex gap-1 ">
                 <MessageText size={20} />
 
