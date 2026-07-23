@@ -3,10 +3,14 @@ import { useFetchData } from "@/hooks/useFetchData";
 import { uniqBy } from "lodash";
 import { Socket } from "@/helper/utils/socket-io";
 import { IChatMessage } from "@/helper/model/chat";
+import { useAtom } from "jotai";
+import { messageData } from "@/store/comment";
 
 export function useChatScroller(chatId: string, limit = 20) {
   const [page, setPage] = useState(1);
-  const [messages, setMessages] = useState<IChatMessage[]>([]);
+  // const [messages, setMessages] = useState<IChatMessage[]>([]);
+
+  const [messages, setMessages] = useAtom(messageData)
   const [hasNextPage, setHasNextPage] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -64,9 +68,7 @@ export function useChatScroller(chatId: string, limit = 20) {
     const total = Number(data?.total ?? 0);
     const loaded = page * limit;
     setHasNextPage(loaded < total);
-  }, [data, isRefetching]);
-
-  console.log(messages);
+  }, [data, isRefetching]); 
   
 
   // ░░░ REALTIME SOCKET MESSAGES ░░░

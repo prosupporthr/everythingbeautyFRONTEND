@@ -1,7 +1,6 @@
 "use client";
 import { PostCard, ProductCard } from "@/components/cards";
 import LandingBusinessCard from "@/components/cards/landingBusinessCard";
-import { CustomButton } from "@/components/custom";
 import { PostForm } from "@/components/forms";
 import { LoadingLayout, ModalLayout } from "@/components/shared";
 import {
@@ -17,25 +16,13 @@ import usePost from "@/hooks/usePost";
 import { postData, postDeleted } from "@/store/post";
 import { userAtom } from "@/store/user";
 import { Spinner } from "@heroui/spinner";
-import { addToast } from "@heroui/toast";
-import { Gallery, People, Send } from "iconsax-reactjs";
+import { Gallery, Send } from "iconsax-reactjs";
 import { useAtom, useAtomValue } from "jotai";
 import { uniqBy } from "lodash";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const DISCOVERY_LIMIT = 4;
-
-// const PROMO_GRADIENT = {
-//     background:
-//         "linear-gradient(135deg, rgba(129, 39, 207, 0.05) 0%, rgba(129, 39, 207, 0) 100%)",
-// };
-
-const STYLIST_ONLY_WARNING = {
-    title: "Warning",
-    description: "Join as a Stylist to create post",
-    color: "warning" as const,
-};
 
 export default function PostPage() {
     const {
@@ -47,7 +34,7 @@ export default function PostPage() {
         queryKeyBaseArray: ["post"],
         endpoint: URLS.POST,
         limit: 10,
-        noCache: true
+        noCache: true,
     });
 
     const { data: businesses, isLoading: loadingBusinesses } = useFetchData<
@@ -72,7 +59,7 @@ export default function PostPage() {
     const [user] = useAtom(userAtom);
     const [posts, setPosts] = useAtom(postData);
     const deletedPosts = useAtomValue(postDeleted);
-    const [ loading, setLoading ] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
 
@@ -89,43 +76,30 @@ export default function PostPage() {
         noredirect: true,
     });
 
-    // Gate stylist-only actions (creating/submitting a post) behind a single check
-    const requireStylistAccess = (action: () => void) => {
-        // if (user?.business?._id) {
-            action();
-        // } else {
-            // addToast(STYLIST_ONLY_WARNING);
-        // }
-    };
-
-    const handleOpenComposer = () =>
-        requireStylistAccess(() => setIsOpen(true));
-    const handleSubmitPost = () =>
-        requireStylistAccess(() => formikPost.handleSubmit());
+    const handleOpenComposer = () => setIsOpen(true);
+    const handleSubmitPost = () => formikPost.handleSubmit();
 
     useEffect(() => {
-        
-        setLoading(true)
         if (items.length === 0) return;
 
+        setLoading(true);
         setPosts((prev) => {
             const merged = uniqBy([...prev, ...items], "_id");
             return merged.length === prev.length ? prev : merged;
         });
-
-        setLoading(false)
-    }, [items, setPosts, setLoading]);
+        setLoading(false);
+    }, [items, setPosts]);
 
     const visiblePosts = posts?.filter(
         (item) => !deletedPosts.includes(item?._id),
     );
 
     return (
-        <div className=" w-full flex-1 lg:flex-row flex-col flex gap-6 lg:overflow-hidden ">
-            <div className=" w-full h-auto lg:flex-1 flex items-center flex-col p-4 lg:p-6 lg:pr-0 gap-4 lg:overflow-auto ">
-                <div className=" lg:max-w-[500px] w-full flex flex-col gap-4 ">
-                    <div className=" w-full flex flex-col gap-2 items-center ">
-                        <div className=" w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center ">
+        <div className="w-full flex-1 lg:flex-row flex-col flex gap-6 lg:overflow-hidden">
+            <div className="w-full h-auto lg:flex-1 flex items-center flex-col p-4 lg:p-6 lg:pr-0 gap-4 lg:overflow-auto">
+                <div className="lg:max-w-[500px] w-full flex flex-col gap-4">
+                    <div className="w-full flex flex-col gap-2 items-center">
+                        <div className="w-full flex border border-[#CFC2D6CC] p-2 rounded-full items-center">
                             <input
                                 value={formikPost.values?.body}
                                 onChange={(e) =>
@@ -139,52 +113,164 @@ export default function PostPage() {
                             />
                             <button
                                 onClick={handleSubmitPost}
-                                className=" w-fit px-3 h-full flex justify-center items-center "
+                                disabled={
+                                    !formikPost?.values?.body || loadingPost
+                                }
+                                className="w-fit px-3 disabled:opacity-30 disabled:cursor-not-allowed! h-full flex justify-center items-center"
                             >
                                 {loadingPost ? (
                                     <Spinner size="sm" />
                                 ) : (
-                                    <Send
-                                        size={"25px"}
-                                        className=" text-brand "
-                                    />
+                                    <Send size={25} className="text-brand" />
                                 )}
                             </button>
                         </div>
                         <button
                             onClick={handleOpenComposer}
-                            className=" flex justify-center items-center w-fit rounded-2xl gap-2 px-3 py-[6px] bg-[#E0B0FF] text-black "
+                            className="flex justify-center items-center w-fit rounded-2xl gap-2 px-3 py-[6px] bg-[#E0B0FF] text-black"
                         >
                             <Gallery size={25} />
                             <p>Add Photos/Video in your post</p>
                         </button>
                     </div>
-                    <div className=" w-full flex flex-col gap-4 ">
+
+                    <div className="w-full flex flex-col gap-4">
                         <LoadingLayout
                             loading={isLoading || loading}
                             refetching={isFetchingMore}
                             length={visiblePosts?.length}
                             ref={ref}
                         >
-                            {visiblePosts?.map((item) => (
-                                <PostCard
-                                    click={handleLikePost}
-                                    key={item?._id}
-                                    item={item}
-                                    isProfile={user?._id === item?.userId}
-                                />
-                            ))}
+                            {visiblePosts?.map((item, index) => {
+                                const showExtra = (index + 1) % 10 === 0;
+                                const sectionIndex = Math.floor(
+                                    (index + 1) / 10,
+                                );
+                                const showDiscovery = sectionIndex % 2 === 1;
+
+                                return (
+                                    <React.Fragment key={item?._id}>
+                                        <PostCard
+                                            click={handleLikePost}
+                                            item={item}
+                                            isProfile={
+                                                user?._id === item?.userId
+                                            }
+                                        />
+
+                                        {showExtra &&
+                                            (showDiscovery ? (
+                                                <div className="w-full lg:hidden flex flex-col gap-4 p-6 pl-0">
+                                                    <div className="w-full flex justify-between items-center">
+                                                        <p className="font-bold">
+                                                            Discovery
+                                                        </p>
+                                                        <button
+                                                            onClick={() =>
+                                                                router.push(
+                                                                    "/businesslist",
+                                                                )
+                                                            }
+                                                            className="font-bold text-xs"
+                                                        >
+                                                            View All
+                                                        </button>
+                                                    </div>
+
+                                                    <LoadingLayout
+                                                        loading={
+                                                            loadingBusinesses
+                                                        }
+                                                        length={
+                                                            businesses?.length
+                                                        }
+                                                    >
+                                                        <div className="w-full min-w-0 flex overflow-x-auto gap-4 text-white">
+                                                            {businesses?.map(
+                                                                (business) => (
+                                                                    <div
+                                                                        className="w-[200px] shrink-0"
+                                                                        key={
+                                                                            business._id
+                                                                        }
+                                                                    >
+                                                                        <LandingBusinessCard
+                                                                            small
+                                                                            item={
+                                                                                business
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </LoadingLayout>
+                                                </div>
+                                            ) : (
+                                                <div className="w-full flex flex-col gap-4">
+                                                    <div className="w-full flex justify-between items-center">
+                                                        <p className="font-bold">
+                                                            Products
+                                                        </p>
+                                                        <button
+                                                            onClick={() =>
+                                                                router.push(
+                                                                    "/productlist",
+                                                                )
+                                                            }
+                                                            className="font-bold text-xs"
+                                                        >
+                                                            View All
+                                                        </button>
+                                                    </div>
+
+                                                    <LoadingLayout
+                                                        loading={
+                                                            loadingProduct
+                                                        }
+                                                        length={
+                                                            product?.length
+                                                        }
+                                                    >
+                                                        <div className="w-full min-w-0 flex overflow-x-auto gap-4 text-white">
+                                                            {product?.map(
+                                                                (
+                                                                    productItem,
+                                                                ) => (
+                                                                    <div
+                                                                        className="shrink-0"
+                                                                        key={
+                                                                            productItem._id
+                                                                        }
+                                                                    >
+                                                                        <ProductCard
+                                                                            item={
+                                                                                productItem
+                                                                            }
+                                                                            post
+                                                                        />
+                                                                    </div>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </LoadingLayout>
+                                                </div>
+                                            ))}
+                                    </React.Fragment>
+                                );
+                            })}
                         </LoadingLayout>
                     </div>
                 </div>
             </div>
-            <div className=" max-w-[470px] w-full lg:flex hidden pl-0 p-6 flex-col gap-6 lg:overflow-auto ">
-                <div className=" flex w-full flex-col gap-4 ">
-                    <div className=" w-full flex justify-between items-center ">
-                        <p className=" font-bold ">Discovery</p>
+
+            <div className="max-w-[470px] w-full lg:flex hidden flex-col gap-6 p-6 pl-0 lg:overflow-auto">
+                <div className="flex w-full flex-col gap-4">
+                    <div className="w-full flex justify-between items-center">
+                        <p className="font-bold">Discovery</p>
                         <button
                             onClick={() => router.push("/businesslist")}
-                            className=" font-bold text-xs "
+                            className="font-bold text-xs"
                         >
                             View All
                         </button>
@@ -193,7 +279,7 @@ export default function PostPage() {
                         loading={loadingBusinesses}
                         length={businesses?.length}
                     >
-                        <div className=" w-full grid grid-cols-2 gap-4 text-white ">
+                        <div className="w-full grid grid-cols-2 gap-4 text-white">
                             {businesses
                                 ?.slice(0, DISCOVERY_LIMIT)
                                 ?.map((item) => (
@@ -207,51 +293,34 @@ export default function PostPage() {
                         </div>
                     </LoadingLayout>
                 </div>
-                <div className=" flex w-full flex-col gap-4 ">
-                    <div className=" w-full flex justify-between items-center ">
-                        <p className=" font-bold ">Products</p>
+
+                <div className="flex w-full flex-col gap-4">
+                    <div className="w-full flex justify-between items-center">
+                        <p className="font-bold">Products</p>
                         <button
                             onClick={() => router.push("/productlist")}
-                            className=" font-bold text-xs "
+                            className="font-bold text-xs"
                         >
                             View All
                         </button>
                     </div>
                     <LoadingLayout
-                        loading={loadingBusinesses}
-                        length={businesses?.length}
+                        loading={loadingProduct}
+                        length={product?.length}
                     >
-                        <div className=" w-full grid grid-cols-2 gap-4 text-white ">
-                            {product?.slice(0, DISCOVERY_LIMIT)?.map((item) => (
-                                <div key={item?._id}>
-                                    <ProductCard item={item} post key={item?._id} />
-                                </div>
-                            ))}
+                        <div className="w-full grid grid-cols-2 gap-4 text-white">
+                            {product
+                                ?.slice(0, DISCOVERY_LIMIT)
+                                ?.map((item) => (
+                                    <div key={item?._id}>
+                                        <ProductCard item={item} post />
+                                    </div>
+                                ))}
                         </div>
                     </LoadingLayout>
                 </div>
-                {/* <div
-                    style={PROMO_GRADIENT}
-                    className=" w-full flex flex-col shadow p-6 gap-3 rounded-3xl justify-center items-center "
-                >
-                    <div className=" w-14 h-14 rounded-2xl bg-white text-brand flex justify-center items-center ">
-                        <People size={30} />
-                    </div>
-                    <div className=" text-center ">
-                        <p className=" font-bold ">Jenes Glow</p>
-                        <p className=" text-sm text-secondary ">
-                            Connect with 50k+ beauty enthusiasts and pros.
-                        </p>
-                    </div>
-                    <CustomButton
-                        height="45px"
-                        variant="outlinebrand"
-                        fullWidth
-                    >
-                        follow
-                    </CustomButton>
-                </div> */}
             </div>
+
             <ModalLayout isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <PostForm
                     modal
