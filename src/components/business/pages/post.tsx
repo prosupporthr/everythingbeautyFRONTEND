@@ -52,7 +52,7 @@ export default function PostPage({
                             <PostCard
                                 click={handleLikePost}
                                 key={index}
-                                isProfile={true}
+                                isProfile={isProfile}
                                 item={item}
                             />
                         );

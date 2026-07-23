@@ -15,6 +15,8 @@ import { FaCheckCircle } from "react-icons/fa";
 import { LoadingLayout } from "../shared";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/user";
+import { Input } from "@heroui/react";
+import { useState } from "react";
 
 export default function PostForm({
     formik,
@@ -25,7 +27,7 @@ export default function PostForm({
     imageFiles,
     setImageFiles,
     modal,
-    client
+    client,
 }: {
     formik: FormikProps<IPost>;
     imageFiles: File[];
@@ -39,10 +41,11 @@ export default function PostForm({
 }) {
     const param = useParams();
     const id = param.id as string;
+    const [search, setSearch] = useState("");
 
     const [user] = useAtom(userAtom);
 
-    const effectiveBusinessId = id;
+    const effectiveBusinessId = id ?? user?.business?._id;
 
     const {
         items = [],
@@ -53,6 +56,9 @@ export default function PostForm({
         queryKeyBaseArray: ["productfilter", effectiveBusinessId],
         endpoint: URLS.PRODUCTBUSINESSBYID(effectiveBusinessId),
         limit: 10,
+        params: {
+            q: search
+        }
     });
 
     const router = useRouter();
@@ -79,11 +85,9 @@ export default function PostForm({
                     className={` w-full flex justify-center  ${client ? " max-w-[700px] mx-auto " : ""} ${modal ? " mb-8 " : " mb-8 h-full "} `}
                 >
                     <div
-                        className={` ${(modal || client) ? " flex-col " : " flex-row "} w-full flex gap-4 `}
+                        className={` ${modal || client ? " flex-col " : " flex-row "} w-full flex gap-4 `}
                     >
-                        <div
-                            className={`" w-full ${modal ? " " : "h-fit"} `}
-                        >
+                        <div className={`" w-full ${modal ? " " : "h-fit"} `}>
                             <MultipleImagePicker
                                 imageFiles={imageFiles}
                                 setImageFiles={setImageFiles}
@@ -100,21 +104,32 @@ export default function PostForm({
                                 textarea
                             />
                             {user?.business?._id && (
-                                <div className=" w-full flex flex-col gap-3 border rounded-2xl  ">
+                                <div className=" w-full h-fit flex flex-col gap-3 border rounded-2xl  ">
                                     <div className=" flex gap-2 items-center pt-4 px-4 ">
                                         <SlBag size={17} />
                                         <p className=" text-sm font-semibold ">
                                             Tag Products
                                         </p>
                                     </div>
-                                    <div className=" w-full px-4 ">
-                                        <CustomInput
-                                            type="search"
-                                            notform
-                                            name=""
-                                            placeholder="Search product..."
-                                            hasFrontIcon
-                                            icon={<RiSearch2Line size={15} />}
+                                    <div className=" h-[40px] px-4 ">
+                                        <Input
+                                            placeholder={"Search product..."}
+                                            type={"search"}
+                                            startContent={
+                                                <RiSearch2Line
+                                                    color="black"
+                                                    size={15}
+                                                />
+                                            }
+                                            classNames={{
+                                                inputWrapper:
+                                                    " rounded-xl bg-[#FDFDFD] border border-[#EAEBEDCC]  h-[45px]", // 👈 force height
+                                                input: "text-gray-900 h-full w-full text-sm  outline-none ",
+                                            }}
+                                            value={search}
+                                            onValueChange={(value) =>
+                                                setSearch(value)
+                                            }
                                         />
                                     </div>
                                     <LoadingLayout
@@ -123,7 +138,9 @@ export default function PostForm({
                                         length={items?.length}
                                         ref={ref}
                                     >
-                                        <div className=" h-[50%] overflow-y-auto flex p-4 flex-col gap-3 ">
+                                        <div
+                                            className={`  max-h-[200px] overflow-y-auto flex p-4 flex-col gap-3 `}
+                                        >
                                             {items.map((item, index) => {
                                                 return (
                                                     <div className=" w-full flex items-center justify-between ">
@@ -192,9 +209,13 @@ export default function PostForm({
                                     isLoading={isLoading}
                                     height="45px"
                                     type="submit"
-                                    isDisabled={imageFiles.length === 0 && !formik?.values?.body && preview?.length === 0}
+                                    isDisabled={
+                                        imageFiles.length === 0 &&
+                                        !formik?.values?.body &&
+                                        preview?.length === 0
+                                    }
                                 >
-                                   {edit ? "Edit" : ""} Post
+                                    {edit ? "Edit" : ""} Post
                                 </CustomButton>
                             </div>
                         </div>

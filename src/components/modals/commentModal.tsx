@@ -219,7 +219,7 @@ export default function CommentModal({
                                         >
                                             {activeReply === comment?._id
                                                 ? "Hide Replies"
-                                                : "Show Replies"}
+                                                : `View ${comment?.replies} more ${comment?.replies > 1 ? "replies" : "reply"} `}
                                         </button>
                                     </div>
                                 )}

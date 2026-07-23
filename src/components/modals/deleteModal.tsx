@@ -4,6 +4,8 @@ import { ModalLayout } from "../shared";
 import useBusiness from "@/hooks/useBusiness";
 import useEditUser from "@/hooks/useEditUser";
 import usePost from "@/hooks/usePost";
+import useMessage from "@/hooks/useMessage";
+import { textLimit } from "@/helper/utils/textlimit";
 
 export default function DeleteModal({
     isOpen,
@@ -23,7 +25,8 @@ export default function DeleteModal({
         | "Post"
         | "Staff"
         | "Comment"
-        | "Reply";
+        | "Reply"
+        | "Message";
     id: string;
     name: string;
 }) {
@@ -36,6 +39,8 @@ export default function DeleteModal({
     } = useBusiness({});
 
     const { deleteCommentMutation } = usePost();
+
+    const { deleteMessageMutation } = useMessage();
 
     const { deleteAddressMutation } = useEditUser();
 
@@ -51,7 +56,9 @@ export default function DeleteModal({
                   : type === "Staff"
                     ? staffDeleteMutation
                     :(type === "Comment" || type === "Reply")
-                    ? deleteCommentMutation
+                    ? deleteCommentMutation 
+                    : type === "Message" 
+                    ? deleteMessageMutation
                     : servicesDeleteMutation;
 
     const clickHandler = () => {
@@ -74,7 +81,7 @@ export default function DeleteModal({
 
                     <p className="text-xs font-medium text-center text-secondary">
                         Deleting this {type}{" "}
-                        <span className=" font-bold text-brand capitalize ">{name}</span>{" "}
+                        <span className=" font-bold text-brand capitalize ">{textLimit(name, 30)}</span>{" "}
                         will permanently delete it. This action cannot be
                         undone, so make sure you're certain before proceeding.
                     </p>
