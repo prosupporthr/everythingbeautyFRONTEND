@@ -30,7 +30,7 @@ const LoadingLayout = forwardRef<HTMLDivElement, LoaderProps>(
                     </>
                 )}
 
-                {!loading && length === 0 && (
+                {!loading && !refetching && length === 0 && (
                     <div className="w-full flex flex-col justify-center items-center py-7">
                         <CgFileDocument size="30px" />
                         <p className="text-sm font-semibold">No activity</p>

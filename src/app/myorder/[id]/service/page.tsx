@@ -254,34 +254,44 @@ export default function BookedServicesPage() {
                                             showDetail
                                         />
                                     </div>
-
-                                    {data?.status === "APPROVED" &&
-                                        !hasReview && (
-                                            <div className=" lg:max-w-[300px] w-full ">
-                                                <CustomButton
-                                                    onClick={() =>
-                                                        setIsOpen(true)
-                                                    }
-                                                    fullWidth
-                                                >
-                                                    Rate Business
-                                                </CustomButton>
-                                            </div>
-                                        )}
-                                    {data?.status === "AWAITING_APPROVAL" && (
-                                        <PaymentMethod />
-                                    )}
-                                    {data?.status === "AWAITING_APPROVAL" && (
-                                        <div className=" lg:max-w-[300px] w-full ">
-                                            <PaymentBtn
-                                                type={"booking"}
-                                                title="Make Payment"
-                                                ordered
-                                                id={data?._id}
-                                                amount={data?.totalPrice}
-                                                user={user as IUserDetail}
-                                                isClosable
-                                            />
+                                    {user?._id !==
+                                        data?.service?.business?.userId && (
+                                        <div className=" w-full ">
+                                            {data?.status === "APPROVED" &&
+                                                !hasReview && (
+                                                    <div className=" lg:max-w-[300px] w-full ">
+                                                        <CustomButton
+                                                            onClick={() =>
+                                                                setIsOpen(true)
+                                                            }
+                                                            fullWidth
+                                                        >
+                                                            Rate Business
+                                                        </CustomButton>
+                                                    </div>
+                                                )}
+                                            {data?.status ===
+                                                "AWAITING_APPROVAL" && (
+                                                <PaymentMethod />
+                                            )}
+                                            {data?.status ===
+                                                "AWAITING_APPROVAL" && (
+                                                <div className=" lg:max-w-[300px] w-full ">
+                                                    <PaymentBtn
+                                                        type={"booking"}
+                                                        title="Make Payment"
+                                                        ordered
+                                                        id={data?._id}
+                                                        amount={
+                                                            data?.totalPrice
+                                                        }
+                                                        user={
+                                                            user as IUserDetail
+                                                        }
+                                                        isClosable
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
