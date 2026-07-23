@@ -24,16 +24,7 @@ const useMessage = () => {
     const [previews, setPreviews] = useState<string[]>([]);
 
 
-    const uploadMutation = useUploadMutation((res: Array<string>) => {
-
-        console.log({
-            chatId: formik?.values?.chatId,
-            senderId: formik?.values?.senderId,
-            type: formik?.values?.type,
-            message: formik?.values?.message,
-            flies: [...res]
-        });
-        
+    const uploadMutation = useUploadMutation((res: Array<string>) => { 
 
         Socket.emit("chat", {
             chatId: formik?.values?.chatId,
