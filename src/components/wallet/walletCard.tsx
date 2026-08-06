@@ -93,11 +93,11 @@ export default function WalletCard({
                                             }
                                         >
                                             <div
-                                                className={` ${pathname === item.link ? " border-brand " : " border-white "}  border w-10 h-10 rounded-full bg-white flex justify-center items-center `}
+                                                className={` ${pathname === item.link ? " border-brand bg-brand text-white " : " border-white bg-white text-brand "}  border w-10 h-10 rounded-full  flex justify-center items-center `}
                                             >
                                                 <item.icon
                                                     size={"20px"}
-                                                    color={"#9747FF"}
+                                                    // variant={pathname === item.link ? "Bulk" : "Outline"} 
                                                 />
                                             </div>
                                             <p

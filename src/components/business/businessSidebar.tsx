@@ -1,5 +1,6 @@
 "use client";
 
+import { tabs, tabsClient } from "@/helper/utils/databank";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -13,25 +14,25 @@ export default function BusinessSidebar() {
 
     const visible = pathname?.includes(`business/${id}/dashboard`) || pathname?.includes(`dashboard/${id}`);
 
-    const tabs = [
-        { label: "Overview", value: null },
-        { label: "Schedule", value: "schedule" },
-        { label: "Post", value: "post" },
-        { label: "Services", value: "services" },
-        { label: "My Product", value: "store" },
-        // { label: "Settings", value: "settings" },
-        { label: "Profile", value: "profile" },
-    ];
+    // const tabs = [
+    //     { label: "Overview", value: null },
+    //     { label: "Schedule", value: "schedule" },
+    //     { label: "Post", value: "post" },
+    //     { label: "Services", value: "services" },
+    //     { label: "My Product", value: "store" },
+    //     // { label: "Settings", value: "settings" },
+    //     { label: "Profile", value: "profile" },
+    // ];
 
 
-    const tabsClient = [
-        { label: "Schedule", value: null },
-        { label: "Post", value: "post" },
-        { label: "Bookmark", value: "favourite" },
-        { label: "Profile", value: "profile" }, 
-        // { label: "Settings", value: "settings" },
-        // { label: "Profile", value: "profile" },
-    ];
+    // const tabsClient = [
+    //     { label: "Schedule", value: null },
+    //     { label: "Post", value: "post" },
+    //     { label: "Bookmark", value: "favourite" },
+    //     { label: "Profile", value: "profile" }, 
+    //     // { label: "Settings", value: "settings" },
+    //     // { label: "Profile", value: "profile" },
+    // ];
 
     const handleClick = (value: string | null) => {
         if(pathname?.includes("business")) {

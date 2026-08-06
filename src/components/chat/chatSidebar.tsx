@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { CustomInput } from "../custom";
 import { useState } from "react";
 import { LoadingLayout } from "../shared";
+import { useAtom } from "jotai";
+import { messageData } from "@/store/comment";
 
 export default function ChatSidebar({
     chat,
@@ -25,7 +27,10 @@ export default function ChatSidebar({
     const first = query?.get("first");
     const id = query?.get("id");
 
+    const [ _, setMessage ] = useAtom(messageData)
+
     const clickHandler = (item: IChatList) => {
+        setMessage([])
         router.push(`/message?id=${item?._id}`);
     };
 

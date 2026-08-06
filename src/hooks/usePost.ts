@@ -14,12 +14,14 @@ import { IPostComment } from "@/helper/model/post";
 import { uniqBy } from "lodash";
 import { useAtom } from "jotai";
 import { commentData as commentDataAtom, commentDeleted, replyData as replyDataAtom } from "@/store/comment";
+import { postData } from "@/store/post";
 
 const usePost = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
     const [index, setIndex] = useState<string>("") 
+    const [posts, setPosts] = useAtom(postData);
 
     const [_, setOnDeleteComment] = useAtom(commentDeleted);
     const [commentId, setCommentId] = useState<string>("") 
@@ -92,6 +94,16 @@ const usePost = () => {
         onError: handleError,
         onSuccess: (data) => { 
             console.log(data?.data?.data);
+            const clone = [...posts] 
+
+            const postIndex = clone.findIndex(post => post._id === index);
+            
+            clone[postIndex] = {
+                ...clone[postIndex],
+                commentsCount: clone[postIndex].commentsCount + 1
+            } 
+
+            setPosts(clone)
             setCommentData((prevComments) => uniqBy([data?.data?.data, ...prevComments], "_id"));
             formikComment?.resetForm(); 
             queryClient.invalidateQueries({ queryKey: ["comment"] });

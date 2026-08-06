@@ -56,7 +56,7 @@ export default function MediaCarousel({ item, isProfile }: Props) {
     };
 
     return (
-        <div className={`w-full h-[200px] ${height} relative group`}>
+        <div className={`w-full h-[200px] ${height} relative group `}>
             {/* Prev */}
             {activeIndex > 0 && (
                 <button
@@ -92,7 +92,7 @@ export default function MediaCarousel({ item, isProfile }: Props) {
                     return (
                         <div
                             key={index}
-                            className="min-w-full h-full snap-center flex-shrink-0 relative"
+                            className="min-w-full h-full snap-center flex-shrink-0 "
                         >
                             {/* 🔥 Lazy mount only nearby slides */}
                             {shouldRender(index) ? (
@@ -111,6 +111,7 @@ export default function MediaCarousel({ item, isProfile }: Props) {
                                 ) : (
                                     <CustomImage
                                         post
+                                        nopopup={false}
                                         src={media}
                                         alt={`media-${index}`}
                                         loading="lazy"

@@ -18,7 +18,11 @@ import { useEffect, useState } from "react";
 import { PiClockLight } from "react-icons/pi";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useParams, useRouter } from "next/navigation";
-import { IBusinessDetails, ISelectStaff, IServiceDetail } from "@/helper/model/business";
+import {
+    IBusinessDetails,
+    ISelectStaff,
+    IServiceDetail,
+} from "@/helper/model/business";
 import { convertDataForSelect } from "@/helper/utils/convertDataForSelect";
 import { days } from "@/helper/utils/databank";
 import { isBusinessOpen } from "@/helper/utils/dateStatus";
@@ -36,7 +40,7 @@ import { URLS } from "@/helper/services/urls";
 import { addToast } from "@heroui/toast";
 import { textLimit } from "@/helper/utils/textlimit";
 import { formatTime } from "@/helper/utils/dateFormat";
-import { SelectStaffModal } from "@/components/modals"; 
+import { SelectStaffModal } from "@/components/modals";
 
 export default function SaleServicePage() {
     const param = useParams();
@@ -52,6 +56,7 @@ export default function SaleServicePage() {
     const [user] = useAtom(userAtom);
 
     const [status, setStatus] = useState(false);
+    const [hasStaff, setHasStaff] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [marker, setMarker] = useState(
         {} as google.maps.LatLngLiteral | null,
@@ -130,7 +135,7 @@ export default function SaleServicePage() {
             lat: Number(data?.lat ?? 0),
             lng: Number(data?.long ?? 0),
         });
-    }, [data, isLoading, setMarker]);
+    }, [data, isLoading]);
 
     const handleClick = () => {
         if (!selectedDate || !data) return;
@@ -407,12 +412,13 @@ export default function SaleServicePage() {
                             )}
                             <ReviewSection businessId={data?._id} />
                         </div>
+                        <div className=" h-[500px] " />
                     </div>
                     {!self && (
-                        <div className=" lg:w-fit p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-40 ">
+                        <div className=" lg:w-fit p-3 lg:relative fixed bottom-0 inset-x-0 lg:z-0 z-40 ">
                             <div className=" w-full bg-white lg:w-[413px] rounded-2xl border p-6 flex flex-col gap-4 ">
                                 <p className=" text-2xl font-bold ">Checkout</p>
-                                <div className=" w-full border rounded-t-xl ">
+                                <div className={` w-full border rounded-t-xl ${selectedOption.service ? " " : " rounded-b-xl "} `}>
                                     <div className=" w-full h-fit border-b px-4 py-2 ">
                                         <CustomSelect
                                             placeholder="Select Services "
@@ -427,20 +433,28 @@ export default function SaleServicePage() {
                                             options={options}
                                         />
                                     </div>
-                                    <div className=" p-2 w-full ">
-                                        <button
-                                            onClick={() => setIsOpen(true)}
-                                            className=" w-full h-[45px] rounded-2xl border "
+                                    {hasStaff && (
+                                        <div
+                                            className={` ${selectedOption.service ? " flex " : " lg:flex hidden "} p-2 w-full `}
                                         >
-                                            <p className=" capitalize text-sm font-medium " >{selectedStaff?.label ? selectedStaff?.label : "Select Stylist"}</p>
-                                        </button>
-                                    </div>
+                                            <button
+                                                onClick={() => setIsOpen(true)}
+                                                className=" w-full h-[45px] rounded-2xl border "
+                                            >
+                                                <p className=" capitalize text-sm font-medium ">
+                                                    {selectedStaff?.label
+                                                        ? selectedStaff?.label
+                                                        : "Select Stylist"}
+                                                </p>
+                                            </button>
+                                        </div>
+                                    )}
                                     <div
                                         className={` w-full ${selectedOption.service ? " flex " : " lg:flex hidden "} border-t py-2 `}
                                     >
                                         <div className=" w-full border-r px-4 ">
                                             <CustomDateTimePicker
-                                                borderWidth="0px" 
+                                                borderWidth="0px"
                                                 withTime={false}
                                                 label="Service Date"
                                                 useFormik={false}
@@ -472,6 +486,7 @@ export default function SaleServicePage() {
                                 </div>
                                 <CustomButton
                                     onClick={handleClick}
+                                    className={` ${selectedOption.service ? " flex " : " lg:flex hidden "}  `}
                                     isDisabled={
                                         selectedOption.service &&
                                         selectedOption.date &&
@@ -482,7 +497,7 @@ export default function SaleServicePage() {
                                 >
                                     Book Now
                                 </CustomButton>
-                                <div className=" w-full flex justify-center font-medium ">
+                                <div className=" w-full hidden lg:flex justify-center font-medium ">
                                     You won't be charged yet
                                 </div>
                                 {selectedOption?.service && (
@@ -534,6 +549,8 @@ export default function SaleServicePage() {
                 </div>
                 <SelectStaffModal
                     order={true}
+                    detail={true}
+                    setHasStaff={setHasStaff}
                     selectStaff={selectedStaff}
                     setSelectStaff={setSelectedStaff}
                     id={id + ""}

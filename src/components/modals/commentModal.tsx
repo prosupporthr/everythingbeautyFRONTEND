@@ -16,9 +16,17 @@ import { uniqBy } from "lodash";
 // LoadingLayout expects a "length" that reflects the merged/deduped list, but
 // there's a render where the freshly-fetched page hasn't been merged into
 // the atom yet. Falling back to 1 avoids a flash of the empty state during
-// that gap without lying about the real count once they're in sync. 
+// that gap without lying about the real count once they're in sync.
 
-export default function CommentModal({ post, setActiveId, activeId }: { post: IPostDetail, setActiveId: (id: string) => void, activeId: string }) {
+export default function CommentModal({
+    post,
+    setActiveId,
+    activeId,
+}: {
+    post: IPostDetail;
+    setActiveId: (id: string) => void;
+    activeId: string;
+}) {
     const [isOpen, setIsOpen] = useState(false);
     const [loadingLikeId, setLoadingLikeId] = useState("");
     const deletedComments = useAtomValue(commentDeleted);
@@ -43,6 +51,7 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
         ref,
         isLoading: loading,
         isFetchingMore,
+        refetch
     } = useInfiniteScroller<IComment>({
         queryKeyBaseArray: [activeId, "comment"],
         endpoint: `/post/${activeId}/comments`,
@@ -56,13 +65,14 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
         ref: repliesRef,
         isLoading: loadingReplies,
         isFetchingMore: isFetchingMoreReplies,
+        reset: refetchReply
     } = useInfiniteScroller<IComment>({
         queryKeyBaseArray: [activeReply, "reply"],
         endpoint: `/post/comment/${activeReply}/replies`,
         enable: Boolean(activeReply),
         limit: 10,
         noCache: true,
-    }); 
+    });
 
     useEffect(() => {
         setIndex(activeId);
@@ -83,6 +93,8 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
         // active reply thread, and the "replying to" target are otherwise
         // shared global atoms and would leak in from whatever post was
         // last viewed.
+
+        refetch()
         setComments([]);
         setRepliesData([]);
         setCurrentComment({ id: "", name: "", message: "" });
@@ -93,6 +105,7 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
     };
 
     const handleClickReply = (comment: IComment) => {
+        refetchReply()
         setRepliesData([]);
         setActiveReply(activeReply === comment?._id ? "" : comment?._id);
     };
@@ -109,14 +122,17 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
     const visibleComments = uniqBy([...comments, ...items], "_id")?.filter(
         (comment) => !deletedComments.includes(comment?._id),
     );
-    const visibleReplies = uniqBy([...repliesData, ...repliesItems], "_id")?.filter(
-        (reply) => !deletedComments.includes(reply?._id),
-    );
+    const visibleReplies = uniqBy(
+        [...repliesData, ...repliesItems],
+        "_id",
+    )?.filter((reply) => !deletedComments.includes(reply?._id));
 
     return (
-        <div className=" pt-[6px] ">
-            <button onClick={handleClick}>
+        <div className=" ">
+            <button onClick={handleClick} className=" flex gap-1 ">
                 <MessageText size={20} />
+
+                <p className=" text-[10px] font-bold ">{post?.commentsCount}</p>
             </button>
             <ModalLayout
                 isOpen={isOpen}
@@ -128,7 +144,7 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                 <div className=" w-full flex flex-col gap-5 pb-4 max-h-[70vh] min-h-[50vh] px-4 py-4 overflow-y-auto ">
                     <LoadingLayout
                         loading={loading}
-                        length={visibleComments?.length}
+                        length={isFetchingMore ? 1 : visibleComments?.length}
                         ref={ref}
                         refetching={isFetchingMore}
                     >
@@ -142,9 +158,14 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                                     item={comment}
                                     setCommentId={setCurrentComment}
                                     onLike={() => handleLike(comment?._id)}
-                                    newLikeData={likeCommentMutation.data?.data as IComment}
+                                    newLikeData={
+                                        likeCommentMutation.data
+                                            ?.data as IComment
+                                    }
                                     onDelete={() =>
-                                        deleteCommentMutation.mutate(comment?._id)
+                                        deleteCommentMutation.mutate(
+                                            comment?._id,
+                                        )
                                     }
                                 />
                                 {activeReply === comment?._id && (
@@ -161,13 +182,21 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                                                     className="  pl-10 w-full "
                                                 >
                                                     <CommentCard
-                                                        loadingLike={loadingLikeId}
+                                                        loadingLike={
+                                                            loadingLikeId
+                                                        }
                                                         item={reply}
                                                         reply
                                                         onLike={() =>
-                                                            handleLike(reply?._id)
+                                                            handleLike(
+                                                                reply?._id,
+                                                            )
                                                         }
-                                                        newLikeData={likeCommentMutation.data?.data as IComment}
+                                                        newLikeData={
+                                                            likeCommentMutation
+                                                                .data
+                                                                ?.data as IComment
+                                                        }
                                                         onDelete={() =>
                                                             deleteCommentMutation.mutate(
                                                                 reply?._id,
@@ -184,11 +213,13 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                                     <div className=" w-full flex justify-center ">
                                         <button
                                             className=" text-secondary text-xs font-medium "
-                                            onClick={() => handleClickReply(comment)}
+                                            onClick={() =>
+                                                handleClickReply(comment)
+                                            }
                                         >
                                             {activeReply === comment?._id
                                                 ? "Hide Replies"
-                                                : "Show Replies"}
+                                                : `View ${comment?.replies} more ${comment?.replies > 1 ? "replies" : "reply"} `}
                                         </button>
                                     </div>
                                 )}
@@ -212,7 +243,10 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                     <div className=" w-full px-4 flex h-[40px] items-center gap-4">
                         <input
                             onChange={(e) =>
-                                formikComment.setFieldValue("body", e.target.value)
+                                formikComment.setFieldValue(
+                                    "body",
+                                    e.target.value,
+                                )
                             }
                             value={formikComment.values?.body}
                             className="flex-1 px-4 text-sm outline-none! h-[40px] ring-0! bg-[#F0F3FF] focus:outline-none! rounded focus:ring-0! focus:border-transparent"
@@ -223,7 +257,11 @@ export default function CommentModal({ post, setActiveId, activeId }: { post: IP
                             onClick={() => formikComment.handleSubmit()}
                             disabled={!formikComment.values.body || isLoading}
                         >
-                            {isLoading ? <Spinner size="sm" /> : <Send size={20} />}
+                            {isLoading ? (
+                                <Spinner size="sm" />
+                            ) : (
+                                <Send size={20} />
+                            )}
                         </button>
                     </div>
                 </div>

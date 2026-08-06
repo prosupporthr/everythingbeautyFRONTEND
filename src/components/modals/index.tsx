@@ -16,3 +16,4 @@ export { default as SuccessModal } from "./successModal"
 export { default as SelectStaffModal } from "./selectStaffModal"
 
 export { default as CommentModal } from "./commentModal"
+export { default as EditMessageModal } from "./editMessageModal"

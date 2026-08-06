@@ -96,7 +96,7 @@ export default function ColorSelector() {
                 className="max-w-xs"
             >
                 {colorOptions
-                    .filter((c) => !colors.some((x: any) => x.color === c.value))
+                    .filter((c) => !colors?.some((x: any) => x?.color === c?.value))
                     .map((c) => (
                         <SelectItem key={c.value} id={c.value} >
                             {c.label}
@@ -107,14 +107,14 @@ export default function ColorSelector() {
             <div className="flex flex-wrap gap-2 mt-2">
                 {colors.map((item: any) => (
                     <div
-                        key={item.label}
+                        key={item?.label}
                         className="flex items-center gap-2 border border-gray-300 rounded-xl px-3 py-1"
                     >
                         <div
                             className="w-6 h-6 rounded-full"
-                            style={{ backgroundColor: item.color }}
+                            style={{ backgroundColor: item?.color }}
                         />
-                        <p className="text-sm">{item.label}</p>
+                        <p className="text-sm">{item?.label}</p>
                         <button
                             onClick={() => removeColor(item.label)}
                             className="text-gray-600 hover:text-black"

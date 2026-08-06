@@ -40,6 +40,7 @@ const BusinessPost = lazy(() =>
 );
 
 export default function BusinessDashboardPage() {
+    
     const query = useSearchParams();
     const tab = query?.get("tab");
 

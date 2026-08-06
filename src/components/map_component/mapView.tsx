@@ -218,7 +218,7 @@ export default function MapView({
                         />
                     )}
 
-                    {marker && <Marker position={marker} />}
+                    {marker?.lat && <Marker position={marker} />}
 
                     {(isLoaded && myLocation) && (
                         <Marker

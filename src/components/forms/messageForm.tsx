@@ -9,9 +9,10 @@ import { IChatList } from "@/helper/model/chat";
 import { FormEvent, useEffect } from "react";
 import { userAtom } from "@/store/user";
 import { useAtom } from "jotai";
+import { MultipleImagePicker } from "../shared";
 
 export default function MessageForm({ selected }: { selected: IChatList }) {
-    const { formik, isLoading } = useMessage();
+    const { formik, isLoading, setPreviews, setImageFiles, imageFiles, previews } = useMessage();
     const [user] = useAtom(userAtom);
 
     useEffect(() => {
@@ -30,7 +31,8 @@ export default function MessageForm({ selected }: { selected: IChatList }) {
                 onSubmit={handleSubmit}
                 className=" w-full h-[70px] lg:h-[123px] px-3 lg:px-6 flex gap-3 items-center border-t "
             >
-                <TbPhoto size={"24px"} />
+                {/* <TbPhoto size={"24px"} /> */}
+                <MultipleImagePicker previews={previews} setPreviews={setPreviews} imageFiles={imageFiles} setImageFiles={setImageFiles} type="message" />
                 <CustomInput
                     rounded="999px"
                     name={"message"}

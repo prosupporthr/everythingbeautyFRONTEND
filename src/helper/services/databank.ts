@@ -2,7 +2,9 @@ import { MessageQuestion, ProfileDelete } from "iconsax-reactjs";
 import { BiMessageDetail } from "react-icons/bi";
 import { BsPersonCircle, BsShop } from "react-icons/bs";
 import { IoChatboxOutline, IoHeartOutline, IoSettingsOutline, IoWalletOutline } from "react-icons/io5";
+import { MdOutlineAddBusiness } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
+import { LiaCartPlusSolid } from "react-icons/lia";
 
 export const menulistBusiness = [
     {
@@ -25,6 +27,16 @@ export const menulistBusiness = [
         icon: IoWalletOutline,
         link: "/wallet"
     },
+    {
+        title: "Business",
+        icon: MdOutlineAddBusiness,
+        link: "/businesslist"
+    }, 
+    {
+        title: "Product",
+        icon: LiaCartPlusSolid,
+        link: "/productlist"
+    }, 
     {
         title: "Favourite",
         icon: IoHeartOutline,
@@ -68,6 +80,16 @@ export const menulistClient = [
         icon: IoWalletOutline,
         link: "/wallet"
     },
+    {
+        title: "Business",
+        icon: MdOutlineAddBusiness,
+        link: "/businesslist"
+    }, 
+    {
+        title: "Product",
+        icon: LiaCartPlusSolid,
+        link: "/productlist"
+    }, 
     // {
     //     title: "Favourite",
     //     icon: IoHeartOutline,

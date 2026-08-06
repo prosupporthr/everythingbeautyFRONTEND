@@ -8,7 +8,7 @@ import {
     StarRating,
     Verified,
 } from "@/components/shared";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RiAddFill } from "react-icons/ri";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useParams, useRouter } from "next/navigation";
@@ -33,9 +33,9 @@ export default function SaleProductPage() {
 
     const router = useRouter();
 
-    const [marker, setMarker] = useState(
-        {} as google.maps.LatLngLiteral | null,
-    );
+    // const [marker, setMarker] = useState(
+    //     {} as google.maps.LatLngLiteral | null,
+    // );
     const { data, isLoading } = useFetchData<IProductDetail>({
         endpoint: URLS.PRODUCTBYID(id),
         name: ["product"],
@@ -55,10 +55,10 @@ export default function SaleProductPage() {
     });
 
     const isLightColor = (hex: string) => {
-        const c = hex.replace("#", "");
-        const r = parseInt(c.substring(0, 2), 16);
-        const g = parseInt(c.substring(2, 4), 16);
-        const b = parseInt(c.substring(4, 6), 16);
+        const c = hex?.replace("#", "");
+        const r = parseInt(c?.substring(0, 2), 16);
+        const g = parseInt(c?.substring(2, 4), 16);
+        const b = parseInt(c?.substring(4, 6), 16);
 
         // Perceived brightness formula
         const brightness = (r * 299 + g * 587 + b * 114) / 1000;
@@ -81,12 +81,27 @@ export default function SaleProductPage() {
         }
     }, [data, isLoading]);
 
-    useEffect(() => {
-        setMarker({
-            lat: Number(data?.business?.lat ?? 0),
-            lng: Number(data?.business?.long ?? 0),
-        });
-    }, [data, isLoading, setMarker]);
+    // useEffect(() => {
+    //     if(data?._id) {
+    //         setMarker({
+    //             lat: Number(data?.business?.lat ?? 0),
+    //             lng: Number(data?.business?.long ?? 0),
+    //         });
+    //     }
+    // }, [data, isLoading]);
+
+    // console.log(marker);
+
+    const marker = useMemo(() => {
+        const lat = Number(data?.business?.lat);
+        const lng = Number(data?.business?.long);
+
+        if (Number.isNaN(lat) || Number.isNaN(lng)) {
+            return null;
+        }
+
+        return { lat, lng };
+    }, [data]);
 
     const handleClick = () => {
         if (data?.colors[0]?.label && !color?.label) {
@@ -96,7 +111,7 @@ export default function SaleProductPage() {
                 color: "warning",
             });
             return;
-        } 
+        }
         router.push(
             `/sales/${data?.businessId}/order/${id}?qty=${qty}&color=${color?.label}`,
         );
@@ -128,6 +143,7 @@ export default function SaleProductPage() {
                 {/* {!data?.colors[0]?.label && ( */}
                 <CustomButton
                     onClick={handleClick}
+                    className={` ${qty > 0 ? " " : " lg:flex hidden "} `}
                     isDisabled={qty > 0 ? false : true}
                 >
                     {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
@@ -141,10 +157,14 @@ export default function SaleProductPage() {
                         {Number(data?.quantity) > 0 ? "Check out" : "Sold out"}
                     </CustomButton>
                 )} */}
-                <div className=" w-full flex justify-center border-b pb-3 font-medium ">
+                <div
+                    className={` w-full flex ${qty > 0 ? " " : " lg:flex hidden "} justify-center border-b pb-3 font-medium `}
+                >
                     You won't be charged yet
                 </div>
-                <div className=" w-full flex justify-between items-center ">
+                <div
+                    className={` w-full flex ${qty > 0 ? " " : " lg:flex hidden "} justify-between items-center `}
+                >
                     <p className=" text-xl font-medium ">Total</p>
                     <p className=" text-xl font-bold ">
                         {formatNumber(Number(data?.price) * Number(qty))}
@@ -227,13 +247,14 @@ export default function SaleProductPage() {
                                     <MapView
                                         hidesearch={true}
                                         marker={marker}
-                                        setMarker={setMarker}
+                                        // setMarker={setMarker}
                                         outclick={true}
                                         height="460px"
                                     />
                                 </div>
                             )}
                             <ReviewSection />
+                            <div className=" h-[400px] " />
                         </div>
                     </div>
                     <div className=" lg:w-[80%] w-full flex gap-6 ">
@@ -346,7 +367,7 @@ export default function SaleProductPage() {
                         </div>
                     </div>
                 </div>
-                <div className=" w-full lg:flex hidden gap-6 flex-col pb-8">
+                <div className=" w-full lg:flex hidden gap-6 flex-col">
                     {marker?.lat && (
                         <div className=" flex flex-col gap-6 w-full ">
                             <p className=" text-lg lg:text-2xl font-semibold ">
@@ -355,8 +376,7 @@ export default function SaleProductPage() {
                             <MapView
                                 hidesearch={true}
                                 marker={marker}
-                                latlng={marker}
-                                setMarker={setMarker}
+                                // setMarker={setMarker}
                                 outclick={true}
                                 height="460px"
                             />
@@ -365,7 +385,7 @@ export default function SaleProductPage() {
                     <ReviewSection />
                 </div>
                 {!self && (
-                    <div className=" lg:hidden p-3 lg:relative sticky bottom-0 inset-x-0 lg:z-0 z-30">
+                    <div className=" lg:hidden p-3 lg:relative fixed bottom-0 inset-x-0 lg:z-0 z-30">
                         <CheckOutCard />
                     </div>
                 )}

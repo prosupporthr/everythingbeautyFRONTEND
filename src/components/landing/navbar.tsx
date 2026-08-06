@@ -52,6 +52,17 @@ export default function Navbar() {
             enable: user?._id ? true : false,
         });
 
+    const { data: countMessage, isLoading: loadingMessage } = useFetchData<{
+        count: number;
+    }>({
+        endpoint: URLS.MESSAGECOUNT(user?._id as string),
+        name: ["messageCount", user?._id as string],
+        enable: user?._id ? true : false,
+        noCache: true,
+    });
+
+    console.log(countMessage);
+
     const { formik, isLoading: loading, isOpen, setIsOpen, tab } = useRating();
 
     useEffect(() => {
@@ -84,8 +95,8 @@ export default function Navbar() {
     };
 
     const HandleRouter = (item: string) => {
-        if(item === "/dashboard") {
-            router.push(item+"/"+user?._id)
+        if (item === "/dashboard") {
+            router.push(item + "/" + user?._id);
         } else {
             router.push(item);
         }
@@ -265,7 +276,10 @@ export default function Navbar() {
                                             </button>
                                         </div>
                                         <div className=" py-1 border-b border-[#E7E7E7] flex flex-col gap-2 px-6 ">
-                                            {(user?.business?._id ? menulistBusiness : menulistClient).map((item, index) => {
+                                            {(user?.business?._id
+                                                ? menulistBusiness
+                                                : menulistClient
+                                            ).map((item, index) => {
                                                 if (item?.title === "Logout") {
                                                     return (
                                                         <button
@@ -311,6 +325,14 @@ export default function Navbar() {
                                                                 />
                                                             </div>
                                                             {item?.title}
+                                                            {item?.title ===
+                                                                "Message" && (
+                                                                <div className=" w-6 h-6 text-sm flex justify-center items-center ml-auto rounded-full bg-red-500 text-white font-stretch-semi-condensed ">
+                                                                    {
+                                                                        countMessage?.count
+                                                                    }
+                                                                </div>
+                                                            )}
                                                         </button>
                                                     );
                                                 }

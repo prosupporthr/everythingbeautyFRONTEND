@@ -87,7 +87,7 @@ export default function CustomTimePicker({
         }}
         classNames={{
           inputWrapper: ` bg-white hover:bg-white border-gray-300 rounded-xl h-[45px] `,
-          input: "text-gray-900",
+          input: "text-gray-900 !text-base",
         }}
       />
 

@@ -283,6 +283,7 @@ export interface IPostDetail {
     images: string[];
     userId: string;
     productId: string;
+    commentsCount: number;
     hasLiked: boolean;
     createdAt: string;
     updatedAt: string;

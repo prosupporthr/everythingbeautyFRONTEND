@@ -3,7 +3,7 @@ import { Heart, Send } from "iconsax-reactjs";
 import { CustomButton, CustomImage, ImageCarousel } from "../custom";
 import { IPostDetail } from "@/helper/model/business";
 import { formatNumber } from "@/helper/utils/numberFormat";
-import { ModalLayout } from "../shared";
+import { ModalLayout, UserCard } from "../shared";
 import { usePathname, useRouter } from "next/navigation";
 import {
     Avatar,
@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { CommentModal, DeleteModal } from "../modals";
 import { IoIosMore } from "react-icons/io";
 import moment from "moment-timezone";
+import { IUserDetail } from "@/helper/model/user";
 
 interface IProps {
     postId: string;
@@ -87,11 +88,7 @@ export default function PostCard({
                 <div className=" flex items-center gap-2 ">
                     {item?.creator?.data?.profilePicture && (
                         <div className=" w-10 h-10 rounded-full bg-gray-400 ">
-                            <Avatar
-                                size={"md"}
-                                src={item?.creator?.data?.profilePicture}
-                                name={item?.creator?.data?.firstName}
-                            />
+                           <UserCard item={item?.creator.data as IUserDetail} />
                         </div>
                     )}
                     <div className=" flex flex-col ">
@@ -154,7 +151,7 @@ export default function PostCard({
                 >
                     {/* <CustomImage post src={item?.images[0]} alt="post" /> */}
 
-                    <ImageCarousel images={item?.images} />
+                    <ImageCarousel nopopup={false} images={item?.images} />
                 </div>
             )}
             <div className=" w-full flex flex-col px-4 ">
