@@ -311,8 +311,8 @@ export default function PostPage() {
                         <div className="w-full grid grid-cols-2 gap-4 text-white">
                             {product
                                 ?.slice(0, DISCOVERY_LIMIT)
-                                ?.map((item) => (
-                                    <div key={item?._id}>
+                                ?.map((item, index) => (
+                                    <div key={index}>
                                         <ProductCard item={item} post />
                                     </div>
                                 ))}
