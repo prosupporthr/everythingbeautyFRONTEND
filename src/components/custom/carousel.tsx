@@ -46,7 +46,7 @@ export default function ImageCarousel({
   nopopup = true,
 }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
-  const total = images.length;
+  const total = images?.length;
   const touchStartX = useRef<number | null>(null);
   const touchDeltaX = useRef(0);
 
@@ -120,7 +120,7 @@ export default function ImageCarousel({
         }`}
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
-        {images.map((img, i) => (
+        {images?.map((img, i) => (
           <div key={i} className="relative w-full h-full flex-shrink-0">
             <CustomImage
               post={true}
